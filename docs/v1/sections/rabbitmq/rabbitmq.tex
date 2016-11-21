@@ -1,0 +1,31 @@
+\section{RabbitMQ}
+
+\subsection{Présentation générale}
+
+RabbitMQ est un middleware de Pivotal facilitant l’échange de messages entre applications présentes sur un système informatique :  message broker software. RabbitMQ implémente le protocole AMQP (conçu par un consortium international) qui standardise les échanges de messages. Écrit en Erlang, RabbitMQ est open-source et un support payant est disponible. Des librairies sont disponibles pour l’écrasante majorité des langages utilisés, est compatible avec les principaux systèmes d’exploitation et bénéficie d’une large communauté d’utilisateurs. Il est utilisé par de nombreuses entreprises pour répondre à leurs besoins en échange de messages, telles que Instagram, The New York Times, Nokia, SoundCloud...
+
+\subsection{Fonctionnalitées}
+
+RabbitMQ propose les fonctionnalités suivantes :
+
+\begin{itemize}
+  \item Le transport de messages ;
+  \item La communication asynchrone : L’émetteur d'un message et le récepteur du message n'ont pas besoin d'être activés en même temps. La file d’attente reçoit le message de l'application émettrice et le stocke jusqu'à ce que l'application réceptrice vienne lire le message ;
+  \item Le routage : Les messages peuvent être routés entre machines ;
+  \item Le clustering : Plusieurs serveurs RabbitMQ peuvent former un cluster ;
+  \item La persistance des messages : Les messages d’une file peuvent être sauvegardé sur un support physique ;
+  \itemLa fiabilité : Chaque envoi ou réception par une application fait l'objet d'un accusé de réception. Couplé avec la persistance, ce mécanisme permet de garantir qu'aucun message ne sera perdu dans son transfert entre les applications ;
+  \item La diversité des protocoles supportés : AMQP, STOMP, MQTT, AMQP, HTTP ;
+  \item La diversité des clients : Java, Python, .NET, Ruby, PHP, etc… (plus de 20).
+\end{itemize}
+
+\subsection{Principes de fonctionnement}
+
+RabbitMQ propose les différents cas d'utilisation :
+
+\begin{itemize}
+	\item Point à point : Une seule application productrice et une seule consommatrice. Le message est retiré de la file d’attente lorsque le consommateur l’a lu ;
+	\item Publish-subscribe : Les applications consommatrices des messages s'abonnent à un channel correspondant à une catégorie de messages qu’elles veulent recevoir. Tous les messages du channel restent disponibles tant que tous les abonnés ne les ont pas lu ;
+	\item Work queue : Une application remplit une file de job à exécuter. Des serveurs viennent récupérer ces tâches pour les réaliser.
+	\item Routing : Les messages sont distribués dans les queues en fonction de leur type.
+\end{itemize}
