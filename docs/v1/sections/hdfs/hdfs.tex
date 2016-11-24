@@ -1,0 +1,70 @@
+\section{HDFS - Hadoop Distributed File System}
+
+\subsection{Présentation}
+
+HDFS est un système de fichiers distribué, redondant et fiable. Il est tolérant aux fautes, par conception.
+HDFS fait partie du framework Hadoop (HDFS, YARN, MR). Dans le cadre de la stack Mazerunner, YARN ne sera pas utilisé et Spark sera directement sur HDFS (Standalone Mode).
+Version utilisée : 2.7.3
+
+
+\subsection{Eléments d'architecture}
+
+Un cluster HDFS est composé d'un \textbf{NameNode} et de \textbf{DataNodes}.
+Les fichiers sont divisés en blocs, qui sont répliqués sur les DataNodes. \\
+
+\paragraph{}Le NameNode :
+\begin{itemize}
+	\item centralisé, gére les métadonnées et le namespace.
+	\item reçoit les requêtes client.
+	\item est un \textit{single point of failure}. Il peut être dédoublé (cf \textbf{Secondary NameNode} et \textbf{HA})
+\end{itemize}
+
+\paragraph{}Les DataNodes :
+\begin{itemize}
+	\item stockent les blocs.
+	\item n'ont aucune connaissance des fichiers d'origine.
+	\item envoient régulièrement des \textbf{HeartBeats} au NameNode.
+	\item envoient la liste des blocs stockés  - \textbf{BlockReport}
+\end{itemize}
+
+
+\subsection{failures}
+
+\paragraph{3 types de pannes,}
+\begin{enumerate}
+	\item NameNode failure :
+
+
+	\item DataNode failure :
+
+	DataNode déclaré mort après 10min (par défaut) sans HeartBeat
+
+	\item Network partition :
+\end{enumerate}
+
+\paragraph{Pour tester les pannes,}
+\begin{enumerate}
+	\item Trouver le pid du daemon concerné :
+	\begin{lstlisting}
+	$ jps
+	\end{lstlisting}
+	\item Terminer brutalement :
+	\begin{lstlisting}
+	$ sudo kill -9 <pid>
+	\end{lstlisting}
+\end{enumerate}
+(à wrap dans un script à lancer dps la machine "manager")
+
+
+\subsection{Intégration}
+Installation du client :
+\begin{itemize}
+	\item Installation classique d'Hadoop
+	\item Copie des fichiers de configuration du cluster /etc/hadoop/
+	\item accés via CLI : 
+	\begin{lstlisting}
+	$ hdfs dfs <commande>
+	\end{lstlisting}
+	\item accés via API python avec l'URI du cluster (\texttt{hdfs://...})
+\end{itemize}
+
