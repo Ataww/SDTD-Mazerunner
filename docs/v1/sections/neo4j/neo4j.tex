@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[latin1]{inputenc} 
+\usepackage{listings}
+
+\title{docNeo4j}
+\author{victorvalladier}
+\date{November 2016}
+
+\begin{document}
+
+
+\section{Neo4j}
+
+\subsection{Présentation générale}
+
+Neo4j est un système de gestion de base de données orienté graphes. Le code source, écrit en Java, est développé par Neo Technology.
+
+\subsection{Caractéristiques}
+
+La base de données de graphes offrent de meilleures performances dans le traitement de requêtes utilisant des relations entre objets. Au lieu d'utiliser des jointures comme dans le bases de données relationnelles, Neo4j utilise des outils de parcours de graphes. Ces outils permettent également de faciliter des cas d'usages exploitant au maximum les relations.
+
+Les données ne sont pas stockées de manière structurée dans Neo4j. Cela porte l'avantage d'adapter la base à la modification continue des données. En outre, le temps de développement de la base et le coût de sa maintenance s'en trouvent réduits.
+
+Neo4j utilise le langage Cypher pour la description des requêtes. 
+
+\subsection{Cas d'utilisation privilégiés}
+
+\begin{itemize}
+      \item Gestion de réseau
+      \item Réseaux sociaux
+      \item Recommandation
+      \item Géo-spatial
+\end{itemize}
+
+\subsection{Installation}
+
+Neo4j requiert Java 7.
+
+\begin{lstlisting}
+wget -O - http://debian.neo4j.org/neotechnology.gpg.key | apt-key add -
+echo 'deb http://debian.neo4j.org/repo stable/' > /etc/apt/sources.list.d/neo4j.list
+apt-get update
+apt-get install neo4j
+\end{lstlisting}
+
+Pour démarrer le serveur :
+\begin{lstlisting}
+/etc/init.d/neo4j-service start
+Après extraction du dossier, 
+\end{lstlisting}
+
+
+\end{document}
