@@ -2,7 +2,7 @@
 
 \subsection{Présentation générale}
 
-GraphX est l'API de spark pour tout ce qui est traitement de graphes. GraphX étend l'objet RDD en introduisant le Resilient Distributed Property Graph.
+GraphX est l'API de spark pour tout ce qui est traitement de graphes. GraphX étend l'objet RDD en introduisant le Resilient Distributed Property Graph. Pour permettre d'effectuer des traitements sur des graphes on peut stocker les informations dans des tableaux. Un graphe est structuré de plusieurs sommets et d'arrétes de ce fait, il est facile de pouvoir représenter un graphe sous forme de tableau où les deux premiéres colonnes correspondent aux sommets source et destination. Ce tableau comprendra une troisiéme colonne pour permettre d'y stocker la propriéte qui est présente entre les deux sommets. A partir de ce tableau spark à la possibilités de créer des collecion parallélisées en s'appuyant sur ces données. Ce jeu de données distribué pourra être utilisé en paralléle.
 
 \subsection{Cas d'utilisation graphes}
 
