@@ -22,10 +22,10 @@ def install_spark():
 	os.system(' echo "#############################"')
 	os.system(' echo "####### Launch Spark ########"')
 	os.system(' echo "#############################"')
-	os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/stop-master.sh')
-	os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/start-master.sh -i '+url_master+' -p '+port_master+' --webui-port '+port_webui)
-	os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/stop-slave.sh')
-	os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/start-slave.sh spark://'+url_master+':'+port_master)
+	#os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/stop-master.sh')
+	#os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/start-master.sh -i '+url_master+' -p '+port_master+' --webui-port '+port_webui)
+	#os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/stop-slave.sh')
+	#os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/start-slave.sh spark://'+url_master+':'+port_master)
 	return
 
-#install_spark()
+install_spark()
