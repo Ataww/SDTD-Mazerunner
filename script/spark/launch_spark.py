@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 
@@ -24,9 +24,7 @@ def launch_spark():
 
 # Function for launch master
 def launch_master():
-    os.system(' echo "####################################"')
-    os.system(' echo "####### Launch Spark Master ########"')
-    os.system(' echo "####################################"')
+    os.system(' echo "[Info] Start Spark Master ...."')
     os.system('stop-master.sh')
     #os.system('start-master.sh -i '+url_master+' -p '+port_master+' --webui-port '+port_webui)
     return
@@ -34,9 +32,7 @@ def launch_master():
 
 # Function for launch slave
 def launch_slave():
-    os.system(' echo "####################################"')
-    os.system(' echo "####### Launch Spark Worker ########"')
-    os.system(' echo "####################################"')
+    os.system(' echo "[Info] Start Spark Worker ...."')
     os.system('stop-slave.sh')
     # os.system('start-slave.sh spark://'+url_master+':'+port_master)
     return
