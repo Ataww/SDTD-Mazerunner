@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 
@@ -28,4 +28,4 @@ def install_spark():
 	#os.system('./spark/spark-2.0.2-bin-hadoop2.7/sbin/start-slave.sh spark://'+url_master+':'+port_master)
 	return
 
-install_spark()
+#install_spark()
