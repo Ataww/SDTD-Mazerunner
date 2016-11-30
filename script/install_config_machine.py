@@ -2,12 +2,14 @@
 
 import os
 
-# Function for install python
+# Function for install python2.7
 def install_python():
-    os.system(' echo "################################"')
-    os.system(' echo "####### Install Python #########"')
-    os.system(' echo "################################"')
-    os.system('sudo apt-get -y install python')
+    PYTHON_VERSION = os.popen('python -V 2>&1 |awk \'{ print $2 }\'', "r").read()
+    if '2.7' not in PYTHON_VERSION:
+        os.system(' echo "################################"')
+        os.system(' echo "####### Install Python #########"')
+        os.system(' echo "################################"')
+        os.system('sudo apt-get -y install python')
     return
 
 # Function for install Java
@@ -27,5 +29,5 @@ def install_java():
         os.system('echo "export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin" >> ~/.profile')
     return
 
-#install_python()
-#install_java()
+install_python()
+install_java()

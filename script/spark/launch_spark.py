@@ -41,4 +41,4 @@ def launch_slave():
     # os.system('start-slave.sh spark://'+url_master+':'+port_master)
     return
 
-#launch_spark()
+launch_spark()
