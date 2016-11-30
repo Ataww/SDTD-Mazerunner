@@ -23,7 +23,9 @@ def install_java():
         os.system('sudo mkdir /usr/lib/java/')
         os.system('sudo mv jdk1.8.0_112/ /usr/lib/java/jdk1.8.0_112/')
         os.system('echo "export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/" >> ~/.bashrc')
+        os.system('export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/')
         os.system('echo "export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin" >> ~/.bashrc')
+        os.system('export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin')
     return
 
 #install_python()
