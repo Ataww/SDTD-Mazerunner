@@ -1,6 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
+import logging
+import subprocess
 
 components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
 
@@ -11,16 +13,18 @@ def install_environment():
     print("#############################################################")
     for conponent in components:
         file = open('./'+conponent+'/hostfile.txt')
+        index = 1
         for host in file:
-            print("[Info] Set environment for component " + conponent + " on the machine with address " + host.replace('\n', ''))
-            print('[Info] Transfer all files ... ')
-            os.system('ssh -i ~/.ssh/xnet xnet@' + host.replace('\n', '') + ' \'rm -rf ' + conponent + ' \'')
-            os.system('ssh -i ~/.ssh/xnet xnet@' + host.replace('\n', '') + ' \'mkdir ' + conponent + ' \'')
-            os.system('scp -pq -i ~/.ssh/xnet ./install_config_machine.py xnet@' + host.replace('\n','') + ':~')
+            logging.info(" Set environment for component " + conponent + " on the machine with address " + host.replace('\n', ''))
+            logging.info(' Transfer all files ... ')
+            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''), 'rm -rf ' + conponent])
+            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''), 'mkdir ' + conponent])
+            subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host.replace('\n','') + ':~'])
             for fichier in os.listdir('./'+conponent):
-                os.system('scp -pq -i ~/.ssh/xnet ./'+conponent+'/'+fichier+' xnet@' + host.replace('\n', '') + ':~/'+conponent+'/')
-            os.system('ssh -i ~/.ssh/xnet xnet@'+host.replace('\n','')+' \'source ~/.profile; ./install_config_machine.py\'')
-            os.system('ssh -i ~/.ssh/xnet xnet@'+host.replace('\n','')+' \'source ~/.profile; ./'+conponent+'/install_'+conponent+'.py\'')
+                subprocess.run(['scp', '-pq', '-i', '~/.ssh/xnet', './'+conponent+'/'+fichier,'xnet@' + host.replace('\n', '') + ':~/'+conponent])
+            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''),'source ~/.profile; ./install_config_machine.py '+conponent+' '+str(index)])
+            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''),'source ~/.profile; ./'+conponent+'/install_'+conponent+'.py'])
+            index += 1
         file.close()
     return
 
@@ -32,10 +36,12 @@ def launch_component():
     for conponent in components:
         file = open('./'+conponent+'/hostfile.txt')
         for host in file:
-            print("[Info] Launch component " + conponent + " on the machine with address " + host.replace('\n', ''))
-            os.system('ssh -i ~/.ssh/xnet xnet@'+host.replace('\n','')+' \'source ~/.profile; ./'+conponent+'/launch_'+conponent+'.py\'')
+            logging.info(" Launch component " + conponent + " on the machine with address " + host.replace('\n', ''))
+            subprocess.run(['ssh','-i','~/.ssh/xnet','xnet@'+host.replace('\n',''),'source ~/.profile; ./'+conponent+'/launch_'+conponent+'.py'])
         file.close()
     return
 
-install_environment()
-launch_component()
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    install_environment()
+    launch_component()
