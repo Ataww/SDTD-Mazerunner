@@ -20,12 +20,11 @@ def install_java():
         os.system('wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz" -O jdk-8-linux.tar.gz')
         os.system('tar xf jdk-8-linux.tar.gz')
         os.system('rm jdk-8-linux.tar.gz')
+        os.system('sudo rm -rf /usr/lib/java/')
         os.system('sudo mkdir /usr/lib/java/')
         os.system('sudo mv jdk1.8.0_112/ /usr/lib/java/jdk1.8.0_112/')
-        os.system('echo "export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/" >> ~/.bashrc')
-        os.system('export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/')
-        os.system('echo "export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin" >> ~/.bashrc')
-        os.system('export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin')
+        os.system('echo "export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/" >> ~/.profile')
+        os.system('echo "export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin" >> ~/.profile')
     return
 
 #install_python()
