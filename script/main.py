@@ -17,6 +17,7 @@ def install_environment():
         for host in file:
             logging.info(" Set environment for component " + conponent + " on the machine with address " + host.replace('\n', ''))
             logging.info(' Transfer all files ... ')
+            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''), 'rm -rf ' + conponent])
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host.replace('\n','') + ':~'])
             out = subprocess.run(['scp', '-prq', '-i', '~/.ssh/xnet', './'+conponent,'xnet@' + host.replace('\n', '') + ':~/'],check=True)
             if out.returncode == 0:
