@@ -17,11 +17,12 @@ def install_environment():
         for host in file:
             logging.info(" Set environment for component " + conponent + " on the machine with address " + host.replace('\n', ''))
             logging.info(' Transfer all files ... ')
-            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''), 'rm -rf ' + conponent])
-            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''), 'mkdir ' + conponent])
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host.replace('\n','') + ':~'])
-            for fichier in os.listdir('./'+conponent):
-                subprocess.run(['scp', '-pq', '-i', '~/.ssh/xnet', './'+conponent+'/'+fichier,'xnet@' + host.replace('\n', '') + ':~/'+conponent])
+            out = subprocess.run(['scp', '-prq', '-i', '~/.ssh/xnet', './'+conponent,'xnet@' + host.replace('\n', '') + ':~/'],check=True)
+            if out.returncode == 0:
+                logging.info(" Transferring finish [success]")
+            else:
+                logging.error(" Transferring files failed [error]")
             subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''),'source ~/.profile; ./install_config_machine.py '+conponent+' '+str(index)])
             subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host.replace('\n', ''),'source ~/.profile; ./'+conponent+'/install_'+conponent+'.py'])
             index += 1
