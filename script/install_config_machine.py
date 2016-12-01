@@ -51,13 +51,18 @@ def define_hostname(conponent,index):
     find = False
     file = open('/etc/hosts')
     for line in file:
-        if '127.0.1.1' in line:
+        if get_ip() in line:
             find = True
     if not find:
-        os.system('echo "127.0.1.1 '+conponent+'-'+index+'" | sudo tee -a /etc/hosts >> /dev/null 2>&1')
+        os.system('echo "'+get_ip()+' '+conponent+'-'+index+'" | sudo tee -a /etc/hosts >> /dev/null 2>&1')
         os.system('sudo hostname '+conponent+'-'+index+' >> /dev/null 2>&1')
         logging.info(" Hostname update")
     return
+
+def get_ip():
+    ip = os.popen('ifconfig ens3 | grep "inet ad" | cut -f2 -d: | awk \'{print $1}\'', "r").read()
+    ip = ip.replace('\n', '')
+    return ip
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
