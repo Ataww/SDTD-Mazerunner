@@ -51,7 +51,7 @@ def define_hostname(conponent,index):
         os.system('echo "127.0.1.1 '+conponent+'-'+index+'" | sudo tee -a /etc/hosts >> /dev/null 2>&1')
         #TODO try with subprocess
         #subprocess.run(['echo','127.0.1.1 ',conponent+'-'+index,'|','sudo','tee','-a','/etc/hosts','>>','/dev/null'])
-        subprocess.run(['sudo','hostname',conponent+'-'+index])
+        subprocess.run(['sudo','hostname',conponent+'-'+index],'>>','/dev/null','2>&1')
         logging.info(" Hostname update")
     return
 
