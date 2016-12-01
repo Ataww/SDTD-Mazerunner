@@ -28,6 +28,7 @@ def install_spark():
         subprocess.run(['sudo','ln', '-s', '/usr/lib/spark/'+spark_version+'/sbin/stop-slave.sh', '/sbin/stop-slave'])
         with open(os.path.expanduser('~/.profile'), 'a') as proFile:
             subprocess.run(['echo', 'export SPARK_HOME=/usr/lib/spark/'+spark_version], stdout=proFile, check=True)
+            subprocess.run(['echo', 'export SPARK_CONF_DIR=/home/xnet/spark/conf'+spark_version], stdout=proFile, check=True)
         subprocess.run(['sudo','mkdir','/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/logs'])
         subprocess.run(['sudo','chmod','777','-R','/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/logs'])
         subprocess.run(['sudo','mkdir','/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/work'])
