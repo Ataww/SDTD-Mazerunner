@@ -1,3 +1,6 @@
 #Latex generated files
 *.aux
 *.log
+.idea/
+/application/node_modules/
+/application/.idea/
