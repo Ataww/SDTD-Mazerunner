@@ -27,6 +27,7 @@ def launch_spark():
 # Function for launch master
 def launch_master(url):
     logging.info(" Start Spark Master ...")
+    #TODO check if it is realy stop
     subprocess.run(['stop-master.sh'])
     subprocess.run(['start-master.sh','-i',url,'-p',port_master,'--webui-port',port_webui])
     return

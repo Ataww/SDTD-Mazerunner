@@ -12,31 +12,37 @@ def install_python():
         logging.info(" Installation of python ...")
         out = subprocess.run(['sudo','apt-get','-qq','-y','install','python', '>>','/dev/null','2>&1'], check=True)
         if out.returncode == 0:
-            logging.info(" Installing Python with success")
+            logging.info("  Python 2.7 is installed with [success]")
+        else:
+            logging.error("  Python couldn't be install [error]")
     return
 
 # Function for install Java
 def install_java():
     JAVA_VERSION = os.popen('java -version 2>&1 |awk \'NR==1{ gsub(/"/,""); print $3 }\'', "r").read()
-    if JAVA_VERSION != '1.8.0_112\n':
+    if '1.8.0_112' not in JAVA_VERSION:
         logging.info(" Downloading Java ...")
         out = subprocess.run(['wget', '-q', '--no-cookies', '--no-check-certificate', '--header','Cookie: oraclelicense=accept-securebackup-cookie','http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz'], check=True)
         if out.returncode == 0:
-            logging.info(" Downloading Java with success")
+            logging.info(" Downloading Java with [success]")
         logging.info(" Installation of Java ...")
         subprocess.run(['sudo','rm','-rf','/usr/lib/java/'])
         subprocess.run(['sudo','mkdir','/usr/lib/java/'])
         out = subprocess.run(['sudo', 'tar', '-xf', 'jdk-8u112-linux-x64.tar.gz', '-C', '/usr/lib/java'], check=True)
         if out.returncode == 0:
-            logging.info(" Uncompressing Java with success")
+            logging.info(" Uncompressing Java with [success]")
         subprocess.run(['rm','jdk-8u112-linux-x64.tar.gz'])
-        #TODO use subprocess
-        #subprocess.run(['echo','export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/','>>','~/.profile'])
-        #subprocess.run(['echo','export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin','>>','~/.profile'])
-        os.system('echo "export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/" >> ~/.profile')
-        os.system('echo "export PATH=$PATH:/usr/lib/java/jdk1.8.0_112/bin" >> ~/.profile')
-        # TODO add log for know if java is installed
-    return
+        subprocess.run(['sudo','ln', '-s', '/usr/lib/java/jdk1.8.0_112/bin/java', '/bin/java'])
+        subprocess.run(['sudo','ln', '-s', '/usr/lib/java/jdk1.8.0_112/bin/javac', '/bin/javac'])
+        subprocess.run(['sudo','ln', '-s', '/usr/lib/java/jdk1.8.0_112/bin/jar', '/bin/jar'])
+        with open(os.path.expanduser('~/.profile'), 'a') as proFile:
+            subprocess.run(['echo', 'export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/'], stdout=proFile, check=True)
+        JAVA_VERSION = os.popen('java -version 2>&1 |awk \'NR==1{ gsub(/"/,""); print $3 }\'', "r").read()
+        if '1.8.0_112' in JAVA_VERSION:
+            logging.info(" Java is installed with [success]")
+        else:
+            logging.error(" Java couldn't be install [error]")
+        return
 
 # Function for define the hostname
 def define_hostname(conponent,index):
