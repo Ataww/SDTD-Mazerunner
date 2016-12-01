@@ -9,23 +9,25 @@ distrib='http://apache.crihan.fr/dist/hadoop/common/'+version+'/'+version+'.tar.
 def install_hdfs():
 	"""Install hadoop et set it up"""
 	logging.info('Downloading hadoop')
-	subprocess.run(['wget', distrib], check=True)
+	# subprocess.run(['wget', distrib], check=True)
 	logging.info('Uncompressing to /opt/')
-	subprocess.run(['tar', 'xf', version+'.tar.gz', '-C', '/opt/'], check=True)
+	# subprocess.run(['tar', 'xf', version+'.tar.gz', '-C', '/opt/'], check=True)
 	logging.info('Creating symbolic links')
 	subprocess.run(['ln', '-s', '/opt/'+version+'/bin/hdfs', '/bin/hdfs'])
 	subprocess.run(['ln', '-s', '/opt/'+version+'/sbin/start-dfs.sh', '/sbin/start-dfs.sh'])
 	subprocess.run(['ln', '-s', '/opt/'+version+'/sbin/stop-dfs.sh', '/sbin/stop-dfs.sh'])
 	logging.info('Setting environment variables')
 	with open(os.path.expanduser('~/.profile'), 'a') as proFile:
-		subprocess.run(['echo', '"export HADOOP_CONF_DIR=/opt/etc/hadoop"'], stdout=proFile, check=True)
+		subprocess.run(['echo', 'export HADOOP_CONF_DIR=/opt/etc/hadoop'], stdout=proFile, check=True)
 	logging.info('Cleaning up')
-	subprocess.run(['rm', '-rf', version+'tar.gz'])	
+	subprocess.run(['rm', '-rf', version+'.tar.gz'])	
+	logging.info('Copying HDFS configuration files')
+	subprocess.run(['cp', '-r', './etc/hadoop/', '/opt/'+version+'/etc/'])
 
-	# TODO modifier les fichiers de conf
 
 def install_zookeeper():
 	pass
+
 
 if __name__ == '__main__':
 	if os.getuid() != 0:
