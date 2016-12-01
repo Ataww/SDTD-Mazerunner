@@ -11,12 +11,15 @@ def install_hdfs():
 	logging.info('Downloading hadoop')
 	subprocess.run(['wget', distrib], check=True)
 	logging.info('Uncompressing to /opt/')
-	subprocess.run(['tar', 'xf', version+'tar.gz', '/opt/'], check=True)
+	subprocess.run(['tar', 'xf', version+'.tar.gz', '-C', '/opt/'], check=True)
 	logging.info('Creating symbolic links')
 	subprocess.run(['ln', '-s', '/opt/'+version+'/bin/hdfs', '/bin/hdfs'])
 	subprocess.run(['ln', '-s', '/opt/'+version+'/sbin/start-dfs.sh', '/sbin/start-dfs.sh'])
 	subprocess.run(['ln', '-s', '/opt/'+version+'/sbin/stop-dfs.sh', '/sbin/stop-dfs.sh'])
-	logging.info('Cleaning the fuck up')
+	logging.info('Setting environment variables')
+	with open(os.path.expanduser('~/.profile'), 'a') as proFile:
+		subprocess.run(['echo', '"export HADOOP_CONF_DIR=/opt/etc/hadoop"'], stdout=proFile, check=True)
+	logging.info('Cleaning up')
 	subprocess.run(['rm', '-rf', version+'tar.gz'])	
 
 	# TODO modifier les fichiers de conf
