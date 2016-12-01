@@ -28,16 +28,16 @@ def launch_spark():
 def launch_master(url):
     logging.info(" Start Spark Master ...")
     #TODO check if it is realy stop
-    subprocess.run(['stop-master.sh'])
-    subprocess.run(['start-master.sh','-i',url,'-p',port_master,'--webui-port',port_webui])
+    subprocess.run(['stop-master'])
+    subprocess.run(['start-master','-i',url,'-p',port_master,'--webui-port',port_webui])
     return
 
 
 # Function for launch slave
 def launch_slave():
     logging.info(" Start Spark Worker ...")
-    subprocess.run(['stop-slave.sh'])
-    subprocess.run(['start-slave.sh','spark://'+get_Ip_Master()+':'+port_master])
+    subprocess.run(['stop-slave'])
+    subprocess.run(['start-slave','spark://'+get_Ip_Master()+':'+port_master])
     return
 
 # Function for recover the address of master

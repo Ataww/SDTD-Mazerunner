@@ -36,7 +36,7 @@ def install_java():
         subprocess.run(['sudo','ln', '-s', '/usr/lib/java/jdk1.8.0_112/bin/javac', '/bin/javac'])
         subprocess.run(['sudo','ln', '-s', '/usr/lib/java/jdk1.8.0_112/bin/jar', '/bin/jar'])
         with open(os.path.expanduser('~/.profile'), 'a') as proFile:
-            subprocess.run(['echo', 'export JAVA_HOME=/usr/lib/java/jdk1.8.0_112/'], stdout=proFile, check=True)
+            subprocess.run(['echo', 'export JAVA_HOME=/usr/lib/java/jdk1.8.0_112'], stdout=proFile, check=True)
         JAVA_VERSION = os.popen('java -version 2>&1 |awk \'NR==1{ gsub(/"/,""); print $3 }\'', "r").read()
         if '1.8.0_112' in JAVA_VERSION:
             logging.info(" Java is installed with [success]")
