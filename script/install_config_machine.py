@@ -55,7 +55,7 @@ def define_hostname(conponent,index):
             find = True
     if not find:
         os.system('echo "127.0.1.1 '+conponent+'-'+index+'" | sudo tee -a /etc/hosts >> /dev/null 2>&1')
-        subprocess.run(['sudo','hostname',conponent+'-'+index,'>>','/dev/null','2>&1'])
+        os.system('sudo hostname '+conponent+'-'+index+' >> /dev/null 2>&1')
         logging.info(" Hostname update")
     return
 
