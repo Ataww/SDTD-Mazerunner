@@ -2,5 +2,5 @@
 *.aux
 *.log
 .idea/
-/application/node_modules/
-/application/.idea/
+/web-app/node_modules/
+/web-app/.idea/
