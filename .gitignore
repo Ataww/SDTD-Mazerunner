@@ -4,3 +4,5 @@
 .idea/
 /application/node_modules/
 /application/.idea/
+/backend/.idea
+/backend/backend.iml
