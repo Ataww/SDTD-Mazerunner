@@ -41,15 +41,25 @@
 # - SPARK_EXECUTOR_MEMORY, Memory per Executor (e.g. 1000M, 2G) (Default: 1G)
 # - SPARK_DRIVER_MEMORY, Memory for Driver (e.g. 1000M, 2G) (Default: 1G)
 
+# Generic options for the daemons used in the standalone deploy mode
+# - SPARK_CONF_DIR      Alternate conf dir. (Default: ${SPARK_HOME}/conf)
+# - SPARK_LOG_DIR       Where log files are stored.  (Default: ${SPARK_HOME}/logs)
+# - SPARK_PID_DIR       Where the pid file is stored. (Default: /tmp)
+# - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
+# - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
+
 # Options for the daemons used in the standalone deploy mode
-# - SPARK_MASTER_HOST, to bind the master to a different IP address or hostname
 # - SPARK_MASTER_PORT / SPARK_MASTER_WEBUI_PORT, to use non-default ports for the master
+export SPARK_MASTER_PORT="7070"
+export SPARK_MASTER_WEBUI_PORT="8080"
 # - SPARK_MASTER_OPTS, to set config properties only for the master (e.g. "-Dx=y")
 # - SPARK_WORKER_CORES, to set the number of cores to use on this machine
 export SPARK_WORKER_CORES="2"
 # - SPARK_WORKER_MEMORY, to set how much total memory workers have to give executors (e.g. 1000m, 2g)
 export SPARK_WORKER_MEMORY="2g"
 # - SPARK_WORKER_PORT / SPARK_WORKER_WEBUI_PORT, to use non-default ports for the worker
+export SPARK_WORKER_PORT="7070"
+export SPARK_WORKER_WEBUI_PORT="8080"
 # - SPARK_WORKER_INSTANCES, to set the number of worker processes per node
 export SPARK_WORKER_INSTANCES="2"
 # - SPARK_WORKER_DIR, to set the working directory of worker processes
@@ -58,11 +68,6 @@ export SPARK_WORKER_INSTANCES="2"
 # - SPARK_HISTORY_OPTS, to set config properties only for the history server (e.g. "-Dx=y")
 # - SPARK_SHUFFLE_OPTS, to set config properties only for the external shuffle service (e.g. "-Dx=y")
 # - SPARK_DAEMON_JAVA_OPTS, to set config properties for all daemons (e.g. "-Dx=y")
+export SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=149.202.161.176:2181,149.202.170.208:2181 -Dspark.deploy.zookeeper.dir=/usr/lib/zookeeper/zookeeper-3.4.9/tmp"
 # - SPARK_PUBLIC_DNS, to set the public dns name of the master or workers
-
-# Generic options for the daemons used in the standalone deploy mode
-# - SPARK_CONF_DIR      Alternate conf dir. (Default: ${SPARK_HOME}/conf)
-# - SPARK_LOG_DIR       Where log files are stored.  (Default: ${SPARK_HOME}/logs)
-# - SPARK_PID_DIR       Where the pid file is stored. (Default: /tmp)
-# - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
-# - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
+# - SPARK_MASTER_HOST, to bind the master to a different IP address or hostname
