@@ -92,7 +92,6 @@ def set_server_value_zookeeper():
     port_elec_leader = 3888
     file = open('./spark/master.txt')
     with open(os.path.expanduser('/home/xnet/spark/conf/zoo.cfg'), 'a') as confFile:
-        subprocess.run(['echo', '\n'], stdout=confFile, check=True)
         for host in file:
             subprocess.run(['echo', 'server-'+str(index)+':'+host.strip(' \n')+':'+str(port_com_leader)+':'+str(port_elec_leader) ], stdout=confFile, check=True)
             index += 1
