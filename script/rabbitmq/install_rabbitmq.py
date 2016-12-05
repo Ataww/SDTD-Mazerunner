@@ -36,6 +36,7 @@ def configure_cluster():
     f.write('rabbitmq-1\n149.202.161.163 rabbitmq-2')
     f.close()
     subprocess.run(['sudo', 'hostname', 'rabbitmq-1'])
+    subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"^ha\."', '{"ha-mode":"all", "ha-sync-mode":"automatic"}'])
     return
 
 def install_rabbitmq():
