@@ -29,7 +29,7 @@ def install_spark():
         with open(os.path.expanduser('~/.profile'), 'a') as proFile:
             subprocess.run(['echo', 'export SPARK_HOME=/usr/lib/spark/'+spark_version], stdout=proFile, check=True)
             subprocess.run(['echo', 'export SPARK_CONF_DIR=/home/xnet/spark/conf'], stdout=proFile, check=True)
-        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-env.sh', '/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/conf/zoo.cfg'])
+        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-env.sh', '/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/conf/spark-env.sh'])
         subprocess.run(['sudo','mkdir','/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/logs'])
         subprocess.run(['sudo','chmod','777','-R','/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/logs'])
         subprocess.run(['sudo','mkdir','/usr/lib/spark/spark-2.0.2-bin-hadoop2.7/work'])
