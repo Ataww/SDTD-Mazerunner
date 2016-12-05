@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+
 import subprocess, os, sys, logging, socket
 
 
@@ -29,10 +30,26 @@ def configure_user() :
     subprocess.run(['sudo', 'rabbitmqctl', 'set_permissions', '-p', '/', 'spark_user', '.*', '.*', '.*'])
     return
 
+def configure_cluster():
+    logging.info('Configuring machine for clustering')
+    f = open('/etc/hostname', 'w')
+    f.write('rabbitmq-1\n149.202.161.163 rabbitmq-2')
+    f.close()
+    subprocess.run(['sudo', 'hostname', 'rabbitmq-1'])
+    subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"^ha\."', '{"ha-mode":"all", "ha-sync-mode":"automatic"}'])
+    return
+
+def configure_replication() :
+    logging.info('Configuring qeues replication')
+    # Queues are replicated on each nodes
+    subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"[^=]*"','{"ha-mode":"all"}'])
+
 def install_rabbitmq():
     logging.info('Going to install RabbitMQ on' + socket.gethostname())
     install_server()
     configure_user()
+    configure_cluster()
+    configure_replication()
     logging.info('RabbitMQ installation done');
     return
 
