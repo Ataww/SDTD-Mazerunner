@@ -39,11 +39,17 @@ def configure_cluster():
     subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"^ha\."', '{"ha-mode":"all", "ha-sync-mode":"automatic"}'])
     return
 
+def configure_replication() :
+    logging.info('Configuring qeues replication')
+    # Queues are replicated on each nodes
+    subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"[^=]*"','{"ha-mode":"all"}'])
+
 def install_rabbitmq():
     logging.info('Going to install RabbitMQ on' + socket.gethostname())
     install_server()
     configure_user()
     configure_cluster()
+    configure_replication()
     logging.info('RabbitMQ installation done');
     return
 
