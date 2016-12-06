@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import subprocess, os, sys, logging, socket
+import subprocess, os, sys, logging, socket, configparser
 
 
 def install_server() :
@@ -30,27 +30,55 @@ def configure_user() :
     subprocess.run(['sudo', 'rabbitmqctl', 'set_permissions', '-p', '/', 'spark_user', '.*', '.*', '.*'])
     return
 
-def configure_cluster():
-    logging.info('Configuring machine for clustering')
-    f = open('/etc/hostname', 'w')
-    f.write('rabbitmq-1\n149.202.161.163 rabbitmq-2')
-    f.close()
-    subprocess.run(['sudo', 'hostname', 'rabbitmq-1'])
-    subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"^ha\."', '{"ha-mode":"all", "ha-sync-mode":"automatic"}'])
+def join_cluster(master):
+    logging.info('Get erlang cookie from master')
+    subprocess.run(['sudo', 'rabbitmqctl', 'stop_app'])
+    subprocess.run(['sudo', 'rabbitmqctl', 'join_cluster', 'rabbit@'+master])
+    subprocess.run(['sudo', 'rabbitmqctl', 'start_app'])
     return
 
 def configure_replication() :
     logging.info('Configuring qeues replication')
     # Queues are replicated on each nodes
     subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"[^=]*"','{"ha-mode":"all"}'])
-
-def install_rabbitmq():
-    logging.info('Going to install RabbitMQ on' + socket.gethostname())
-    install_server()
-    configure_user()
-    configure_cluster()
-    configure_replication()
-    logging.info('RabbitMQ installation done');
     return
 
+def expose_erlang_cookie() :
+    subprocess.run(['sudo' ,'cp', '/var/lib/rabbitmq/.erlang.cookie', '/tmp'])
+    subprocess.run(['sudo', 'chmod', 'o+r', '/tmp/.erlang.cookie'])
+    return
+
+def take_erlang_cookie(master) :
+    # TODO do not use directly username xnet
+    subprocess.run(['sudo', 'service', 'rabbitmq-server', 'stop'])
+    subprocess.run(['sudo','scp', '-i', '/home/xnet/.ssh/xnet', 'xnet@' + master + ':/tmp/.erlang.cookie', '/tmp/'])
+    subprocess.run(['sudo', 'cp', '/tmp/.erlang.cookie', '/var/lib/rabbitmq/'])
+    subprocess.run(['sudo', 'service', 'rabbitmq-server', 'start'])
+
+def install_rabbitmq():
+    hostname = socket.gethostname()
+    logging.info('Going to install RabbitMQ on' + hostname)
+
+    # Read configuration
+    logging.info("Read configuration")
+    config = configparser.ConfigParser()
+    config.read("conf.ini")
+    masterHost = config.get("Master", "host")
+    slaveHosts = config.get("Slaves", 'hosts').split(',')
+
+    # Install
+    install_server()
+    if hostname == masterHost :
+        configure_user()
+        expose_erlang_cookie()
+        configure_replication()
+    else:
+        take_erlang_cookie(masterHost)
+        join_cluster(masterHost)
+
+    logging.info('RabbitMQ installation done')
+
+    return
+
+# INSTALLATION
 install_rabbitmq()
