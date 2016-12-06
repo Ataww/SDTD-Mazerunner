@@ -5,25 +5,31 @@ import subprocess, os, sys, logging
 version='hadoop-2.7.3'
 distrib='http://apache.crihan.fr/dist/hadoop/common/'+version+'/'+version+'.tar.gz'
 
+hadoop_prefix = '/home/xnet/'+version
+
+conf_dir = hadoop_prefix+"/etc/hadoop"
+conf_dir_export = "export HADOOP_CONF_DIR="+conf_dir
+
+
+zk_version='zookeeper-3.4.9'
+zk_distrib='http://apache.crihan.fr/dist/zookeeper/'+zk_version+'/'+version+'tar.gz'
+
 
 def install_hdfs():
 	"""Install hadoop et set it up"""
 	logging.info('Downloading hadoop')
-	subprocess.run(['wget', distrib], check=True)
-	logging.info('Uncompressing to /opt/')
-	subprocess.run(['tar', 'xf', version+'.tar.gz', '-C', '/opt/'], check=True)
-	logging.info('Creating symbolic links')
-	subprocess.run(['ln', '-s', '/opt/'+version+'/bin/hdfs', '/bin/hdfs'])
-	subprocess.run(['ln', '-s', '/opt/'+version+'/sbin/start-dfs.sh', '/sbin/start-dfs.sh'])
-	subprocess.run(['ln', '-s', '/opt/'+version+'/sbin/stop-dfs.sh', '/sbin/stop-dfs.sh'])
+	subprocess.run(['wget', "-nc", distrib], check=True)
+	logging.info('Uncompressing to /home/xnet')
+	subprocess.run(['tar', 'xf', version+'.tar.gz', '-C', '/home/xnet'], check=True)
 	logging.info('Setting environment variables')
-	with open(os.path.expanduser('~/.profile'), 'a') as proFile:
-		subprocess.run(['echo', 'export HADOOP_CONF_DIR=/opt/etc/hadoop'], stdout=proFile, check=True)
-		subprocess.run(['source', '~/.profile'])
-	logging.info('Cleaning up')
-	subprocess.run(['rm', '-rf', version+'.tar.gz'])	
+	with open(os.path.expanduser('~/.profile'), 'r+') as proFile:
+		if conf_dir_export not in proFile.read():
+			subprocess.run(['echo', conf_dir_export], stdout=proFile, check=True)
+			subprocess.run(['echo', 'export HADOOP_PREFIX='+hadoop_prefix], stdout=proFile, check=True)	
 	logging.info('Copying HDFS configuration files')
-	subprocess.run(['cp', '-r', './etc/hadoop/', '/opt/'+version+'/etc/'])
+	# files to copy should be somewhere with the installation script
+	# for now it uses a local repo
+	subprocess.run('cp SDTD-Mazerunner/script/hdfs/etc/hadoop/* /home/xnet/'+version+'/etc/hadoop', shell=True)
 
 
 def install_zookeeper():
@@ -31,8 +37,5 @@ def install_zookeeper():
 
 
 if __name__ == '__main__':
-	if os.getuid() != 0:
-		print('Root permissions required', file=sys.stderr)
-		sys.exit(1)
 	logging.basicConfig(level=logging.INFO)
 	install_hdfs()
