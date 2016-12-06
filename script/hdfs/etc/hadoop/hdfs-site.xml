@@ -21,10 +21,10 @@
     </property>
   	<property>
         <name>dfs.namenode.name.dir</name>
-        <value>file://hdfs/namenode</value>
+        <value>file:///home/xnet/hdfs/namenode</value>
   	</property>
     <property>
         <name>dfs.datanode.name.dir</name>
-        <value>file://hdfs/datanode</value>
+        <value>file:///home/xnet/hdfs/datanode</value>
     </property>
 </configuration>
