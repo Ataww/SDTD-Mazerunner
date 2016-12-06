@@ -6,6 +6,7 @@ import subprocess
 
 port_master = '7070'
 
+
 # Function for launch Spark
 def launch_spark():
 
@@ -15,6 +16,7 @@ def launch_spark():
     else:
         launch_slave()
     return
+
 
 # Function for launch master
 def launch_master():
