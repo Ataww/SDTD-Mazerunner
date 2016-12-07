@@ -38,9 +38,9 @@ def join_cluster(master):
     return
 
 def configure_replication() :
-    logging.info('Configuring qeues replication')
+    logging.info('Configuring queues replication')
     # Queues are replicated on each nodes
-    subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"[^=]*"','{"ha-mode":"all"}'])
+    subprocess.run(['sudo', 'rabbitmqctl', 'set_policy', 'ha-all', '"[^=]*"','{"ha-mode":"all", "ha-sync-mode":"automatic"}'])
     return
 
 def expose_erlang_cookie() :
