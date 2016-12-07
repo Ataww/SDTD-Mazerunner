@@ -34,21 +34,6 @@ def install_environment():
             subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./'+component+'/install_'+component+'.py'])
     return
 
-
-# Function who will launch the different component
-def launch_component():
-    print("############################################################")
-    print("###### Launch the different components on machines #########")
-    print("############################################################")
-    config = configparser.ConfigParser()
-    config.read("conf.ini")
-    for component in components:
-        hosts = getHostsByKey(config, component)
-        for host in hosts:
-            logging.info("Launch component " + component + " on the machine with address " + host)
-            subprocess.run(['ssh','-i','~/.ssh/xnet','xnet@'+host,'source ~/.profile; ./'+component+'/launch_'+component+'.py'])
-    return
-
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
     hosts = config.get(key, "hosts").split(',')
@@ -61,4 +46,3 @@ def getHostsByKey(config, key):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     install_environment()
-    launch_component()
