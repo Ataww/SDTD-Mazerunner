@@ -22,7 +22,7 @@
 # remote nodes.
 
 # The java implementation to use.
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME=/usr/lib/java/jdk1.8.0_112
 
 # The jsvc implementation to use. Jsvc is required to run secure datanodes
 # that bind to privileged ports to provide authentication of data transfer
@@ -30,7 +30,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 # data transfer protocol using non-privileged ports.
 #export JSVC_HOME=${JSVC_HOME}
 
-export HADOOP_CONF_DIR=/home/al00/sdtd/hadoop-2.7.3/etc/hadoop
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-"/etc/hadoop"}
 
 # Extra Java CLASSPATH elements.  Automatically insert capacity-scheduler.
 for f in $HADOOP_HOME/contrib/capacity-scheduler/*.jar; do
