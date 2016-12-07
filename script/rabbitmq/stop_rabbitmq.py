@@ -2,7 +2,7 @@
 import subprocess, logging
 
 def stop_rabbitmq():
-    subprocess.run(['sudo', 'rabbitmqctl', 'start_app'])
+    subprocess.run(['sudo', 'rabbitmqctl', 'stop_app'])
     return
 
 if __name__ == '__main__':
