@@ -8,7 +8,7 @@ version='hadoop-2.7.3'
 
 def format():
 	logging.info('Formatting HDFS namenode')
-	subprocess.run(['/home/xnet/'+version+'/sbin/hdfs', 'namenode', '-format'], check=True)
+	subprocess.run(['/home/xnet/'+version+'/bin/hdfs', 'namenode', '-format'], check=True)
 
 
 def launch():
@@ -19,7 +19,7 @@ def launch():
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO)
 	
-	if len(sys.argv) > 2:
+	if len(sys.argv) > 1:
 		if sys.argv[1] == '-f':
 			format()
 
