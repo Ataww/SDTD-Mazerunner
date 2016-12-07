@@ -11,10 +11,6 @@ conf_dir = hadoop_prefix+"/etc/hadoop"
 conf_dir_export = "export HADOOP_CONF_DIR="+conf_dir
 
 
-zk_version='zookeeper-3.4.9'
-zk_distrib='http://apache.crihan.fr/dist/zookeeper/'+zk_version+'/'+version+'tar.gz'
-
-
 def install_hdfs():
 	"""Install hadoop et set it up"""
 	logging.info('Downloading hadoop')
@@ -31,9 +27,6 @@ def install_hdfs():
 	# for now it uses a local repo
 	subprocess.run('cp SDTD-Mazerunner/script/hdfs/etc/hadoop/* /home/xnet/'+version+'/etc/hadoop', shell=True)
 
-
-def install_zookeeper():
-	pass
 
 
 if __name__ == '__main__':
