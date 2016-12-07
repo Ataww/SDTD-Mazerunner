@@ -42,7 +42,7 @@ def launch_slave():
 def launch_server_zookeeper():
     logging.info(" Starting Server Zookeeper ...")
     ZOOKEEPER_STATUS = os.popen('zkServer.sh start 2>&1 ', "r").read()
-    if 'STARTED' in ZOOKEEPER_STATUS:
+    if 'STARTED' in ZOOKEEPER_STATUS or 'already running' in ZOOKEEPER_STATUS:
         logging.info(" Zookeeper launched [success]")
     else:
         logging.error(" Zookeeper launch failed [error]")
