@@ -90,7 +90,7 @@ def install_rabbitmq():
 
     #Install
     install_server()
-    if hostname == masterHost:
+    if hostname == masterHost[0]:
         configure_user()
         expose_erlang_cookie()
         configure_replication()
