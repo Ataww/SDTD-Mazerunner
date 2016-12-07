@@ -62,6 +62,8 @@ def define_hostname(conponent,index):
         logging.info(" Hostname update")
     return
 
+def install_pika() :
+    subprocess.run(['sudo', 'apt-get', 'install', '-y', 'python-pika'])
 
 def get_ip():
     ip = os.popen('ifconfig ens3 | grep "inet ad" | cut -f2 -d: | awk \'{print $1}\'', "r").read()
@@ -73,3 +75,4 @@ if __name__ == '__main__':
     define_hostname(sys.argv[1],sys.argv[2])
     install_python()
     install_java()
+    install_pika()
