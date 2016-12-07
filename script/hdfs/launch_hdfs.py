@@ -17,7 +17,7 @@ def launch():
 
 def isNameNode():
 	config = configparser.ConfigParser()
-	config.read("./spark/conf.ini")
+	config.read("./hdfs/conf.ini")
 	hosts = getHostsByKey(config, "Master")
 	hostname = socket.gethostname()
 

@@ -37,12 +37,14 @@ def install_java():
 
 # Function for install pika
 def install_pika():
-    logging.info("Installation of python-pika")
-    out = subprocess.run(['sudo', 'apt-get','-qq','-y', 'install', 'python-pika'], check=True)
-    if out.returncode == 0:
-        logging.info("python-pika installed [success]")
-    else:
-        logging.error("python-pika installation failed [error]")
+    PYTHON_PIKA_STATUS = os.popen('apt-cache policy python-pika | grep Installed', "r").read()
+    if "Installed" not in PYTHON_PIKA_STATUS:
+        logging.info("Installation of python-pika")
+        out = subprocess.run(['sudo', 'apt-get','-qq','-y', 'install', 'python-pika'], check=True)
+        if out.returncode == 0:
+            logging.info("python-pika installed [success]")
+        else:
+            logging.error("python-pika installation failed [error]")
     return
 
 # Function for define the hostname

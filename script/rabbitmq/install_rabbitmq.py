@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
 
 import subprocess, os, sys, logging, socket, configparser
+from os.path import exists
 
 def install_server() :
-    logging.info('Add RabbitMQ as source for apt-get')
-    source = subprocess.Popen(('echo',"deb http://www.rabbitmq.com/debian/ testing main"), stdout=subprocess.PIPE)
-    apt = subprocess.check_output(('sudo', 'tee', '/etc/apt/sources.list.d/rabbitmq.list'), stdin=source.stdout)
-    source.wait()
+    if not exists("/usr/lib/rabbitmq/bin/rabbitmq-server"):
+        logging.info('Add RabbitMQ as source for apt-get')
+        source = subprocess.Popen(('echo',"deb http://www.rabbitmq.com/debian/ testing main"), stdout=subprocess.PIPE)
+        apt = subprocess.check_output(('sudo', 'tee', '/etc/apt/sources.list.d/rabbitmq.list'), stdin=source.stdout)
+        source.wait()
 
-    logging.info('Install rabbitMQ Server')
-    subprocess.run(['sudo', 'apt-get', 'update'])
-    subprocess.run(['sudo', 'apt-get', 'install', '-y', 'rabbitmq-server'])
+        logging.info('Install rabbitMQ Server')
+        os.system("sudo apt-get update >> /dev/null 2>&1")
+        out = os.system('sudo apt-get -qq -y install rabbitmq-server >> /dev/null 2>&1')
+        if out == 0:
+            logging.info("rabbitmq-server installed [success]")
+        else:
+            logging.error("rabbitmq-server installation failed [error]")
 
     return
 
@@ -79,8 +85,8 @@ def install_rabbitmq():
     # Configure logger
     configure_logger(DEBUG)
 
-    hostname = socket.gethostname()
-    logging.info('Going to install RabbitMQ on' + hostname)
+    hostname = get_hostname()
+    logging.info('Going to install RabbitMQ on ' + hostname)
 
     #Install
     install_server()
@@ -89,12 +95,30 @@ def install_rabbitmq():
         expose_erlang_cookie()
         configure_replication()
     else:
-        take_erlang_cookie(masterHost)
-        join_cluster(masterHost)
+        take_erlang_cookie(masterHost[0])
+        join_cluster(masterHost[0])
 
     logging.info('RabbitMQ installation done')
 
     return
+
+# Permit to know the hostname
+def get_hostname():
+    config = configparser.ConfigParser()
+    config.read("./rabbitmq/conf.ini")
+    hosts = getHostsByKey(config, "Master")
+    hostname = socket.gethostname()
+
+    for host in hosts:
+        if host in hostname:
+            return host
+
+    hosts = getHostsByKey(config, "Slaves")
+    for host in hosts:
+        if host in hostname:
+            return host
+
+    return hostname
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
