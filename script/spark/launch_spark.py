@@ -3,6 +3,8 @@
 import os
 import logging
 import subprocess
+import configparser
+import socket
 
 port_master = '7070'
 
@@ -22,7 +24,7 @@ def launch_spark():
 def launch_master():
     logging.info(" Starting Spark Master ...")
     with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as confFile:
-        subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_ip() + '"'], stdout=confFile, check=True)
+        subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=confFile, check=True)
     subprocess.run(['stop-master'])
     subprocess.run(['start-master'])
     return
@@ -32,7 +34,7 @@ def launch_master():
 def launch_slave():
     logging.info(" Starting Spark Worker ...")
     subprocess.run(['stop-slave'])
-    subprocess.run(['start-slave', 'spark://'+get_Ip_Master()+':'+port_master])
+    subprocess.run(['start-slave', 'spark://'+get_Master()+':'+port_master])
     return
 
 
@@ -48,32 +50,55 @@ def launch_server_zookeeper():
 
 
 # Function for recover the address of master
-def get_Ip_Master():
-    file = open('./spark/master.txt')
-    ip_master = "127.0.0.1"
-    for host in file:
-        ip_master = host.strip(' \n')
-        return ip_master
-    return ip_master
+def get_Master():
+    master = "127.0.0.1"
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Master")
+    for host in hosts:
+        master = host
+        return master
+    return master
 
 
 # Permit to know if it is master
 def isMaster():
-    result = False
-    ip = get_ip()
-    file = open('./spark/master.txt')
-    for host in file:
-        if ip in host:
-            result = True
-    file.close()
-    return result
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Master")
+    hostname = socket.gethostname()
 
+    for host in hosts:
+        if host in hostname:
+            return True
+    return False
 
-# Get the ip of the current machine
-def get_ip():
-    ip = os.popen('ifconfig ens3 | grep "inet ad" | cut -f2 -d: | awk \'{print $1}\'', "r").read()
-    ip = ip.strip(' \n')
-    return ip
+# Permit to know the hostname
+def get_hostname():
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Master")
+    hostname = socket.gethostname()
+
+    for host in hosts:
+        if host in hostname:
+            return host
+
+    hosts = getHostsByKey(config, "Slaves")
+    for host in hosts:
+        if host in hostname:
+            return host
+
+    return hostname
+
+# Recover all ip for one component. Return format ip
+def getHostsByKey(config, key):
+    hosts = config.get(key, "hosts").split(',')
+    index = 0
+    for host in hosts:
+        hosts[index] = host.strip(' \n')
+        index += 1
+    return hosts
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
