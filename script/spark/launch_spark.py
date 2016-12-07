@@ -22,25 +22,23 @@ def launch_spark():
 
 # Function for launch master
 def launch_master():
-    logging.info(" Starting Spark Master ...")
+    logging.info("Starting Spark Master ...")
     with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as confFile:
         subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=confFile, check=True)
-    subprocess.run(['stop-master'])
     subprocess.run(['start-master'])
     return
 
 
 # Function for launch slave
 def launch_slave():
-    logging.info(" Starting Spark Worker ...")
-    subprocess.run(['stop-slave'])
+    logging.info("Starting Spark Worker ...")
     subprocess.run(['start-slave', 'spark://'+get_Master()+':'+port_master])
     return
 
 
 # Function tu launch server zookeeper
 def launch_server_zookeeper():
-    logging.info(" Starting Server Zookeeper ...")
+    logging.info("Starting Server Zookeeper ...")
     ZOOKEEPER_STATUS = os.popen('zkServer.sh start 2>&1 ', "r").read()
     if 'STARTED' in ZOOKEEPER_STATUS or 'already running' in ZOOKEEPER_STATUS:
         logging.info(" Zookeeper launched [success]")
