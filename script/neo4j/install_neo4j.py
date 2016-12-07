@@ -20,3 +20,6 @@ def install_neo4j():
     if out.returncode == 0:
         logging.info("Neo4j unpacked")
     subprocess.run(["rm", 'artifact.php?name='+neo4j_version+'.tar.gz'])
+    return
+
+install_neo4j()
