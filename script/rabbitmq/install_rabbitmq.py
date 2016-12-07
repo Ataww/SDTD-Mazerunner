@@ -2,7 +2,6 @@
 
 import subprocess, os, sys, logging, socket, configparser
 
-
 def install_server() :
     logging.info('Add RabbitMQ as source for apt-get')
     source = subprocess.Popen(('echo',"deb http://www.rabbitmq.com/debian/ testing main"), stdout=subprocess.PIPE)
@@ -54,19 +53,32 @@ def take_erlang_cookie(master) :
     subprocess.run(['sudo','scp', '-i', '/home/xnet/.ssh/xnet', 'xnet@' + master + ':/tmp/.erlang.cookie', '/tmp/'])
     subprocess.run(['sudo', 'cp', '/tmp/.erlang.cookie', '/var/lib/rabbitmq/'])
     subprocess.run(['sudo', 'service', 'rabbitmq-server', 'start'])
+    return
+
+def configure_logger(debug):
+    logging.basicConfig(filename="install_rabbitmq.log", format="%(asctime)s :: %(levelname)s :: %(message)s")
+    logger = logging.getLogger()
+    if debug == 'True':
+        logger.setLevel(logging.DEBUG)
+    else :
+        logger.setLevel(logging.INFO)
+    return
 
 def install_rabbitmq():
-    hostname = socket.gethostname()
-    logging.info('Going to install RabbitMQ on' + hostname)
-
     # Read configuration
-    logging.info("Read configuration")
     config = configparser.ConfigParser()
     config.read("conf.ini")
     masterHost = config.get("Master", "host")
     slaveHosts = config.get("Slaves", 'hosts').split(',')
+    DEBUG = config.get("Log", "debug")
 
-    # Install
+    # Configure logger
+    configure_logger(DEBUG)
+
+    hostname = socket.gethostname()
+    logging.info('Going to install RabbitMQ on' + hostname)
+
+    #Install
     install_server()
     if hostname == masterHost :
         configure_user()
