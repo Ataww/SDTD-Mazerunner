@@ -71,8 +71,8 @@ def configure_logger(debug):
 def install_rabbitmq():
     # Read configuration
     config = configparser.ConfigParser()
-    config.read("conf.ini")
-    masterHost = config.get("Master", "host")
+    config.read("./rabbitmq/conf.ini")
+    masterHost = getHostsByKey(config, "Master")
     slaveHosts = config.get("Slaves", 'hosts').split(',')
     DEBUG = config.get("Log", "debug")
 
@@ -84,7 +84,7 @@ def install_rabbitmq():
 
     #Install
     install_server()
-    if hostname == masterHost :
+    if hostname == masterHost:
         configure_user()
         expose_erlang_cookie()
         configure_replication()
@@ -96,5 +96,16 @@ def install_rabbitmq():
 
     return
 
+# Recover all ip for one component. Return format ip
+def getHostsByKey(config, key):
+    hosts = config.get(key, "hosts").split(',')
+    index = 0
+    for host in hosts:
+        hosts[index] = host.strip(' \n')
+        index += 1
+    return hosts
+
 # INSTALLATION
-install_rabbitmq()
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    install_rabbitmq()
