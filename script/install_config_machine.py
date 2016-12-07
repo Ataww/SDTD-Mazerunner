@@ -5,6 +5,7 @@ import logging
 import subprocess
 import sys
 
+java_export = 'export JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-amd64"'
 
 # Function for install python2.7
 def install_python():
@@ -18,8 +19,22 @@ def install_python():
             logging.error("  Python installation failed [error]")
     return
 
+def install_java():
+    out = os.system("sudo apt-get update >> /dev/null 2>&1")
+    out = os.system("sudo apt-get -qq -y install openjdk-8-jdk >> /dev/null 2>&1")
+    #TODO set JAVA HOME insode /etc/environment
+    '''environment_file = open('/etc/environment', 'a')
+    if java_export not in environment_file.read():
+        subprocess.run(['echo', java_export], stdout=environment_file, check=True)
+    '''
+
+    if out == 0:
+        logging.info("  OpenJDK 8 installed [success]")
+    else:
+        logging.error("  OpenJDK 8 installation failed [error]")
 
 # Function for install Java
+'''
 def install_java():
     JAVA_VERSION = os.popen('java -version 2>&1 |awk \'NR==1{ gsub(/"/,""); print $3 }\'', "r").read()
     if '1.8.0_112' not in JAVA_VERSION:
@@ -45,7 +60,7 @@ def install_java():
         else:
             logging.error(" Java installation failed [error]")
         return
-
+'''
 
 # Function for define the hostname
 def define_hostname(conponent,index):
