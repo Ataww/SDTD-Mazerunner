@@ -38,16 +38,24 @@ def config_neo4j():
     if hostnumber == 1:
         out = subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-1.conf',
         '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
+        if out.returncode == 0:
+            logging.info("Neo4j configuration file copied")
+        else:
+            logging.error("Neo4j configuration file copy failed")
     elif hostnumber == 2:
         out = subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-2.conf',
         '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
+        if out.returncode == 0:
+            logging.info("Neo4j configuration file copied")
+        else:
+            logging.error("Neo4j configuration file copy failed")
     elif hostnumber == 3:
         out = subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-3.conf',
         '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
-    if out.returncode == 0:
-        logging.info("Neo4j configuration file copied")
-    else:
-        logging.error("Neo4j configuration file copy failed")
+        if out.returncode == 0:
+            logging.info("Neo4j configuration file copied")
+        else:
+            logging.error("Neo4j configuration file copy failed")
     return
 
 if __name__ == '__main__':
