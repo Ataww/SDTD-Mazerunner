@@ -4,6 +4,7 @@ import os
 import logging
 import subprocess
 import configparser
+import socket
 
 java_export = 'JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64'
 
@@ -118,8 +119,29 @@ def deleteLineWithString(pathFile,stringResearch):
     os.system('sudo mv tmp.txt /etc/hosts >> /dev/null 2>&1')
     return
 
+# Function to define known_hosts file
+
+def define_know_host():
+    logging.info("Define known_hosts")
+    components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
+    os.system('cp ~/.ssh/xnet ~/.ssh/id_rsa >> /dev/null 2>&1')
+    os.system('cp ~/.ssh/xnet.pub ~/.ssh/id_rsa.pub >> /dev/null 2>&1')
+    os.system('rm ~/.ssh/known_hosts >> /dev/null 2>&1')
+    os.system('touch ~/.ssh/known_hosts >> /dev/null 2>&1')
+    config = configparser.ConfigParser()
+    config.read("conf.ini")
+    for component in components:
+        hosts = getHostsByKey(config, component)
+        index = 1
+        for host in hosts:
+            os.system('ssh-keyscan -t rsa ' + component + '-' + str(index) + ' >> ~/.ssh/known_hosts 2>&1')
+            index += 1
+    os.system('ssh-keyscan -t rsa ' + socket.gethostname() + ' >> ~/.ssh/known_hosts 2>&1')
+
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
+    define_know_host()
     define_hostname()
     install_python()
     install_java()
