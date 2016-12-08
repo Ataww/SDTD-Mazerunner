@@ -12,15 +12,15 @@ Stack comprenant les outils :
 ## Deploiment
 
 #### Start the deployment
+Pour effectuer le deploiment il est nécessaire de se placer à la racine du dossier script
 
 ```bash
     $ ./launch_deployment
 ```
 
 ## Fonctionnement
-
+Pour pouvoir lancer et arréter les services il est nécessaire de se placer à la racine du dossier script
 #### Start all services
-
 ```bash
     $ ./start_services
 ```
