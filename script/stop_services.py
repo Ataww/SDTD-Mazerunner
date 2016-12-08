@@ -18,7 +18,7 @@ def stop_component():
         hosts = getHostsByKey(config, component)
         for host in hosts:
             logging.info("Stop component " + component + " on the machine with address " + host)
-            subprocess.run(['ssh','-i','~/.ssh/xnet','xnet@'+host,'source ~/.profile; ./'+component+'/stop_'+component+'.py'])
+            subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i','~/.ssh/xnet','xnet@'+host,'source ~/.profile; ./'+component+'/stop_'+component+'.py'])
     return
 
 # Recover all ip for one component. Return format ip

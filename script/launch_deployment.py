@@ -24,14 +24,14 @@ def install_environment():
             logging.info('Start to get all files ... ')
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./conf.ini','xnet@' + host + ':~'])
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host + ':~'])
-            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host, 'rm -rf ' + component])
+            subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host, 'rm -rf ' + component])
             out = subprocess.run(['scp', '-prq', '-i', '~/.ssh/xnet', './'+component,'xnet@' + host + ':~/'],check=True)
             if out.returncode == 0:
                 logging.info("Transfer done [success]")
             else:
                 logging.error("Transferring files failed [error]")
-            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./install_config_machine.py'])
-            subprocess.run(['ssh', '-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./'+component+'/install_'+component+'.py'])
+            subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./install_config_machine.py'])
+            subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./'+component+'/install_'+component+'.py'])
     return
 
 # Recover all ip for one component. Return format ip

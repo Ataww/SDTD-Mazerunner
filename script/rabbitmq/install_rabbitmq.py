@@ -60,7 +60,7 @@ def take_erlang_cookie(master) :
     logging.info('Take erlang cookie from ' + master)
     # TODO do not use directly username xnet
     subprocess.run(['sudo', 'service', 'rabbitmq-server', 'stop'])
-    subprocess.run(['sudo','scp', '-i', '/home/xnet/.ssh/xnet', 'xnet@' + master + ':/tmp/.erlang.cookie', '/tmp/'])
+    subprocess.run(['sudo','scp', '-o','StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet', 'xnet@' + master + ':/tmp/.erlang.cookie', '/tmp/'])
     subprocess.run(['sudo', 'cp', '/tmp/.erlang.cookie', '/var/lib/rabbitmq/'])
     subprocess.run(['sudo', 'service', 'rabbitmq-server', 'start'])
     return
