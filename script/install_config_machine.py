@@ -5,6 +5,11 @@ import logging
 import subprocess
 import configparser
 import socket
+from lib import getHostsByKey
+from lib import getIp
+from lib import isAlreadyAdd
+from lib import deleteLineWithString
+
 
 java_export = 'JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64'
 
@@ -52,7 +57,7 @@ def install_pika():
 def define_hostname():
 
     components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
-    current_ip = get_ip()
+    current_ip = getIp()
     hostname = ''
 
     config = configparser.ConfigParser()
@@ -76,51 +81,12 @@ def define_hostname():
 
     os.system('echo "' + hostname + '" | sudo tee /etc/hostname >> /dev/null 2>&1')
     os.system('sudo hostname ' + hostname + ' >> /dev/null 2>&1')
-    os.system('echo "'+get_ip()+' '+ hostname + '" | sudo tee -a /etc/hosts >> /dev/null 2>&1')
+    os.system('echo "'+getIp()+' '+ hostname + '" | sudo tee -a /etc/hosts >> /dev/null 2>&1')
 
     logging.info("Finished to defined hostname for this machine")
     return
 
-# Function who return the ip of the current machine
-def get_ip():
-    ip = os.popen('ifconfig ens3 | grep "inet ad" | cut -f2 -d: | awk \'{print $1}\'', "r").read()
-    ip = ip.replace('\n', '')
-    return ip
-
-# Check if String il already present in the file
-def isAlreadyAdd(pathFile,string):
-    file = open(pathFile)
-    for line in file:
-        if string in line:
-            return True
-    return False
-
-# Recover all ip for one component. Return format ip
-def getHostsByKey(config, key):
-    hosts = config.get(key, "hosts").split(',')
-    index = 0
-    for host in hosts:
-        hosts[index] = host.strip(' \n')
-        index += 1
-    return hosts
-
-def deleteLineWithString(pathFile,stringResearch):
-
-    contenu = ""
-    fichier = open(pathFile, "r")
-    for ligne in fichier:
-        if not (stringResearch in ligne):
-            contenu += ligne
-    fichier.close()
-
-    fichier = open('tmp.txt', 'w')
-    fichier.write(contenu)
-    fichier.close()
-    os.system('sudo mv tmp.txt /etc/hosts >> /dev/null 2>&1')
-    return
-
 # Function to define known_hosts file
-
 def define_know_host():
     logging.info("Define known_hosts")
     components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']

@@ -7,6 +7,8 @@ import configparser
 import socket
 
 port_master = '7070'
+CODE_STARTING = 0
+CODE_ALREADY_RUN = 256
 
 
 # Function for launch Spark
@@ -25,14 +27,26 @@ def launch_master():
     logging.info("Starting Spark Master ...")
     with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as confFile:
         subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=confFile, check=True)
-    subprocess.run(['start-master'])
+    out = os.system('start-master >> /dev/null 2>&1')
+    if out == CODE_STARTING:
+        logging.info("Spark master are launched [success]")
+    elif out == CODE_ALREADY_RUN:
+        logging.info("Spark master is already launched [success]")
+    else:
+        logging.error("Spark master launch failed [error]")
     return
-
 
 # Function for launch slave
 def launch_slave():
     logging.info("Starting Spark Worker ...")
-    subprocess.run(['start-slave', 'spark://'+get_Master()+':'+port_master])
+    out = os.system('start-slave spark://'+get_Master()+':'+port_master+' >> /dev/null 2>&1')
+
+    if out == CODE_STARTING:
+        logging.info("Spark slaves are launched [success]")
+    elif out == CODE_ALREADY_RUN:
+        logging.info("Spark slaves is already launched [success]")
+    else:
+        logging.error("Spark slaves launch failed [error]")
     return
 
 
@@ -41,11 +55,11 @@ def launch_server_zookeeper():
     logging.info("Starting Server Zookeeper ...")
     ZOOKEEPER_STATUS = os.popen('zkServer.sh start 2>&1 ', "r").read()
     if 'STARTED' in ZOOKEEPER_STATUS:
-        logging.info(" Zookeeper launched [success]")
+        logging.info("Zookeeper launched [success]")
     elif 'already running' in ZOOKEEPER_STATUS:
-        logging.info(" Zookeeper is already running [success]")
+        logging.info("Zookeeper is already running [success]")
     else:
-        logging.error(" Zookeeper launch failed [error]")
+        logging.error("Zookeeper launch failed [error]")
     return
 
 
