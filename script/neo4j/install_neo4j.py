@@ -34,16 +34,14 @@ def install_neo4j():
 
 def config_neo4j():
     hostnumber = socket.gethostname().split('-')[1]
-    if hostnumber == 1:
-        logging.info("Copying neo4j configuration file for hostnumber " + hostnumber)
+    logging.info("Copying neo4j configuration file for hostnumber " + hostnumber)
+    if hostnumber == '1':
         subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-1.conf',
         '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
-    elif hostnumber == 2:
-        logging.info("Copying neo4j configuration file for hostnumber " + hostnumber)
+    elif hostnumber == '2':
         subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-2.conf',
         '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
-    elif hostnumber == 3:
-        logging.info("Copying neo4j configuration file for hostnumber " + hostnumber)
+    elif hostnumber == '3':
         subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-3.conf',
         '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
     return
