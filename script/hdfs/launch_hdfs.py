@@ -17,7 +17,7 @@ def launch():
 
 def isNameNode():
 	config = configparser.ConfigParser()
-	config.read("./conf.ini")
+	config.read("/home/xnet/hdfs/conf.ini")
 	hosts = getHostsByKey(config, "Master")
 	hostname = socket.gethostname()
 
