@@ -38,13 +38,9 @@ def getHostsByKey(config, key):
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
-	#if len(sys.argv) > 1:
-	#	if sys.argv[1] == '-f':
-
-	# We format each time we deploy for the moment
-	format()
-
 	if isNameNode():
+		# We format each time we deploy for the moment
+		format()
 		launch()
 	else:
 		logging.info('Nothing to do on this machine ...')
