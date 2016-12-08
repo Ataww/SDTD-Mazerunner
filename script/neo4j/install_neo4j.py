@@ -31,5 +31,5 @@ def install_neo4j():
         return
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_neo4j()

@@ -142,7 +142,7 @@ def isAlreadyAdd(pathFile,string):
     return False
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_spark()
     if isMaster():
         install_zookeeper()

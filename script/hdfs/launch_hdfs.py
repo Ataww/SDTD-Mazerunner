@@ -36,7 +36,7 @@ def getHostsByKey(config, key):
     return hosts
 
 if __name__ == '__main__':
-	logging.basicConfig(level=logging.INFO)
+	logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
 	#if len(sys.argv) > 1:
 	#	if sys.argv[1] == '-f':

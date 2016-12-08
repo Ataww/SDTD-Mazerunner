@@ -13,4 +13,6 @@ def launch_neo4j():
     subprocess.run(['sudo', '/usr/lib/neo4j/'+neo4j_version+'/bin/neo4j', 'start'])
     return
 
-launch_neo4j()
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
+    launch_neo4j()

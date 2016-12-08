@@ -66,7 +66,7 @@ def take_erlang_cookie(master) :
     return
 
 def configure_logger(debug):
-    logging.basicConfig(filename="install_rabbitmq.log", format="%(asctime)s :: %(levelname)s :: %(message)s")
+    logging.basicConfig(format="%(asctime)s :: %(levelname)s :: %(message)s")
     logger = logging.getLogger()
     if debug == 'True':
         logger.setLevel(logging.DEBUG)
@@ -131,5 +131,4 @@ def getHostsByKey(config, key):
 
 # INSTALLATION
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     install_rabbitmq()

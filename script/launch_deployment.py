@@ -5,7 +5,7 @@ import logging
 import subprocess
 from lib import getHostsByKey, hostIsUp
 
-components = ['neo4j']
+components = ['rabbitmq']
 #components = ['hdfs','rabbitmq','spark']
 #components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
 
@@ -41,5 +41,5 @@ def install_environment():
     return
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_environment()
