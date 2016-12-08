@@ -3,8 +3,10 @@
 import configparser
 import logging
 import subprocess
+from lib import getHostsByKey
 
-components = ['hdfs','rabbitmq','spark']
+components = ['spark']
+#components = ['hdfs','rabbitmq','spark']
 #components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
 
 
@@ -23,6 +25,7 @@ def install_environment():
             logging.info("Set environment for component " + component + " on the machine with address " + host)
             logging.info('Start to get all files ... ')
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./conf.ini','xnet@' + host + ':~'])
+            subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./lib.py','xnet@' + host + ':~'])
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host + ':~'])
             subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host, 'rm -rf ' + component])
             out = subprocess.run(['scp', '-prq', '-i', '~/.ssh/xnet', './'+component, 'xnet@' + host + ':~/'],check=True)
@@ -33,15 +36,6 @@ def install_environment():
             subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./install_config_machine.py'])
             subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./'+component+'/install_'+component+'.py'])
     return
-
-# Recover all ip for one component. Return format ip
-def getHostsByKey(config, key):
-    hosts = config.get(key, "hosts").split(',')
-    index = 0
-    for host in hosts:
-        hosts[index] = host.strip(' \n')
-        index += 1
-    return hosts
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)

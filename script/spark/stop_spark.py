@@ -6,7 +6,7 @@ import subprocess
 import configparser
 import socket
 
-
+CODE_STOP = 0
 
 # Function for launch Spark
 def stop_spark():
@@ -22,14 +22,22 @@ def stop_spark():
 # Function for stop master
 def stop_master():
     logging.info("Stopping Spark Master ...")
-    subprocess.run(['stop-master'])
+    out = os.system('stop-master >> /dev/null 2>&1')
+    if out == CODE_STOP:
+        logging.info("Spark master is stop [success]")
+    else:
+        logging.error("Spark master stop failed [error]")
     return
 
 
 # Function for stop slave
 def stop_slave():
     logging.info("Stopping Spark Worker ...")
-    subprocess.run(['stop-slave'])
+    out = os.system('stop-slave >> /dev/null 2>&1')
+    if out == CODE_STOP:
+        logging.info("Spark slave is stop [success]")
+    else:
+        logging.error("Spark slave stop failed [error]")
     return
 
 
