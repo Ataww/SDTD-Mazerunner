@@ -12,11 +12,11 @@ def install_server() :
 
         logging.info('Install rabbitMQ Server')
         os.system("sudo apt-get update >> /dev/null 2>&1")
-        out = os.system('sudo apt-get -qq -y install rabbitmq-server >> /dev/null 2>&1')
+        out = os.system('sudo apt-get -qq -y --allow-unauthenticated install rabbitmq-server >> /dev/null 2>&1')
         if out == 0:
-            logging.info("rabbitmq-server installed [success]")
+           logging.info("rabbitmq-server installed [success]")
         else:
-            logging.error("rabbitmq-server installation failed [error]")
+           logging.error("rabbitmq-server installation failed [error]")
 
     return
 
@@ -24,7 +24,7 @@ def configure_user() :
     logging.info('Delete default user guest')
     subprocess.run(['sudo', 'rabbitmqctl', 'delete_user', 'guest'])
     # Create
-    logging.info('Add two user with full access on vhost / : neao4j_user and spark_user')
+    logging.info('Add two user with full access on vhost / : neo4j_user and spark_user')
     subprocess.run(['sudo', 'rabbitmqctl', 'add_user', 'neo4j_user', 'neo4j_user'])
     subprocess.run(['sudo', 'rabbitmqctl', 'add_user', 'spark_user', 'spark_user'])
     # Add tags

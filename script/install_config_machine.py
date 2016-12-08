@@ -12,8 +12,8 @@ def install_python():
     PYTHON_VERSION = os.popen('python -V 2>&1 |awk \'{ print $2 }\'', "r").read()
     if '2.7' not in PYTHON_VERSION:
         logging.info("Installation of python ...")
-        out = subprocess.run(['sudo','apt-get','-qq','-y','install','python', '>>','/dev/null','2>&1'], check=True)
-        if out.returncode == 0:
+        out = os.system("sudo apt-get -qq -y install python >> /dev/null 2>&1")
+        if out == 0:
             logging.info("Python 2.7 installed [success]")
         else:
             logging.error("Python installation failed [error]")

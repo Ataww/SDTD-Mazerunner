@@ -17,7 +17,7 @@ def install_hdfs():
     """Install hadoop et set it up"""
     if not exists("/home/xnet/"+version):
         logging.info('Downloading hadoop')
-        subprocess.run(['wget', "-nc", distrib], check=True)
+        subprocess.run(['wget', '-q', "-nc", distrib], check=True)
         logging.info('Uncompressing to /home/xnet')
         subprocess.run(['tar', 'xf', version + '.tar.gz', '-C', '/home/xnet'], check=True)
         logging.info('Setting environment variables')
