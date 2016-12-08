@@ -39,6 +39,8 @@ def stop_server_zookeeper():
     ZOOKEEPER_STATUS = os.popen('zkServer.sh stop 2>&1 ', "r").read()
     if 'STOPPED' in ZOOKEEPER_STATUS:
         logging.info(" Zookeeper stopped [success]")
+    elif 'no zookeeper to stop' in ZOOKEEPER_STATUS:
+        logging.info(" Zookeeper is already stop [success]")
     else:
         logging.error(" Zookeeper stopped failed [error]")
     return
