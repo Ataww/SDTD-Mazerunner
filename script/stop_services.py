@@ -5,7 +5,8 @@ import logging
 import subprocess
 from lib import getHostsByKey
 
-components = ['hdfs','rabbitmq','spark']
+components = ['spark']
+#components = ['hdfs','rabbitmq','spark']
 #components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
 
 # Function who will stop the different component

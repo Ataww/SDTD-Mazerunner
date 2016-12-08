@@ -39,7 +39,7 @@ def launch_master():
 # Function for launch slave
 def launch_slave():
     logging.info("Starting Spark Worker ...")
-    out = os.system('start-slave spark://'+get_Master()+':'+port_master+' >> /dev/null 2>&1')
+    out = os.system('start-slave spark://' + getSparkMaster() + ' >> /dev/null 2>&1')
 
     if out == CODE_STARTING:
         logging.info("Spark slaves are launched [success]")
@@ -64,14 +64,18 @@ def launch_server_zookeeper():
 
 
 # Function for recover the address of master
-def get_Master():
-    master = "127.0.0.1"
+def getSparkMaster():
+    master = ''
+    first = True
     config = configparser.ConfigParser()
     config.read("./spark/conf.ini")
     hosts = getHostsByKey(config, "Master")
     for host in hosts:
-        master = host
-        return master
+        if first:
+            master = host + ':' + port_master
+            first = False
+        else:
+            master = master + ',' + host + ':' + port_master
     return master
 
 

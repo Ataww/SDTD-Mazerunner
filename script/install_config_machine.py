@@ -103,6 +103,7 @@ def define_know_host():
             os.system('ssh-keyscan -t rsa ' + component + '-' + str(index) + ' >> ~/.ssh/known_hosts 2>&1')
             index += 1
     os.system('ssh-keyscan -t rsa ' + socket.gethostname() + ' >> ~/.ssh/known_hosts 2>&1')
+    os.system('ssh-keyscan -t rsa 0.0.0.0 >> ~/.ssh/known_hosts 2>&1')
 
 
 if __name__ == '__main__':
