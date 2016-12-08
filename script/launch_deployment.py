@@ -25,7 +25,7 @@ def install_environment():
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./conf.ini','xnet@' + host + ':~'])
             subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host + ':~'])
             subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host, 'rm -rf ' + component])
-            out = subprocess.run(['scp', '-prq', '-i', '~/.ssh/xnet', './'+component,'xnet@' + host + ':~/'],check=True)
+            out = subprocess.run(['scp', '-prq', '-i', '~/.ssh/xnet', './'+component, 'xnet@' + host + ':~/'],check=True)
             if out.returncode == 0:
                 logging.info("Transfer done [success]")
             else:
