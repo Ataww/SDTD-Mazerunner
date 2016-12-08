@@ -3,9 +3,9 @@
 import configparser
 import logging
 import subprocess
-from lib import getHostsByKey
+from lib import getHostsByKey, hostIsUp
 
-components = ['spark']
+components = ['neo4j']
 #components = ['hdfs','rabbitmq','spark']
 #components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
 
@@ -22,19 +22,22 @@ def install_environment():
     for component in components:
         hosts = getHostsByKey(config,component)
         for host in hosts:
-            logging.info("Set environment for component " + component + " on the machine with address " + host)
-            logging.info('Start to get all files ... ')
-            subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./conf.ini','xnet@' + host + ':~'])
-            subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./lib.py','xnet@' + host + ':~'])
-            subprocess.run(['scp','-pq','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host + ':~'])
-            subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host, 'rm -rf ' + component])
-            out = subprocess.run(['scp', '-prq', '-i', '~/.ssh/xnet', './'+component, 'xnet@' + host + ':~/'],check=True)
-            if out.returncode == 0:
-                logging.info("Transfer done [success]")
+            if hostIsUp(host):
+                logging.info("Set environment for component " + component + " on the machine with address " + host)
+                logging.info('Start to get all files ... ')
+                subprocess.run(['scp','-pq','-o','StrictHostKeyChecking=no','-i','~/.ssh/xnet','./conf.ini','xnet@' + host + ':~'])
+                subprocess.run(['scp','-pq','-o','StrictHostKeyChecking=no','-i','~/.ssh/xnet','./lib.py','xnet@' + host + ':~'])
+                subprocess.run(['scp','-pq','-o','StrictHostKeyChecking=no','-i','~/.ssh/xnet','./install_config_machine.py','xnet@' + host + ':~'])
+                subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host, 'rm -rf ' + component])
+                out = subprocess.run(['scp', '-prq','-o','StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', './'+component, 'xnet@' + host + ':~/'],check=True)
+                if out.returncode == 0:
+                    logging.info("Transfer done [success]")
+                else:
+                    logging.error("Transferring files failed [error]")
+                subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./install_config_machine.py'])
+                subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./'+component+'/install_'+component+'.py'])
             else:
-                logging.error("Transferring files failed [error]")
-            subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./install_config_machine.py'])
-            subprocess.run(['ssh', '-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@' + host,'source ~/.profile; ./'+component+'/install_'+component+'.py'])
+                logging.error("Impossible d'accéder à la machine "+host)
     return
 
 if __name__ == '__main__':

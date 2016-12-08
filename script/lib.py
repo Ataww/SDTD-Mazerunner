@@ -39,3 +39,9 @@ def deleteLineWithString(pathFile,stringResearch):
     fichier.close()
     os.system('sudo mv tmp.txt /etc/hosts >> /dev/null 2>&1')
     return
+
+# Function for check host
+def hostIsUp(host):
+    if os.system('ping -c 1 '+host+' >> /dev/null 2>&1'):
+        return False
+    return True
