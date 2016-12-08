@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import subprocess, os, sys, logging
+import subprocess, os, sys, logging, configparser, socket
 from os.path import exists
 
 
@@ -12,6 +12,29 @@ hadoop_prefix = '/home/xnet/' + version
 conf_dir = hadoop_prefix + "/etc/hadoop"
 conf_dir_export = "export HADOOP_CONF_DIR=" + conf_dir
 
+def format_hdfs():
+	logging.info('Formatting HDFS namenode')
+	subprocess.run(['/home/xnet/'+version+'/bin/hdfs', 'namenode', '-format', '-force'], check=True)
+
+def isNameNode():
+	config = configparser.ConfigParser()
+	config.read("/home/xnet/hdfs/conf.ini")
+	hosts = getHostsByKey(config, "Master")
+	hostname = socket.gethostname()
+
+	for host in hosts:
+		if host in hostname:
+			return True
+	return False
+
+# Recover all ip for one component. Return format ip
+def getHostsByKey(config, key):
+    hosts = config.get(key, "hosts").split(',')
+    index = 0
+    for host in hosts:
+        hosts[index] = host.strip(' \n')
+        index += 1
+    return hosts
 
 def install_hdfs():
     """Install hadoop et set it up"""
@@ -33,7 +56,13 @@ def install_hdfs():
         subprocess.run('cp /home/xnet/hdfs/etc/hadoop/* ' + hadoop_prefix + '/etc/hadoop', shell=True)
 
         #Remove any previous tmp files
+        logging.info('Removing any previous tmp files')
         subprocess.run('rm -rf /tmp/hadoop-xnet', shell=True)
+
+        if isNameNode():
+            #Format the HDFS partition
+            logging.info('Format the HDFS partition')
+            format_hdfs()
 
 
 if __name__ == '__main__':
