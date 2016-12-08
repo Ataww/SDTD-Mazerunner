@@ -10,7 +10,6 @@ def format():
 	logging.info('Formatting HDFS namenode')
 	subprocess.run(['/home/xnet/'+version+'/bin/hdfs', 'namenode', '-format', '-force'], check=True)
 
-
 def launch():
 	logging.info('Launching HDFS cluster')
 	subprocess.run(['/home/xnet/'+version+'/sbin/start-dfs.sh'], check=True)
@@ -39,8 +38,6 @@ if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
 	if isNameNode():
-		# We format each time we deploy for the moment
-		format()
 		launch()
 	else:
 		logging.info('Nothing to do on this machine ...')
