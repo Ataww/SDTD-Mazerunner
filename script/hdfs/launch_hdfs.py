@@ -8,7 +8,7 @@ version='hadoop-2.7.3'
 
 def format():
 	logging.info('Formatting HDFS namenode')
-	subprocess.run(['/home/xnet/'+version+'/bin/hdfs', 'namenode', '-format'], check=True)
+	subprocess.run(['/home/xnet/'+version+'/bin/hdfs', 'namenode', '-format', '-force'], check=True)
 
 
 def launch():
@@ -17,7 +17,7 @@ def launch():
 
 def isNameNode():
 	config = configparser.ConfigParser()
-	config.read("./hdfs/conf.ini")
+	config.read("./conf.ini")
 	hosts = getHostsByKey(config, "Master")
 	hostname = socket.gethostname()
 
@@ -37,10 +37,12 @@ def getHostsByKey(config, key):
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO)
-	
-	if len(sys.argv) > 1:
-		if sys.argv[1] == '-f':
-			format()
+
+	#if len(sys.argv) > 1:
+	#	if sys.argv[1] == '-f':
+
+	# We format each time we deploy for the moment
+	format()
 
 	if isNameNode():
 		launch()
