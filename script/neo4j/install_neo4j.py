@@ -3,6 +3,7 @@
 import os
 import logging
 import subprocess
+import socket
 from os.path import exists
 
 neo4j_version = 'neo4j-enterprise-3.0.7-unix'
