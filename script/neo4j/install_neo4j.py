@@ -6,6 +6,7 @@ import subprocess
 from os.path import exists
 
 neo4j_version = 'neo4j-enterprise-3.0.7-unix'
+neo4j_path = 'neo4j-enterprise-3.0.7'
 
 # Function to install Neo4j
 def install_neo4j():
@@ -30,6 +31,25 @@ def install_neo4j():
         logging.info("Neo4j installation is done")
         return
 
+def config_neo4j():
+    logging.info("Copying neo4j configuration file...")
+    hostnumber = socket.gethostname().split('-')[1]
+    if hostnumber == 1:
+        out = subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-1.conf',
+        '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
+    elif hostnumber == 2:
+        out = subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-2.conf',
+        '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
+    elif hostnumber == 3:
+        out = subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-3.conf',
+        '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
+    if out.returncode == 0:
+        logging.info("Neo4j configuration file copied")
+    else:
+        logging.error("Neo4j configuration file copy failed")
+    return
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_neo4j()
+    config_neo4j()
