@@ -26,10 +26,14 @@ def install_hdfs():
                 subprocess.run(['echo', conf_dir_export], stdout=proFile, check=True)
                 subprocess.run(['echo', 'export HADOOP_PREFIX=' + hadoop_prefix], stdout=proFile, check=True)
 
+
         logging.info('Copying HDFS configuration files')
         # files to copy should be somewhere with the installation script
         # for now it uses a local repo
         subprocess.run('cp /home/xnet/hdfs/etc/hadoop/* ' + hadoop_prefix + '/etc/hadoop', shell=True)
+
+        #Remove any previous tmp files
+        subprocess.run('rm -rf /tmp/hadoop-xnet', shell=True)
 
 
 if __name__ == '__main__':
