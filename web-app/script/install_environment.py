@@ -12,6 +12,7 @@ def install_environment():
     logging.info("Start to install nodeJs ...")
     subprocess.run(['sudo','apt-get','install','-y','npm'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
     logging.info("Start to launch the web-site ...")
+    subprocess.Popen(['npm','install'],cwd='/home/xnet/SDTD-Mazerunner/web-app/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     subprocess.Popen(['npm','start'],cwd='/home/xnet/SDTD-Mazerunner/web-app/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     #TODO check how to stop server
     return
