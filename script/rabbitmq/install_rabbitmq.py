@@ -86,19 +86,21 @@ def install_rabbitmq():
     configure_logger(DEBUG)
 
     hostname = get_hostname()
-    logging.info('Going to install RabbitMQ on ' + hostname)
 
-    #Install
-    install_server()
-    if hostname == masterHost[0]:
-        configure_user()
-        expose_erlang_cookie()
-        configure_replication()
-    else:
-        take_erlang_cookie(masterHost[0])
-        join_cluster(masterHost[0])
+    if not exists("/usr/lib/rabbitmq/bin/rabbitmq-server"):
+        logging.info('Going to install RabbitMQ on ' + hostname)
 
-    logging.info('RabbitMQ installation done')
+        #Install
+        install_server()
+        if hostname == masterHost[0]:
+            configure_user()
+            expose_erlang_cookie()
+            configure_replication()
+        else:
+            take_erlang_cookie(masterHost[0])
+            join_cluster(masterHost[0])
+
+        logging.info('RabbitMQ installation done')
 
     return
 
