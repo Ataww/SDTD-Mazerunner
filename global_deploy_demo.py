@@ -6,7 +6,7 @@ import subprocess
 # Function for launch demo
 def launch_demo():
     print("#############################################################")
-    print("############### DEMO SDTD-Mazerunner deploiment #############")
+    print("############### DEMO SDTD-Mazerunner deployment #############")
     print("#############################################################")
     subprocess.run(['./launch_deployment.py'], cwd='./script/')
     subprocess.run(['./deploy_web_site.py'],cwd='./web-app/script/')
