@@ -11,7 +11,7 @@ def install_environment():
     subprocess.run(['sudo','apt-get','install','-y','nodejs-legacy'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
     logging.info("Start to install npm ...")
     subprocess.run(['sudo','apt-get','install','-y','npm'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
-    logging.info("Start to launch the web-site ...")
+    logging.info("install dependencies ...")
     subprocess.run(['npm','install'],cwd='/home/xnet/SDTD-Mazerunner/web-app/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     return
 
