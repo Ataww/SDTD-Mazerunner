@@ -31,6 +31,7 @@ def install_spark():
         subprocess.run(['sudo', 'ln', '-s', '/usr/lib/spark/'+spark_version+'/sbin/stop-master.sh', '/sbin/stop-master'])
         subprocess.run(['sudo', 'ln', '-s', '/usr/lib/spark/'+spark_version+'/sbin/start-slave.sh', '/sbin/start-slave'])
         subprocess.run(['sudo', 'ln', '-s', '/usr/lib/spark/'+spark_version+'/sbin/stop-slave.sh', '/sbin/stop-slave'])
+        subprocess.run(['sudo', 'ln', '-s', '/usr/lib/spark/'+spark_version+'/bin/spark-submit', '/bin/spark-submit'])
         if not isAlreadyAdd('/etc/environment', spark_home):
             os.system('echo ' + spark_home + ' | sudo tee -a /etc/environment >> /dev/null 2>&1')
         if not isAlreadyAdd('/etc/environment', spark_conf_dir):
