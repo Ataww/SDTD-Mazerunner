@@ -42,6 +42,7 @@ def install_spark():
         subprocess.run(['sudo', 'chmod', '777','-R', '/usr/lib/spark/'+spark_version+'/work'])
         with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as sparkEnv:
             subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=sparkEnv, check=True)
+        setSparkDaemonOpts()
         subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-env.sh', '/usr/lib/spark/'+spark_version+'/conf/spark-env.sh'])
         SPARK_STATUS = os.popen('stop-master 2>&1 ', "r").read()
         if 'not found' not in SPARK_STATUS:
@@ -176,7 +177,7 @@ def setSparkDaemonOpts():
             export += ','+host+':'+str(port)
 
     export += ' -Dspark.deploy.zookeeper.dir=/usr/lib/zookeeper/zookeeper-3.4.9/tmp"'
-    with open(os.path.expanduser(spark_conf_dir + '/spark-env.sh'), 'a') as sparkEnv:
+    with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as sparkEnv:
         subprocess.run(['echo', export], stdout=sparkEnv, check=True)
 
     return
