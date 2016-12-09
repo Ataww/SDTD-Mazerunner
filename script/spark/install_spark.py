@@ -43,7 +43,9 @@ def install_spark():
         with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as sparkEnv:
             subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=sparkEnv, check=True)
         setSparkDaemonOpts()
+        setSparkDefaultsConf()
         subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-env.sh', '/usr/lib/spark/'+spark_version+'/conf/spark-env.sh'])
+        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-defaults.conf', '/usr/lib/spark/'+spark_version+'/conf/spark-defaults.conf'])
         SPARK_STATUS = os.popen('stop-master 2>&1 ', "r").read()
         if 'not found' not in SPARK_STATUS:
             logging.info("Spark installed [success]")
@@ -190,6 +192,25 @@ def setSparkDaemonOpts():
 
     export += ' -Dspark.deploy.zookeeper.dir=/usr/lib/zookeeper/zookeeper-3.4.9/tmp"'
     with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as sparkEnv:
+        subprocess.run(['echo', export], stdout=sparkEnv, check=True)
+
+    return
+
+def setSparkDefaultsConf():
+    port = 7070
+    isFirst = True
+    export = 'spark.master                     spark://'
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Master")
+    for host in hosts:
+        if isFirst:
+            export += host+':'+str(port)
+            isFirst = False
+        else:
+            export += ','+host+':'+str(port)
+
+    with open(os.path.expanduser('/home/xnet/spark/conf/spark-defaults.conf'), 'a') as sparkEnv:
         subprocess.run(['echo', export], stdout=sparkEnv, check=True)
 
     return
