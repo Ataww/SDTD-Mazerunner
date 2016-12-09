@@ -7,7 +7,7 @@ import org.apache.spark._
   */
 object SparkInit {
 
-  val conf = new SparkConf().setAppName("Mazerunner").setMaster("local[*]")
+  val conf = new SparkConf().setAppName("Mazerunner")
   val sc = new SparkContext(conf)
 
   def getSparkContext() ={
