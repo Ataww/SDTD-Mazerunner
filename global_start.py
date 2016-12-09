@@ -14,6 +14,10 @@ def launch_demo():
     config.read("./web-app/script/conf.ini")
     host = getHostsByKey(config, 'web')[0]
     subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host, './SDTD-Mazerunner/web-app/script/start_web_site.py'])
+    config.read("./backend/script/conf.ini")
+    host = getHostsByKey(config, 'application')[0]
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,'./SDTD-Mazerunner/backend/script/start_application.py'])
+
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):

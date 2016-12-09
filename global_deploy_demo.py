@@ -10,8 +10,7 @@ def launch_demo():
     print("#############################################################")
     subprocess.run(['./launch_deployment.py'], cwd='./script/')
     subprocess.run(['./deploy_web_site.py'],cwd='./web-app/script/')
-
-
+    subprocess.run(['./deploy_application.py'],cwd='./backend/script/')
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
