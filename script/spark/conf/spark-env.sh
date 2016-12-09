@@ -48,7 +48,8 @@
 # - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
 # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
 
-export SPARK_DIST_CLASSPATH=$HADOOP_CLASSPATH
+#TODO write with script
+export SPARK_DIST_CLASSPATH=$(/home/xnet/hadoop-2.7.3/bin/hadoop classpath)
 # Options for the daemons used in the standalone deploy mode
 # - SPARK_MASTER_PORT / SPARK_MASTER_WEBUI_PORT, to use non-default ports for the master
 export SPARK_MASTER_PORT="7070"
