@@ -97,6 +97,18 @@ def isMaster():
             return True
     return False
 
+# Permit to know if it is zookeeper
+def isZookeeper():
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Zookeeper")
+    hostname = socket.gethostname()
+
+    for host in hosts:
+        if host in hostname:
+            return True
+    return False
+
 # Permit to define the server value for the file zoo.cfg
 def set_server_value_zookeeper():
     index = 1
@@ -104,7 +116,7 @@ def set_server_value_zookeeper():
     port_elec_leader = 3888
     config = configparser.ConfigParser()
     config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Master")
+    hosts = getHostsByKey(config, "Zookeeper")
 
     with open(os.path.expanduser('/home/xnet/spark/conf/zoo.cfg'), 'a') as confFile:
         for host in hosts:
@@ -168,7 +180,7 @@ def setSparkDaemonOpts():
     export = 'export SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url='
     config = configparser.ConfigParser()
     config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Master")
+    hosts = getHostsByKey(config, "Zookeeper")
     for host in hosts:
         if isFirst:
             export += host+':'+str(port)
@@ -185,5 +197,5 @@ def setSparkDaemonOpts():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_spark()
-    if isMaster():
+    if isZookeeper():
         install_zookeeper()

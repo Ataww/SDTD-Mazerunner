@@ -14,8 +14,10 @@ CODE_ALREADY_RUN = 256
 # Function for launch Spark
 def launch_spark():
 
-    if isMaster():
+
+    if isZookeeper():
         launch_server_zookeeper()
+    if isMaster():
         launch_master()
     else:
         launch_slave()
@@ -82,6 +84,18 @@ def isMaster():
     config = configparser.ConfigParser()
     config.read("./spark/conf.ini")
     hosts = getHostsByKey(config, "Master")
+    hostname = socket.gethostname()
+
+    for host in hosts:
+        if host in hostname:
+            return True
+    return False
+
+# Permit to know if it is zookeeper
+def isZookeeper():
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Zookeeper")
     hostname = socket.gethostname()
 
     for host in hosts:

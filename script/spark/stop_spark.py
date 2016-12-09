@@ -11,8 +11,9 @@ CODE_STOP = 0
 # Function for launch Spark
 def stop_spark():
 
-    if isMaster():
+    if isZookeeper():
         stop_server_zookeeper()
+    if isMaster():
         stop_master()
     else:
         stop_slave()
@@ -40,6 +41,17 @@ def stop_slave():
         logging.error("Spark slave stop failed [error]")
     return
 
+# Permit to know if it is zookeeper
+def isZookeeper():
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Zookeeper")
+    hostname = socket.gethostname()
+
+    for host in hosts:
+        if host in hostname:
+            return True
+    return False
 
 # Function tu stop server zookeeper
 def stop_server_zookeeper():
