@@ -9,12 +9,10 @@ def install_environment():
     logging.info("Start to install nodeJs ...")
     subprocess.run(['sudo','apt-get','install','-y','nodejs'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
     subprocess.run(['sudo','apt-get','install','-y','nodejs-legacy'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
-    logging.info("Start to install nodeJs ...")
+    logging.info("Start to install npm ...")
     subprocess.run(['sudo','apt-get','install','-y','npm'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
     logging.info("Start to launch the web-site ...")
-    subprocess.Popen(['npm','install'],cwd='/home/xnet/SDTD-Mazerunner/web-app/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-    subprocess.Popen(['npm','start'],cwd='/home/xnet/SDTD-Mazerunner/web-app/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-    #TODO check how to stop server
+    subprocess.run(['npm','install'],cwd='/home/xnet/SDTD-Mazerunner/web-app/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     return
 
 if __name__ == '__main__':
