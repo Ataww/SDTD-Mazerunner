@@ -128,7 +128,7 @@ def define_id_zookeeper():
     id = 1
     config = configparser.ConfigParser()
     config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Master")
+    hosts = getHostsByKey(config, "Zookeeper")
     hostname = socket.gethostname()
     subprocess.run(['mkdir', '/usr/lib/zookeeper/'+zookeeper_version+'/tmp/'])
     for host in hosts:
