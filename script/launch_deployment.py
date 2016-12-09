@@ -5,9 +5,7 @@ import logging
 import subprocess
 from lib import getHostsByKey, hostIsUp
 
-components = ['spark']
-#components = ['hdfs','rabbitmq','spark']
-#components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
+components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
 
 
 # Function for copy the different script on the different machine
