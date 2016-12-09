@@ -40,9 +40,9 @@ def install_spark():
         subprocess.run(['sudo', 'chmod', '777','-R', '/usr/lib/spark/'+spark_version+'/logs'])
         subprocess.run(['sudo', 'mkdir', '/usr/lib/spark/'+spark_version+'/work'])
         subprocess.run(['sudo', 'chmod', '777','-R', '/usr/lib/spark/'+spark_version+'/work'])
-        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-env.sh', spark_conf_dir+'/spark-env.sh'])
-        with open(os.path.expanduser(spark_conf_dir+'/spark-env.sh'), 'a') as sparkEnv:
+        with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as sparkEnv:
             subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=sparkEnv, check=True)
+        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-env.sh', spark_conf_dir + '/spark-env.sh'])
         SPARK_STATUS = os.popen('stop-master 2>&1 ', "r").read()
         if 'not found' not in SPARK_STATUS:
             logging.info("Spark installed [success]")
