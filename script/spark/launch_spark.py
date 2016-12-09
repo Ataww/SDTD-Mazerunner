@@ -25,8 +25,6 @@ def launch_spark():
 # Function for launch master
 def launch_master():
     logging.info("Starting Spark Master ...")
-    with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as confFile:
-        subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=confFile, check=True)
     out = os.system('start-master >> /dev/null 2>&1')
     if out == CODE_STARTING:
         logging.info("Spark master are launched [success]")
@@ -90,24 +88,6 @@ def isMaster():
         if host in hostname:
             return True
     return False
-
-# Permit to know the hostname
-def get_hostname():
-    config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Master")
-    hostname = socket.gethostname()
-
-    for host in hosts:
-        if host in hostname:
-            return host
-
-    hosts = getHostsByKey(config, "Slaves")
-    for host in hosts:
-        if host in hostname:
-            return host
-
-    return hostname
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
