@@ -61,14 +61,14 @@
     </property>
     <property>
         <name>dfs.journalnode.edits.dir</name>
-        <value>file:///home/xnet/hdfs/journalnode/</value>
+        <value>/home/xnet/hdfs/journalnode</value>
     </property>
     <property>
         <name>dfs.namenode.name.dir</name>
-        <value>file:///home/xnet/hdfs/namenode</value>
+        <value>/home/xnet/hdfs/namenode</value>
     </property>
     <property>
         <name>dfs.datanode.name.dir</name>
-        <value>file:///home/xnet/hdfs/datanode</value>
+        <value>/home/xnet/hdfs/datanode</value>
     </property>
 </configuration>
