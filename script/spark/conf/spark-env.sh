@@ -48,6 +48,8 @@
 # - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
 # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
 
+#TODO write with script
+export SPARK_DIST_CLASSPATH=$(/home/xnet/hadoop-2.7.3/bin/hadoop classpath)
 # Options for the daemons used in the standalone deploy mode
 # - SPARK_MASTER_PORT / SPARK_MASTER_WEBUI_PORT, to use non-default ports for the master
 export SPARK_MASTER_PORT="7070"
@@ -68,6 +70,5 @@ export SPARK_WORKER_INSTANCES="2"
 # - SPARK_HISTORY_OPTS, to set config properties only for the history server (e.g. "-Dx=y")
 # - SPARK_SHUFFLE_OPTS, to set config properties only for the external shuffle service (e.g. "-Dx=y")
 # - SPARK_DAEMON_JAVA_OPTS, to set config properties for all daemons (e.g. "-Dx=y")
-export SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=149.202.161.176:2181 -Dspark.deploy.zookeeper.dir=/usr/lib/zookeeper/zookeeper-3.4.9/tmp"
 # - SPARK_PUBLIC_DNS, to set the public dns name of the master or workers
 # - SPARK_MASTER_HOST, to bind the master to a different IP address or hostname

@@ -17,6 +17,6 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://spark-1:9000</value>
+        <value>hdfs://hdfscluster</value>
     </property>
 </configuration>
