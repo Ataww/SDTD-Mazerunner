@@ -17,22 +17,16 @@ def launch():
 def isNameNode():
 	config = configparser.ConfigParser()
 	config.read("/home/xnet/hdfs/conf.ini")
-	hosts = getHostsByKey(config, "Master")
+	masters = getHostsByKey(config, "Master")
 	hostname = socket.gethostname()
 
-	for host in hosts:
-		if host in hostname:
-			return True
-	return False
+	return hostname in masters
+
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
     hosts = config.get(key, "hosts").split(',')
-    index = 0
-    for host in hosts:
-        hosts[index] = host.strip(' \n')
-        index += 1
-    return hosts
+    return [host.strip(' \n') for host in hosts]
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
