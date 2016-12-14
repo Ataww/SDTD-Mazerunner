@@ -2,5 +2,11 @@
 *.aux
 *.log
 .idea/
+/web-app/node_modules/
+/web-app/.idea/
 /application/node_modules/
 /application/.idea/
+/backend/.idea
+/backend/backend.iml
+/backend/target
+/backend/project
