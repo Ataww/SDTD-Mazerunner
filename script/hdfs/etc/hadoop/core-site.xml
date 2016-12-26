@@ -19,4 +19,8 @@
         <name>fs.defaultFS</name>
         <value>hdfs://hdfscluster</value>
     </property>
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>hdfs-1:2182,hdfs-2:2182,hdfs-3:2182</value>
+ </property>
 </configuration>

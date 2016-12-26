@@ -71,4 +71,8 @@
         <name>dfs.datanode.name.dir</name>
         <value>/home/xnet/hdfs/datanode</value>
     </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled</name>
+        <value>true</value>
+    </property>
 </configuration>
