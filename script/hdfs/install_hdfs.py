@@ -8,7 +8,7 @@ version = 'hadoop-2.7.3'
 distrib = 'http://apache.crihan.fr/dist/hadoop/common/'+version+'/'+version+'.tar.gz'
 
 version_zk = 'zookeeper-3.4.9'
-distrib_zk = 'http://apache.crihan.fr/dist/zookeeper/'+version+'/'+version+'.tar.gz'
+distrib_zk = 'http://apache.crihan.fr/dist/zookeeper/'+version_zk+'/'+version_zk+'.tar.gz'
 
 hadoop_prefix = '/home/xnet/' + version
 
@@ -62,27 +62,26 @@ def install_hdfs():
         logging.info('Removing any previous tmp files')
         subprocess.run('rm -rf /tmp/hadoop-xnet', shell=True)
 
-        if isNameNode():
-            #Format the HDFS partition
-            logging.info('Format the HDFS partition')
-            format_hdfs()
+        # if isNameNode():
+        #     #Format the HDFS partition
+        #     logging.info('Format the HDFS partition')
+        #     format_hdfs()
 
 
 def install_zookeeper():
     """Install zookeeper"""
     if not exists('/home/xnet/hdfs_zk'):
         logging.info('Downloading ZK (hdfs)')
-        subprocess.run(['wget', '-q', '-nc', distrib_zk])
+        subprocess.run(['wget', '-q', '-nc', distrib_zk], check=True)
         logging.info('Uncompressing to /home/xnet')
         subprocess.run(['tar', 'xf', version_zk + '.tar.gz', '-C', '/home/xnet'], check=True)
         subprocess.run(['mv', '/home/xnet/'+version_zk, '/home/xnet/hdfs_zk'])
         logging.info('Copying ZK (hdfs) configuration files')
-        subprocess.run('cp /home/xnet/hdfs/etc/zookeeper/* ' + 'home/xnet/hdfs_zk/conf', shell=True)
+        subprocess.run('cp /home/xnet/hdfs/etc/zookeeper/* /home/xnet/hdfs_zk/conf', shell=True)
         logging.info('Creating ZK (hdfs) dataDir')
-        subprocess.run(['rm', '-rf', '/home/xnet/hdfs_zk/tmp_data'], check=True)
-        subprocess.run(['/home/xnet/hdfs_zk/tmp_data'], check=True)
+        subprocess.run(['mkdir', '/home/xnet/hdfs_zk/tmp_data'])
         logging.info('Setting ZK (hdfs) service id')
-        with open('/home/xnet/hdfs_zk/tmp_data', 'w') as myidFile:
+        with open('/home/xnet/hdfs_zk/tmp_data/myid', 'w') as myidFile:
             # get ZK server id based on the hostname (for instance spark-1-hdfs-1 is 1)
             subprocess.run(['echo', socket.gethostname()[-1]], stdout=myidFile, check=True)
 
