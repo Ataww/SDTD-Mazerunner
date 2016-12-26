@@ -14,6 +14,14 @@ def launch():
 	logging.info('Launching HDFS cluster')
 	subprocess.run(['/home/xnet/'+version+'/sbin/start-dfs.sh'], check=True)
 
+def startJournalNode():
+	logging.info('Starting JournalNode')
+	subprocess.run(['/home/xnet/'+version+'/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
+
+def startZK():
+	logging.info('Starting ZooKeeper (hdfs)')
+	subprocess.run(['/home/xnet/hdfs_zk/bin/zkServer.sh', 'start'], check=True)
+
 def isNameNode():
 	config = configparser.ConfigParser()
 	config.read("/home/xnet/hdfs/conf.ini")
@@ -31,7 +39,9 @@ def getHostsByKey(config, key):
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
+	startJournalNode()
+	startZK()
+
 	if isNameNode():
 		launch()
-	else:
-		logging.info('Nothing to do on this machine ...')
+
