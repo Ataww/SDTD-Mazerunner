@@ -15,29 +15,6 @@ hadoop_prefix = '/home/xnet/' + version
 conf_dir = hadoop_prefix + "/etc/hadoop"
 conf_dir_export = "export HADOOP_CONF_DIR=" + conf_dir
 
-def format_hdfs():
-	logging.info('Formatting HDFS namenode')
-	subprocess.run(['/home/xnet/'+version+'/bin/hdfs', 'namenode', '-format', '-force'], check=True)
-
-def isNameNode():
-	config = configparser.ConfigParser()
-	config.read("/home/xnet/hdfs/conf.ini")
-	hosts = getHostsByKey(config, "Master")
-	hostname = socket.gethostname()
-
-	for host in hosts:
-		if host in hostname:
-			return True
-	return False
-
-def getHostsByKey(config, key):
-    """Recover all ips for one component. Return format ip"""
-    hosts = config.get(key, "hosts").split(',')
-    index = 0
-    for host in hosts:
-        hosts[index] = host.strip(' \n')
-        index += 1
-    return hosts
 
 def install_hdfs():
     """Install hadoop et set it up"""
@@ -58,14 +35,14 @@ def install_hdfs():
         # for now it uses a local repo
         subprocess.run('cp /home/xnet/hdfs/etc/hadoop/* ' + hadoop_prefix + '/etc/hadoop', shell=True)
 
+        subprocess.run(['mkdir', '-p', '/home/xnet/'+version+'/data/namenode'])
+
         #Remove any previous tmp files
         logging.info('Removing any previous tmp files')
         subprocess.run('rm -rf /tmp/hadoop-xnet', shell=True)
 
-        # if isNameNode():
-        #     #Format the HDFS partition
-        #     logging.info('Format the HDFS partition')
-        #     format_hdfs()
+        logging.info('Starting journalnode')
+        subprocess.run(['/home/xnet/'+version+'/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
 
 
 def install_zookeeper():
@@ -84,6 +61,8 @@ def install_zookeeper():
         with open('/home/xnet/hdfs_zk/tmp_data/myid', 'w') as myidFile:
             # get ZK server id based on the hostname (for instance spark-1-hdfs-1 is 1)
             subprocess.run(['echo', socket.gethostname()[-1]], stdout=myidFile, check=True)
+        logging.info('Starting ZKQ server')
+        subprocess.run(['/home/xnet/hdfs_zk/bin/zkServer.sh', 'start'], check=True)
 
 
 if __name__ == '__main__':

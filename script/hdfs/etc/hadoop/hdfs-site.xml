@@ -57,15 +57,15 @@
     </property>
     <property>
         <name>dfs.journalnode.edits.dir</name>
-        <value>/home/xnet/hdfs/journalnode</value>
+        <value>/home/xnet/hadoop-2.7.3/data/journalnode</value>
     </property>
     <property>
         <name>dfs.namenode.name.dir</name>
-        <value>/home/xnet/hdfs/namenode</value>
+        <value>/home/xnet/hadoop-2.7.3/data/namenode</value>
     </property>
     <property>
         <name>dfs.datanode.name.dir</name>
-        <value>/home/xnet/hdfs/datanode</value>
+        <value>/home/xnet/hadoop-2.7.3/data/datanode</value>
     </property>
     <property>
         <name>dfs.ha.automatic-failover.enabled</name>

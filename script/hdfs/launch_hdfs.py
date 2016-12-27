@@ -3,47 +3,46 @@
 import logging, sys, subprocess, configparser, socket
 
 
-version='hadoop-2.7.3'
+home='/home/xnet'
+hadoop_dir=home+'/hadoop-2.7.3'
+
 
 
 def format():
-	logging.info('Formatting HDFS namenode')
-	subprocess.run(['/home/xnet/'+version+'/bin/hdfs', 'namenode', '-format', '-force'], check=True)
+	logging.info('Formatting ActiveNN')
+	subprocess.run('yes Y | '+hadoop_dir+'/bin/hdfs namenode -format -force', shell=True)
+
 
 def launch():
-	logging.info('Launching HDFS cluster')
-	subprocess.run(['/home/xnet/'+version+'/sbin/start-dfs.sh'], check=True)
+	logging.info('Starting ActiveNN')
+	subprocess.run([hadoop_dir+'/sbin/hadoop-daemon.sh', 'start', 'namenode'])
 
-def startJournalNode():
-	logging.info('Starting JournalNode')
-	subprocess.run(['/home/xnet/'+version+'/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
-
-def startZK():
-	logging.info('Starting ZooKeeper (hdfs)')
-	subprocess.run(['/home/xnet/hdfs_zk/bin/zkServer.sh', 'start'], check=True)
-
-def isNameNode():
+	logging.info('Copying ActiveNN metadata to StandbyNN')
+	# has to be done from StandbyNN
 	config = configparser.ConfigParser()
-	config.read("/home/xnet/hdfs/conf.ini")
-	masters = getHostsByKey(config, "Master")
-	hostname = socket.gethostname()
+	config.read(home+'/hdfs/conf.ini')
+	subprocess.run('ssh xnet@'+config.get('standbyNN', 'host')+' \"'+hadoop_dir+'/bin/hdfs namenode -bootstrapStandby\"', shell=True)
+	logging.info('Starting StandbyNN')
+	subprocess.run('ssh xnet@'+config.get('standbyNN', 'host')+' \"'+hadoop_dir+'/sbin/hadoop-daemon.sh start namenode\"', shell=True)
 
-	return hostname in masters
+	logging.info('Formatting ZKFC')
+	subprocess.run([hadoop_dir+'/bin/hdfs', 'zkfc', '-formatZK'], check=True)
+	
+	logging.info('Starting ZKFCs and DNs')
+	subprocess.run([hadoop_dir+'/sbin/start-dfs.sh'], check=True)
 
 
-# Recover all ip for one component. Return format ip
-def getHostsByKey(config, key):
-    hosts = config.get(key, "hosts").split(',')
-    return [host.strip(' \n') for host in hosts]
+def isActiveNN():
+	config = configparser.ConfigParser()
+	config.read('/home/xnet/hdfs/conf.ini')
+	return config.get('activeNN', 'host') in socket.gethostname()
+
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
-	startJournalNode()
-	format()
-
-	#startZK()
-
-	if isNameNode():
+	if isActiveNN():
+		format()
 		launch()
+
 
