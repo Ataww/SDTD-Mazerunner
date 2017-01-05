@@ -2,8 +2,11 @@
 
 import configparser
 import sys
-import os, logging, coloredlogs
+import os
+import logging
+import coloredlogs
 from lib import getIpServerName, hostIsUp, color
+
 
 # Display error
 def error_commande(msg):
@@ -33,6 +36,7 @@ def launch_commande():
         error_commande("Too much argument")
     return
 
+
 # Valid action
 def check_action():
     action = ""
@@ -44,6 +48,7 @@ def check_action():
         action = "DELETE"
     return action
 
+
 # Permit to know if the server name is valid
 def check_server():
     ip = getIpServerName(config, sys.argv[2])
@@ -51,41 +56,42 @@ def check_server():
         return True
     return False
 
+
 # Display help for launch commande
 def show_commande():
     print("\n")
-    print(color.BOLD+"DESCRIPTION"+color.END)
-    print("     "+color.UNDERLINE+"Install service server:\n"+color.END)
+    print(color.BOLD + "DESCRIPTION" + color.END)
+    print("     " + color.UNDERLINE + "Install service server:\n" + color.END)
     print("         python3 mazerunner.py -i                (for all server)")
     print("         python3 mazerunner.py -i <servername>   (for a specific server)")
     print("\n")
-    print("     "+color.UNDERLINE+"Reinstall service server:\n"+color.END)
+    print("     " + color.UNDERLINE + "Reinstall service server:\n" + color.END)
     print("         python3 mazerunner.py -r                (for all server)")
     print("         python3 mazerunner.py -r <servername>   (for a specific server)")
     print("\n")
-    print("     "+color.UNDERLINE+"Delete service server:\n"+color.END)
+    print("     " + color.UNDERLINE + "Delete service server:\n" + color.END)
     print("         python3 mazerunner.py -d                (for all server)")
     print("         python3 mazerunner.py -d <servername>   (for a specific server)")
     print("\n")
-    print(color.BOLD+"SERVER NAME"+color.END)
-    print("     "+color.UNDERLINE+"Spark server:\n"+color.END)
+    print(color.BOLD + "SERVER NAME" + color.END)
+    print("     " + color.UNDERLINE + "Spark server:\n" + color.END)
     print("         spark-1")
     print("         spark-2")
     print("         spark-3")
     print("         spark-4")
     print("\n")
-    print("     "+color.UNDERLINE+"Hdfs server:\n"+color.END)
+    print("     " + color.UNDERLINE + "Hdfs server:\n" + color.END)
     print("         hdfs-1")
     print("         hdfs-2")
     print("         hdfs-3")
     print("         hdfs-4")
     print("\n")
-    print("     "+color.UNDERLINE+"Neo4j server:\n"+color.END)
+    print("     " + color.UNDERLINE + "Neo4j server:\n" + color.END)
     print("         Neo4j-1")
     print("         Neo4j-2")
     print("         Neo4j-3")
     print("\n")
-    print("     "+color.UNDERLINE+"Rabbitmq server:\n"+color.END)
+    print("     " + color.UNDERLINE + "Rabbitmq server:\n" + color.END)
     print("         rabbitmq-1")
     print("         rabbitmq-2")
     print("\n")
@@ -98,12 +104,13 @@ if __name__ == '__main__':
     config.read("conf.ini")
     os.environ["COLOREDLOGS_LOG_FORMAT"] = "[%(hostname)s] %(asctime)s - %(levelname)s - %(message)s"
     coloredlogs.install(level='DEBUG')
-    print(color.BOLD+color.GREEN+" /$$      /$$")
+    print(color.BOLD + color.GREEN + " /$$      /$$")
     print("| $$$    /$$$")
     print("| $$$$  /$$$$  /$$$$$$  /$$$$$$$$  /$$$$$$   /$$$$$$  /$$  /$$  /$$$$$$$  /$$$$$$$   /$$$$$$   /$$$$$$")
     print("| $$ $$/$$ $$ |____  $$|____ /$$/ /$$__  $$ /$$__  $$| $$ | $$ | $$__  $$| $$__  $$ /$$__  $$ /$$__  $$")
     print("| $$  $$$| $$  /$$$$$$$   /$$$$/ | $$$$$$$$| $$  \__/| $$ | $$ | $$  \ $$| $$  \ $$| $$$$$$$$| $$  \__/")
     print("| $$\  $ | $$ /$$__  $$  /$$__/  | $$_____/| $$      | $$ | $$ | $$  | $$| $$  | $$| $$_____/| $$")
     print("| $$ \/  | $$|  $$$$$$$ /$$$$$$$$| $$$$$$$ | $$      | $$$$$$ /| $$  | $$| $$  | $$|  $$$$$$$| $$")
-    print("|__/     |__/ \_______/|________/ \_______/|__/       \______/ |__/  |__/|__/  |__/ \_______/|__/"+color.END)
+    print(
+        "|__/     |__/ \_______/|________/ \_______/|__/       \______/ |__/  |__/|__/  |__/ \_______/|__/" + color.END)
     launch_commande()
