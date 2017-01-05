@@ -2,8 +2,8 @@
 
 import configparser
 import sys
-import logging
-from lib import getIpServerName, hostIsUp
+import os, logging, coloredlogs
+from lib import getIpServerName, hostIsUp, color
 
 # Display error
 def error_commande(msg):
@@ -44,7 +44,7 @@ def check_action():
         action = "DELETE"
     return action
 
-# Permit to know if the server name is valide
+# Permit to know if the server name is valid
 def check_server():
     ip = getIpServerName(config, sys.argv[2])
     if hostIsUp(ip):
@@ -53,24 +53,57 @@ def check_server():
 
 # Display help for launch commande
 def show_commande():
-    print("python3 mazerunner.py [OPTIONS] .... \n")
-    print("Install all service on all server:")
-    print("     python3 mazerunner.py -i")
-    print("re-install all service on all server:")
-    print("     python3 mazerunner.py -r")
-    print("delete all service on all server:")
-    print("     python3 mazerunner.py -d")
-    print("Install service on specific server:")
-    print("     python3 mazerunner.py -i <name_server>")
-    print("re-install service on specific server:")
-    print("     python3 mazerunner.py -r <name_server>")
-    print("delete service on specific server:")
-    print("     python3 mazerunner.py -d <name_server>")
+    print("\n")
+    print(color.BOLD+"DESCRIPTION"+color.END)
+    print("     "+color.UNDERLINE+"Install service server:\n"+color.END)
+    print("         python3 mazerunner.py -i                (for all server)")
+    print("         python3 mazerunner.py -i <servername>   (for a specific server)")
+    print("\n")
+    print("     "+color.UNDERLINE+"Reinstall service server:\n"+color.END)
+    print("         python3 mazerunner.py -r                (for all server)")
+    print("         python3 mazerunner.py -r <servername>   (for a specific server)")
+    print("\n")
+    print("     "+color.UNDERLINE+"Delete service server:\n"+color.END)
+    print("         python3 mazerunner.py -d                (for all server)")
+    print("         python3 mazerunner.py -d <servername>   (for a specific server)")
+    print("\n")
+    print(color.BOLD+"SERVER NAME"+color.END)
+    print("     "+color.UNDERLINE+"Spark server:\n"+color.END)
+    print("         spark-1")
+    print("         spark-2")
+    print("         spark-3")
+    print("         spark-4")
+    print("\n")
+    print("     "+color.UNDERLINE+"Hdfs server:\n"+color.END)
+    print("         hdfs-1")
+    print("         hdfs-2")
+    print("         hdfs-3")
+    print("         hdfs-4")
+    print("\n")
+    print("     "+color.UNDERLINE+"Neo4j server:\n"+color.END)
+    print("         Neo4j-1")
+    print("         Neo4j-2")
+    print("         Neo4j-3")
+    print("\n")
+    print("     "+color.UNDERLINE+"Rabbitmq server:\n"+color.END)
+    print("         rabbitmq-1")
+    print("         rabbitmq-2")
+    print("\n")
+    print("©ensimag ")
     return
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
     config = configparser.ConfigParser()
     config.read("conf.ini")
+    os.environ["COLOREDLOGS_LOG_FORMAT"] = "[%(hostname)s] %(asctime)s - %(levelname)s - %(message)s"
+    coloredlogs.install(level='DEBUG')
+    print(color.BOLD+color.GREEN+" /$$      /$$")
+    print("| $$$    /$$$")
+    print("| $$$$  /$$$$  /$$$$$$  /$$$$$$$$  /$$$$$$   /$$$$$$  /$$  /$$  /$$$$$$$  /$$$$$$$   /$$$$$$   /$$$$$$")
+    print("| $$ $$/$$ $$ |____  $$|____ /$$/ /$$__  $$ /$$__  $$| $$ | $$ | $$__  $$| $$__  $$ /$$__  $$ /$$__  $$")
+    print("| $$  $$$| $$  /$$$$$$$   /$$$$/ | $$$$$$$$| $$  \__/| $$ | $$ | $$  \ $$| $$  \ $$| $$$$$$$$| $$  \__/")
+    print("| $$\  $ | $$ /$$__  $$  /$$__/  | $$_____/| $$      | $$ | $$ | $$  | $$| $$  | $$| $$_____/| $$")
+    print("| $$ \/  | $$|  $$$$$$$ /$$$$$$$$| $$$$$$$ | $$      | $$$$$$ /| $$  | $$| $$  | $$|  $$$$$$$| $$")
+    print("|__/     |__/ \_______/|________/ \_______/|__/       \______/ |__/  |__/|__/  |__/ \_______/|__/"+color.END)
     launch_commande()
