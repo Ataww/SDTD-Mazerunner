@@ -45,3 +45,15 @@ def hostIsUp(host):
     if os.system('ping -c 1 '+host+' >> /dev/null 2>&1'):
         return False
     return True
+
+#Function for recover ip by using server name
+def getIpServerName(config,serverName):
+    ip = ""
+    value = serverName.split('-')
+    if len(value) == 2:
+        try:
+            hosts = config.get(value[0], "hosts").split(',')
+            ip = hosts[int(value[1])-1]
+        except:
+            return ip
+    return ip
