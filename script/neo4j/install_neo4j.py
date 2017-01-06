@@ -46,7 +46,13 @@ def config_neo4j():
         '/usr/lib/neo4j/'+neo4j_path+'/conf/neo4j.conf'])
     return
 
+def set_database():
+    logging.info("Importing database")
+    subprocess.run(['sudo', 'mkdir', '/usr/lib/neo4j'+neo4j_path+'/data/databases/music.db'])
+    subprocess.run(['sudo', '/usr/lib/neo4j/'+neo4j_path+'/bin/neo4j-import', '--into', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db', '--nodes', 'data/utilisateurs.csv', '--nodes', 'data/titres.csv', '--relationships', 'data/gout.csv'])
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_neo4j()
     config_neo4j()
+    set_database()
