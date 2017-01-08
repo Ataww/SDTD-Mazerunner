@@ -141,6 +141,21 @@ def call_method(action, serverName):
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
                         'source ~/.profile; ./' + directory + '/remove_' + directory + '.py'])
+    elif action == "START":
+        subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+                        'xnet@' + ip,
+                        'source ~/.profile; ./' + directory + '/launch_' + directory + '.py'])
+    elif action == "STOP":
+        subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+                        'xnet@' + ip,
+                        'source ~/.profile; ./' + directory + '/stop_' + directory + '.py'])
+    elif action == "RESTART":
+        subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+                        'xnet@' + ip,
+                        'source ~/.profile; ./' + directory + '/stop_' + directory + '.py'])
+        subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+                        'xnet@' + ip,
+                        'source ~/.profile; ./' + directory + '/launch_' + directory + '.py'])
     else:
         error_command("NOT YET IMPLEMENTED")
 
