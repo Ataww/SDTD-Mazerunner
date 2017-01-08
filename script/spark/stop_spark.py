@@ -2,17 +2,16 @@
 
 import os
 import logging
-import subprocess
-import configparser
-import socket
+from . import lib_spark
 
 CODE_STOP = 0
 
-# Function for launch Spark
-def stop_spark():
 
-    if isMaster():
+# Function for launch Spark
+def stop_environement_spark():
+    if lib_spark.isZookeeper():
         stop_server_zookeeper()
+    if lib_spark.isMaster():
         stop_master()
     else:
         stop_slave()
@@ -46,34 +45,13 @@ def stop_server_zookeeper():
     logging.info("stop Server Zookeeper ...")
     ZOOKEEPER_STATUS = os.popen('zkServer.sh stop 2>&1 ', "r").read()
     if 'STOPPED' in ZOOKEEPER_STATUS:
-        logging.info(" Zookeeper stopped [success]")
+        logging.info("Zookeeper stopped [success]")
     elif 'no zookeeper to stop' in ZOOKEEPER_STATUS:
-        logging.info(" Zookeeper is already stop [success]")
+        logging.info("Zookeeper is already stop [success]")
     else:
-        logging.error(" Zookeeper stopped failed [error]")
+        logging.error("Zookeeper stopped failed [error]")
     return
 
-# Permit to know if it is master
-def isMaster():
-    config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Master")
-    hostname = socket.gethostname()
-
-    for host in hosts:
-        if host in hostname:
-            return True
-    return False
-
-# Recover all ip for one component. Return format ip
-def getHostsByKey(config, key):
-    hosts = config.get(key, "hosts").split(',')
-    index = 0
-    for host in hosts:
-        hosts[index] = host.strip(' \n')
-        index += 1
-    return hosts
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
-    stop_spark()
+    stop_environement_spark()

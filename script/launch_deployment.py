@@ -5,8 +5,6 @@ import logging
 import subprocess
 from lib import getHostsByKey, hostIsUp
 
-#components = ['rabbitmq']
-#components = ['hdfs','rabbitmq','spark']
 components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
 
 
