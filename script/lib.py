@@ -2,17 +2,19 @@
 
 import os
 
+
 class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
@@ -54,11 +56,13 @@ def deleteLineWithString(pathFile, stringResearch):
     os.system('sudo mv tmp.txt /etc/hosts >> /dev/null 2>&1')
     return
 
+
 # Function for check host
 def hostIsUp(host):
     if os.system('ping -c 1 ' + host + ' >> /dev/null 2>&1'):
         return False
     return True
+
 
 # Function for recover ip by using server name
 def getIpServerName(config, serverName):
@@ -67,7 +71,7 @@ def getIpServerName(config, serverName):
     if len(value) == 2:
         try:
             hosts = config.get(value[0], "hosts").split(',')
-            ip = hosts[int(value[1]) - 1]
+            ip = hosts[int(value[1]) - 1].strip(' \n')
         except:
             return ip
     return ip

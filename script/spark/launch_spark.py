@@ -2,22 +2,17 @@
 
 import os
 import logging
-import subprocess
-import configparser
-import socket
+from . import lib_spark
 
-port_master = '7070'
 CODE_STARTING = 0
 CODE_ALREADY_RUN = 256
 
 
 # Function for launch Spark
 def launch_spark():
-
-
-    if isZookeeper():
+    if lib_spark.isZookeeper():
         launch_server_zookeeper()
-    if isMaster():
+    if lib_spark.isMaster():
         launch_master()
     else:
         launch_slave()
@@ -36,10 +31,11 @@ def launch_master():
         logging.error("Spark master launch failed [error]")
     return
 
+
 # Function for launch slave
 def launch_slave():
     logging.info("Starting Spark Worker ...")
-    out = os.system('start-slave spark://' + getSparkMaster() + ' >> /dev/null 2>&1')
+    out = os.system('start-slave spark://' + lib_spark.getSparkMaster() + ' >> /dev/null 2>&1')
 
     if out == CODE_STARTING:
         logging.info("Spark slaves are launched [success]")
@@ -62,56 +58,5 @@ def launch_server_zookeeper():
         logging.error("Zookeeper launch failed [error]")
     return
 
-
-# Function for recover the address of master
-def getSparkMaster():
-    master = ''
-    first = True
-    config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Master")
-    for host in hosts:
-        if first:
-            master = host + ':' + port_master
-            first = False
-        else:
-            master = master + ',' + host + ':' + port_master
-    return master
-
-
-# Permit to know if it is master
-def isMaster():
-    config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Master")
-    hostname = socket.gethostname()
-
-    for host in hosts:
-        if host in hostname:
-            return True
-    return False
-
-# Permit to know if it is zookeeper
-def isZookeeper():
-    config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = getHostsByKey(config, "Zookeeper")
-    hostname = socket.gethostname()
-
-    for host in hosts:
-        if host in hostname:
-            return True
-    return False
-
-# Recover all ip for one component. Return format ip
-def getHostsByKey(config, key):
-    hosts = config.get(key, "hosts").split(',')
-    index = 0
-    for host in hosts:
-        hosts[index] = host.strip(' \n')
-        index += 1
-    return hosts
-
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     launch_spark()
