@@ -34,7 +34,7 @@ def launch():
 
 def isActiveNN():
 	config = configparser.ConfigParser()
-	config.read('/home/xnet/hdfs/conf.ini')
+	config.read('/home/xnet/SDTD-Mazerunner/script/hdfs/conf.ini')
 	return config.get('activeNN', 'host') in socket.gethostname()
 
 

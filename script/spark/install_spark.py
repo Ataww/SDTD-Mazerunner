@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import os
-import logging
-import subprocess
 import configparser
+import logging
+import os
 import socket
-from .. import lib
+import subprocess
+
+from script import lib
 from . import lib_spark
 
 spark_version = 'spark-2.0.2-bin-without-hadoop'
@@ -48,7 +49,7 @@ def install_spark():
         subprocess.run(['sudo', 'chmod', '777', '-R', '/usr/lib/spark/' + spark_version + '/logs'])
         subprocess.run(['sudo', 'mkdir', '/usr/lib/spark/' + spark_version + '/work'])
         subprocess.run(['sudo', 'chmod', '777', '-R', '/usr/lib/spark/' + spark_version + '/work'])
-        with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as sparkEnv:
+        with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-env.sh'), 'a') as sparkEnv:
             subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + lib_spark.get_hostname() + '"'], stdout=sparkEnv,
                            check=True)
         setSparkDaemonOpts()
@@ -92,7 +93,7 @@ def install_zookeeper():
         logging.info("Zookeeper configuration")
         set_server_value_zookeeper()
         define_id_zookeeper()
-        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/zoo.cfg',
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/zoo.cfg',
                         '/usr/lib/zookeeper/' + zookeeper_version + '/conf/zoo.cfg'])
         # ZOOKEEPER_STATUS = os.popen('zkServer.sh status 2>&1 ', "r").read()
         # if 'not found' in ZOOKEEPER_STATUS:
@@ -111,7 +112,7 @@ def set_server_value_zookeeper():
     config.read("./spark/conf.ini")
     hosts = lib.getHostsByKey(config, "Zookeeper")
 
-    with open(os.path.expanduser('/home/xnet/spark/conf/zoo.cfg'), 'a') as confFile:
+    with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/zoo.cfg'), 'a') as confFile:
         for host in hosts:
             subprocess.run(['echo', 'server.' + str(index) + '=' + host + ':' + str(port_com_leader) + ':' + str(
                 port_elec_leader)], stdout=confFile, check=True)
@@ -150,7 +151,7 @@ def setSparkDaemonOpts():
             export += ',' + host + ':' + str(port)
 
     export += ' -Dspark.deploy.zookeeper.dir=/usr/lib/zookeeper/zookeeper-3.4.9/tmp"'
-    with open(os.path.expanduser('/home/xnet/spark/conf/spark-env.sh'), 'a') as sparkEnv:
+    with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-env.sh'), 'a') as sparkEnv:
         subprocess.run(['echo', export], stdout=sparkEnv, check=True)
 
     return
@@ -170,7 +171,7 @@ def setSparkDefaultsConf():
         else:
             export += ',' + host + ':' + str(port)
 
-    with open(os.path.expanduser('/home/xnet/spark/conf/spark-defaults.conf'), 'a') as sparkEnv:
+    with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-defaults.conf'), 'a') as sparkEnv:
         subprocess.run(['echo', export], stdout=sparkEnv, check=True)
 
     return

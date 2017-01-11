@@ -2,7 +2,6 @@
 
 import configparser
 import socket
-from .. import lib
 
 port_master = '7070'
 
@@ -10,8 +9,8 @@ port_master = '7070'
 # Permit to know if it is zookeeper
 def isZookeeper():
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = lib.getHostsByKey(config, "Zookeeper")
+    config.read("conf.ini")
+    hosts = getHostsByKey(config, "Zookeeper")
     hostname = socket.gethostname()
 
     for host in hosts:
@@ -23,8 +22,8 @@ def isZookeeper():
 # Permit to know if it is master
 def isMaster():
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = lib.getHostsByKey(config, "Master")
+    config.read("conf.ini")
+    hosts = getHostsByKey(config, "Master")
     hostname = socket.gethostname()
 
     for host in hosts:
@@ -38,8 +37,8 @@ def getSparkMaster():
     master = ''
     first = True
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = lib.getHostsByKey(config, "Master")
+    config.read("conf.ini")
+    hosts = getHostsByKey(config, "Master")
     for host in hosts:
         if first:
             master = host + ':' + port_master
@@ -52,17 +51,27 @@ def getSparkMaster():
 # Permit to know the hostname
 def get_hostname():
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
-    hosts = lib.getHostsByKey(config, "Master")
+    config.read("conf.ini")
+    hosts = getHostsByKey(config, "Master")
     hostname = socket.gethostname()
 
     for host in hosts:
         if host in hostname:
             return host
 
-    hosts = lib.getHostsByKey(config, "Slaves")
+    hosts = getHostsByKey(config, "Slaves")
     for host in hosts:
         if host in hostname:
             return host
 
     return hostname
+
+
+# Recover all ip for one component. Return format ip
+def getHostsByKey(config, key):
+    hosts = config.get(key, "hosts").split(',')
+    index = 0
+    for host in hosts:
+        hosts[index] = host.strip(' \n')
+        index += 1
+    return hosts

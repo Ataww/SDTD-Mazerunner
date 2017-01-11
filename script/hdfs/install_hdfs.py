@@ -33,7 +33,7 @@ def install_hdfs():
         logging.info('Copying HDFS configuration files')
         # files to copy should be somewhere with the installation script
         # for now it uses a local repo
-        subprocess.run('cp /home/xnet/hdfs/etc/hadoop/* ' + hadoop_prefix + '/etc/hadoop', shell=True)
+        subprocess.run('cp /home/xnet/SDTD-Mazerunner/script/hdfs/etc/hadoop/* ' + hadoop_prefix + '/etc/hadoop', shell=True)
 
         subprocess.run(['mkdir', '-p', '/home/xnet/'+version+'/data/namenode'])
 
@@ -54,7 +54,7 @@ def install_zookeeper():
         subprocess.run(['tar', 'xf', version_zk + '.tar.gz', '-C', '/home/xnet'], check=True)
         subprocess.run(['mv', '/home/xnet/'+version_zk, '/home/xnet/hdfs_zk'])
         logging.info('Copying ZK (hdfs) configuration files')
-        subprocess.run('cp /home/xnet/hdfs/etc/zookeeper/* /home/xnet/hdfs_zk/conf', shell=True)
+        subprocess.run('cp /home/xnet/SDTD-Mazerunner/script/hdfs/etc/zookeeper/* /home/xnet/hdfs_zk/conf', shell=True)
         logging.info('Creating ZK (hdfs) dataDir')
         subprocess.run(['mkdir', '/home/xnet/hdfs_zk/tmp_data'])
         logging.info('Setting ZK (hdfs) service id')

@@ -14,7 +14,7 @@ def stop():
 
 def isDefaultNN():
 	config = configparser.ConfigParser()
-	config.read('/home/xnet/hdfs/conf.ini')
+	config.read('/home/xnet/SDTD-Mazerunner/script/hdfs/conf.ini')
 	return config.get('namenodes', 'default_host') in socket.gethostname()
 
 

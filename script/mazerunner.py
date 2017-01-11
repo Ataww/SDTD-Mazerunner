@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 import configparser
-import os
-import sys
 import logging
-import coloredlogs
+import os
 import subprocess
+import sys
 
 
 # Display error
@@ -52,6 +51,10 @@ def check_action():
         action = "STOP"
     elif "--restart" == sys.argv[1]:
         action = "RESTART"
+    elif "--update" == sys.argv[1]:
+        action = "UPDATE"
+    elif "--installenv" == sys.argv[1]:
+        action = "ENVIRONMENT"
     return action
 
 
@@ -91,6 +94,14 @@ def show_command():
     print("         python3 mazerunner.py --stop                (for all server)")
     print("         python3 mazerunner.py --stop <servername>   (for a specific server)")
     print("\n")
+    print("     " + lib.color.UNDERLINE + "Update file on server:\n" + lib.color.END)
+    print("         python3 mazerunner.py --update                (for all server)")
+    print("         python3 mazerunner.py --update <servername>   (for a specific server)")
+    print("\n")
+    print("     " + lib.color.UNDERLINE + "Define environment on server:\n" + lib.color.END)
+    print("         python3 mazerunner.py --installenv                (for all server)")
+    print("         python3 mazerunner.py --installenv <servername>   (for a specific server)")
+    print("\n")
     print(lib.color.BOLD + "SERVER NAME" + lib.color.END)
     print("     " + lib.color.UNDERLINE + "Spark server:\n" + lib.color.END)
     print("         spark-1")
@@ -119,12 +130,32 @@ def show_command():
 
 # launch commande in ssh
 def call_method(action, serverName):
-    ip = ""
-    directory = ""
 
     if serverName is not None:
         directory = serverName.split('-')[0]
         ip = lib.getIpServerName(config, serverName)
+    else:
+        if action == "START":
+            global_service.launch_component()
+        elif action == "STOP":
+            global_service.stop_component()
+        elif action == "RESTART":
+            global_service.stop_component()
+            global_service.launch_component()
+        elif action == "UPDATE":
+            global_service.update_all_server()
+        elif action == "REMOVE":
+            global_service.remove_all_server()
+        elif action == "INSTALL":
+            global_service.install_all_server()
+        elif action == "REINSTALL":
+            global_service.remove_all_server()
+            global_service.install_all_server()
+        elif action == "ENVIRONMENT":
+            global_service.install_basic_config()
+        else:
+            error_command("NOT YET IMPLEMENTED")
+        return
 
     if action == "INSTALL":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
@@ -144,18 +175,23 @@ def call_method(action, serverName):
     elif action == "START":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/launch_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./launch_' + directory + '.py'])
     elif action == "STOP":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/stop_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./stop_' + directory + '.py'])
     elif action == "RESTART":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/stop_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./stop_' + directory + '.py'])
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/launch_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./launch_' + directory + '.py'])
+    elif action == "UPDATE":
+        lib.updateFileServer(config=config, serverName=serverName)
+    elif action == "ENVIRONMENT":
+        subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                        'source ~/.profile; cd SDTD-Mazerunner/script/; ./install_config_machine.py'])
     else:
         error_command("NOT YET IMPLEMENTED")
 
@@ -164,14 +200,11 @@ def call_method(action, serverName):
 
 if __name__ == '__main__':
     os.sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    sys.modules["script"] = __import__('script')
-    __package__ = 'script'
-    from . import lib
+    from script.lib import lib, global_service
 
     config = configparser.ConfigParser()
     config.read("conf.ini")
-    os.environ["COLOREDLOGS_LOG_FORMAT"] = "[%(hostname)s] %(asctime)s - %(levelname)s - %(message)s"
-    coloredlogs.install(level='DEBUG')
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
     print(lib.color.BOLD + lib.color.GREEN + " /$$      /$$")
     print("| $$$    /$$$")
     print("| $$$$  /$$$$  /$$$$$$  /$$$$$$$$  /$$$$$$   /$$$$$$  /$$  /$$  /$$$$$$$  /$$$$$$$   /$$$$$$   /$$$$$$")
@@ -180,5 +213,6 @@ if __name__ == '__main__':
     print("| $$\  $ | $$ /$$__  $$  /$$__/  | $$_____/| $$      | $$ | $$ | $$  | $$| $$  | $$| $$_____/| $$")
     print("| $$ \/  | $$|  $$$$$$$ /$$$$$$$$| $$$$$$$ | $$      | $$$$$$ /| $$  | $$| $$  | $$|  $$$$$$$| $$")
     print(
-        "|__/     |__/ \_______/|________/ \_______/|__/       \______/ |__/  |__/|__/  |__/ \_______/|__/" + lib.color.END)
+        "|__/     |__/ \_______/|________/ \_______/|__/       \______/ |__/  |__/|__/  |__/ \_______/|__/"
+        + lib.color.END)
     launch_command()

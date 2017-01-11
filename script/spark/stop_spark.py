@@ -2,16 +2,16 @@
 
 import os
 import logging
-from . import lib_spark
+from lib_spark import isZookeeper, isMaster
 
 CODE_STOP = 0
 
 
 # Function for launch Spark
 def stop_environement_spark():
-    if lib_spark.isZookeeper():
+    if isZookeeper():
         stop_server_zookeeper()
-    if lib_spark.isMaster():
+    if isMaster():
         stop_master()
     else:
         stop_slave()
@@ -54,4 +54,6 @@ def stop_server_zookeeper():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
+
     stop_environement_spark()

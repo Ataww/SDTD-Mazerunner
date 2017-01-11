@@ -2,7 +2,7 @@
 
 import os
 import logging
-from . import lib_spark
+from lib_spark import isZookeeper, isMaster, getSparkMaster
 
 CODE_STARTING = 0
 CODE_ALREADY_RUN = 256
@@ -10,9 +10,9 @@ CODE_ALREADY_RUN = 256
 
 # Function for launch Spark
 def launch_spark():
-    if lib_spark.isZookeeper():
+    if isZookeeper():
         launch_server_zookeeper()
-    if lib_spark.isMaster():
+    if isMaster():
         launch_master()
     else:
         launch_slave()
@@ -35,7 +35,7 @@ def launch_master():
 # Function for launch slave
 def launch_slave():
     logging.info("Starting Spark Worker ...")
-    out = os.system('start-slave spark://' + lib_spark.getSparkMaster() + ' >> /dev/null 2>&1')
+    out = os.system('start-slave spark://' + getSparkMaster() + ' >> /dev/null 2>&1')
 
     if out == CODE_STARTING:
         logging.info("Spark slaves are launched [success]")
@@ -59,4 +59,6 @@ def launch_server_zookeeper():
     return
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
+
     launch_spark()
