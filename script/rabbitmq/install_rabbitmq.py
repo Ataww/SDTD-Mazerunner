@@ -68,7 +68,7 @@ def take_erlang_cookie(master) :
 def install_haproxy():
     subprocess.run(['sudo','apt-get','-qq','-y','install','haproxy'])
     subprocess.run(['mkdir','-p','/etc/haproxy'])
-    subprocess.run(['sudo','mv','SDTD_Mazerunner/script/rabbitmq/conf/haproxy.cfg','/etc/haproxy/'])
+    subprocess.run(['sudo','mv','/home/xnet/SDTD-Mazerunner/script/rabbitmq/conf/haproxy.cfg','/etc/haproxy/'])
 
     return
 
@@ -84,7 +84,7 @@ def configure_logger(debug):
 def install_rabbitmq():
     # Read configuration
     config = configparser.ConfigParser()
-    config.read("./rabbitmq/conf.ini")
+    config.read("conf.ini")
     masterHost = getHostsByKey(config, "Master")
     slaveHosts = config.get("Slaves", 'hosts').split(',')
     DEBUG = config.get("Log", "debug")
@@ -114,7 +114,7 @@ def install_rabbitmq():
 # Permit to know the hostname
 def get_hostname():
     config = configparser.ConfigParser()
-    config.read("./rabbitmq/conf.ini")
+    config.read("conf.ini")
     hosts = getHostsByKey(config, "Master")
     hostname = socket.gethostname()
 

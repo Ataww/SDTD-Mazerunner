@@ -90,7 +90,7 @@ def updateFileServer(config, serverName):
     else:
         logging.error("Compressing directory failed [error]")
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
-                          'rm -rf SDTD-Mazerunner/script/'])
+                          'sudo rm -rf SDTD-Mazerunner/script/'])
     out = subprocess.run(
         ['scp', '-pq', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', '/tmp/SDTD-Mazerunner-Script.tar.gz',
          'xnet@' + ip + ':~/'], check=True)
