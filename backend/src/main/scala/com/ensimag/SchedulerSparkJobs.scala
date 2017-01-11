@@ -14,9 +14,12 @@ object SchedulerSparkJobs {
 
 
   def launchScheduler(): Unit = {
-
-    JobSparkGraph.calculateNumberOfAirports(graph)
-    JobSparkGraph.calculateNumberOfRoutes(graph)
+    while(true) {
+      Thread.sleep(500)
+      println("New Job Launch")
+      JobSparkGraph.calculateNumberOfAirports(graph)
+      JobSparkGraph.calculateNumberOfRoutes(graph)
+    }
 
   }
 

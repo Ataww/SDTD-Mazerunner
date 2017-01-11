@@ -19,7 +19,7 @@ def install_web_site():
         logging.info("Compressing directory done [success]")
     else:
          logging.error("Compressing directory failed [error]")
-    out = subprocess.run(['scp', '-pq','-o','StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', '/tmp/SDTD-Mazerunner-Backend.tar.gz', 'xnet@'+host],check=True)
+    out = subprocess.run(['scp', '-pq','-o','StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', '/tmp/SDTD-Mazerunner-Backend.tar.gz', 'xnet@'+host+':'],check=True)
     if out.returncode == 0:
         logging.info("Transfer done [success]")
     else:
@@ -27,7 +27,7 @@ def install_web_site():
     subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host, 'sudo rm -rf SDTD-Mazerunner/backend/'])
     subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host, 'mkdir -p SDTD-Mazerunner/backend/'])
     logging.info("Detar file ...")
-    out = subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host, 'tar xzf SDTD-Mazerunner.tar.gz -C SDTD-Mazerunner/backend/'])
+    out = subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host, 'tar xzf SDTD-Mazerunner-Backend.tar.gz -C SDTD-Mazerunner/backend/'])
     if out.returncode == 0:
         logging.info("Decompressing directory done [success]")
     else:
