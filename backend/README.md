@@ -26,5 +26,9 @@ A réaliser à la racine de l'application
 1. Run 
 
     ```bash
-    $
+    # Pour envoyer les sources sur le serveurs
+    $ python3 deploy_application.py
+     
+    # Pour lancer le spark-submit (Vérifier que spark est lancer sur les serveurs)
+    $ python3 start_application.py
     ``` 
