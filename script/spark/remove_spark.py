@@ -4,12 +4,10 @@ import subprocess
 import os
 import logging
 
-spark_home = 'SPARK_HOME'
-spark_conf_dir = 'SPARK_CONF_DIR'
-
 
 def remove_directory_spark():
     logging.info("Remove All files installed")
+    os.system('stop-master >> /dev/null 2>&1')
     subprocess.run(['sudo', 'rm', '-rf', '/usr/lib/spark'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.run(['sudo', 'rm', '/sbin/stop-master'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.run(['sudo', 'rm', '/sbin/stop-slave'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
