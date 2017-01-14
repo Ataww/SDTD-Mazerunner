@@ -21,7 +21,7 @@ def launch_component():
             if hostIsUp(host):
                 logging.info("Launch component " + component + " on the machine with address " + host)
                 subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
-                                'source ~/.profile; cd SDTD-Mazerunner/script/'+component+'/; python3 launch_' + component + '.py'])
+                                'source ~/.profile; cd SDTD-Mazerunner/script/' + component + '/; python3 launch_' + component + '.py'])
             else:
                 logging.error("Impossible d'accéder à la machine " + host)
     return
@@ -40,10 +40,11 @@ def stop_component():
             if hostIsUp(host):
                 logging.info("Stop component " + component + " on the machine with address " + host)
                 subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
-                                'source ~/.profile; cd SDTD-Mazerunner/script/'+component+'/; python3 stop_' + component + '.py'])
+                                'source ~/.profile; cd SDTD-Mazerunner/script/' + component + '/; python3 stop_' + component + '.py'])
             else:
                 logging.error("Impossible d'accéder à la machine " + host)
     return
+
 
 # Function for update fill on all Machine
 def update_all_server():
@@ -62,6 +63,7 @@ def update_all_server():
                 logging.error("Impossible d'accéder à la machine " + host)
     return
 
+
 # Function for remove all service on all Machine
 def remove_all_server():
     print("############################################################")
@@ -75,16 +77,17 @@ def remove_all_server():
             if hostIsUp(host):
                 logging.info("Remove component " + component + " on the machine with address " + host)
                 subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
-                                'source ~/.profile; cd SDTD-Mazerunner/script/'+component+'/; python3 remove_' + component + '.py'])
+                                'source ~/.profile; cd SDTD-Mazerunner/script/' + component + '/; python3 remove_' + component + '.py'])
             else:
                 logging.error("Impossible d'accéder à la machine " + host)
     return
 
+
 # Function for install all service on all Machine
 def install_all_server():
-    print("############################################################")
+    print("#############################################################")
     print("######## install the different service on machines ##########")
-    print("############################################################")
+    print("#############################################################")
     config = configparser.ConfigParser()
     config.read("conf.ini")
     for component in components:
@@ -93,10 +96,11 @@ def install_all_server():
             if hostIsUp(host):
                 logging.info("Install component " + component + " on the machine with address " + host)
                 subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
-                                'source ~/.profile; cd SDTD-Mazerunner/script/'+component+'/; python3 install_' + component + '.py'])
+                                'source ~/.profile; cd SDTD-Mazerunner/script/' + component + '/; python3 install_' + component + '.py'])
             else:
                 logging.error("Impossible d'accéder à la machine " + host)
     return
+
 
 # Function for install basic config on all Machine
 def install_basic_config():
@@ -117,6 +121,41 @@ def install_basic_config():
     return
 
 
+# Install Cluster
+def install_cluster(service_name):
+    print("############################################################")
+    print("######               install cluster                ########")
+    print("############################################################")
+    config = configparser.ConfigParser()
+    config.read("conf.ini")
+    hosts = getHostsByKey(config, service_name)
+    for host in hosts:
+        if hostIsUp(host):
+            logging.info("Install service " + service_name + " on the machine with address " + host)
+            subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
+                            'source ~/.profile; cd SDTD-Mazerunner/script/' + service_name + '/; python3 install_' + service_name + '.py'])
+        else:
+            logging.error("Impossible d'accéder à la machine " + host)
+    return
+
+
+# Launch Cluster
+def launch_cluster(service_name):
+    print("############################################################")
+    print("######               launch cluster                #########")
+    print("############################################################")
+    config = configparser.ConfigParser()
+    config.read("conf.ini")
+    hosts = getHostsByKey(config, service_name)
+    for host in hosts:
+        if hostIsUp(host):
+            logging.info("Launch service " + service_name + " on the machine with address " + host)
+            subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
+                            'source ~/.profile; cd SDTD-Mazerunner/script/' + service_name + '/; python3 launch_' + service_name + '.py'])
+        else:
+            logging.error("Impossible d'accéder à la machine " + host)
+    return
+
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
@@ -127,11 +166,13 @@ def getHostsByKey(config, key):
         index += 1
     return hosts
 
+
 # Function for check host
 def hostIsUp(host):
     if os.system('ping -c 1 ' + host + ' >> /dev/null 2>&1'):
         return False
     return True
+
 
 # Function for update file on specific server
 def updateFileServer(ip):
@@ -143,7 +184,7 @@ def updateFileServer(ip):
     else:
         logging.error("Compressing directory failed [error]")
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
-                          'sudo rm -rf SDTD-Mazerunner/script/'])
+                    'sudo rm -rf SDTD-Mazerunner/script/'])
     out = subprocess.run(
         ['scp', '-pq', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', '/tmp/SDTD-Mazerunner-Script.tar.gz',
          'xnet@' + ip + ':~/'], check=True)
@@ -153,7 +194,7 @@ def updateFileServer(ip):
         logging.error("Transferring files failed [error]")
     logging.info("Detar file ...")
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
-                          'mkdir -p SDTD-Mazerunner/script'])
+                    'mkdir -p SDTD-Mazerunner/script'])
     out = subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
                           'tar xzf SDTD-Mazerunner-Script.tar.gz -C SDTD-Mazerunner/script'])
     if out.returncode == 0:
@@ -161,5 +202,5 @@ def updateFileServer(ip):
     else:
         logging.error("Decompressing directory failed [error]")
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
-                          'rm SDTD-Mazerunner-Script.tar.gz'])
+                    'rm SDTD-Mazerunner-Script.tar.gz'])
     return
