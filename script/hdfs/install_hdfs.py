@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import subprocess, os, sys, logging, configparser, socket
+
+from subprocess import run
+from logging import info
 from os.path import exists
 
 
@@ -19,50 +22,57 @@ conf_dir_export = "export HADOOP_CONF_DIR=" + conf_dir
 def install_hdfs():
     """Install hadoop et set it up"""
     if not exists('/home/xnet/'+version):
-        logging.info('Downloading hadoop')
-        subprocess.run(['wget', '-q', '-nc', distrib], check=True)
-        logging.info('Uncompressing to /home/xnet')
-        subprocess.run(['tar', 'xf', version + '.tar.gz', '-C', '/home/xnet'], check=True)
-        logging.info('Setting environment variables')
+        info('Downloading hadoop')
+        run(['wget', '-q', '-nc', distrib], check=True)
+
+        info('Uncompressing to /home/xnet')
+        run(['tar', 'xf', version + '.tar.gz', '-C', '/home/xnet'], check=True)
+
+        info('Setting environment variables')
         with open(os.path.expanduser('~/.profile'), 'r+') as proFile:
             if conf_dir_export not in proFile.read():
-                subprocess.run(['echo', conf_dir_export], stdout=proFile, check=True)
-                subprocess.run(['echo', 'export HADOOP_PREFIX=' + hadoop_prefix], stdout=proFile, check=True)
+                run(['echo', conf_dir_export], stdout=proFile, check=True)
+                run(['echo', 'export HADOOP_PREFIX=' + hadoop_prefix], stdout=proFile, check=True)
 
 
-        logging.info('Copying HDFS configuration files')
+        info('Copying HDFS configuration files')
         # files to copy should be somewhere with the installation script
         # for now it uses a local repo
-        subprocess.run('cp /home/xnet/SDTD-Mazerunner/script/hdfs/etc/hadoop/* ' + hadoop_prefix + '/etc/hadoop', shell=True)
+        run('cp /home/xnet/SDTD-Mazerunner/script/hdfs/etc/hadoop/* ' + hadoop_prefix + '/etc/hadoop', shell=True)
 
-        subprocess.run(['mkdir', '-p', '/home/xnet/'+version+'/data/namenode'])
+        run(['mkdir', '-p', '/home/xnet/'+version+'/data/namenode'])
 
         #Remove any previous tmp files
-        logging.info('Removing any previous tmp files')
-        subprocess.run('rm -rf /tmp/hadoop-xnet', shell=True)
+        info('Removing any previous tmp files')
+        run('rm -rf /tmp/hadoop-xnet', shell=True)
 
-        logging.info('Starting journalnode')
-        subprocess.run(['/home/xnet/'+version+'/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
+        info('Starting journalnode')
+        run(['/home/xnet/'+version+'/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
 
 
 def install_zookeeper():
     """Install zookeeper"""
     if not exists('/home/xnet/hdfs_zk'):
-        logging.info('Downloading ZK (hdfs)')
-        subprocess.run(['wget', '-q', '-nc', distrib_zk], check=True)
-        logging.info('Uncompressing to /home/xnet')
-        subprocess.run(['tar', 'xf', version_zk + '.tar.gz', '-C', '/home/xnet'], check=True)
-        subprocess.run(['mv', '/home/xnet/'+version_zk, '/home/xnet/hdfs_zk'])
-        logging.info('Copying ZK (hdfs) configuration files')
-        subprocess.run('cp /home/xnet/SDTD-Mazerunner/script/hdfs/etc/zookeeper/* /home/xnet/hdfs_zk/conf', shell=True)
-        logging.info('Creating ZK (hdfs) dataDir')
-        subprocess.run(['mkdir', '/home/xnet/hdfs_zk/tmp_data'])
-        logging.info('Setting ZK (hdfs) service id')
+        info('Downloading ZK (hdfs)')
+        run(['wget', '-q', '-nc', distrib_zk], check=True)
+
+        info('Uncompressing to /home/xnet')
+        run(['tar', 'xf', version_zk + '.tar.gz', '-C', '/home/xnet'], check=True)
+        run(['mv', '/home/xnet/'+version_zk, '/home/xnet/hdfs_zk'])
+
+        info('Copying ZK (hdfs) configuration files')
+        run('cp /home/xnet/SDTD-Mazerunner/script/hdfs/etc/zookeeper/* /home/xnet/hdfs_zk/conf', shell=True)
+
+        info('Creating ZK (hdfs) dataDir')
+        run(['mkdir', '/home/xnet/hdfs_zk/tmp_data'])
+
+        info('Setting ZK (hdfs) service id')
         with open('/home/xnet/hdfs_zk/tmp_data/myid', 'w') as myidFile:
             # get ZK server id based on the hostname (for instance spark-1-hdfs-1 is 1)
-            subprocess.run(['echo', socket.gethostname()[-1]], stdout=myidFile, check=True)
-        logging.info('Starting ZKQ server')
-        subprocess.run(['/home/xnet/hdfs_zk/bin/zkServer.sh', 'start'], check=True)
+            run(['echo', socket.gethostname()[-1]], stdout=myidFile, check=True)
+
+        info('Starting ZKQ server')
+        run(['/home/xnet/hdfs_zk/bin/zkServer.sh', 'start'], check=True)
 
 
 
@@ -71,12 +81,12 @@ def conf_monit(service):
     if not exists('/etc/monit'):
         logging.error('monit is not installed')
     else:
-        logging.info('Copying monit config files for'+service)
+        info('Copying monit config files for'+service)
         os.system('sudo cp /home/xnet/hdfs/etc/monit/'+service+' /etc/monit/conf.d/')
         os.system('sudo monit reload')
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
+    logging.basicConfig(level=info,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_hdfs()
     install_zookeeper()
