@@ -65,6 +65,17 @@ def install_zookeeper():
         subprocess.run(['/home/xnet/hdfs_zk/bin/zkServer.sh', 'start'], check=True)
 
 
+
+def conf_monit(service):
+    """Copy monit config files for service"""
+    if not exists('/etc/monit'):
+        logging.error('monit is not installed')
+    else:
+        logging.info('Copying monit config files for'+service)
+        os.system('sudo cp /home/xnet/hdfs/etc/monit/'+service+' /etc/monit/conf.d/')
+        os.system('sudo monit reload')
+
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_hdfs()
