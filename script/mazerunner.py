@@ -24,7 +24,7 @@ def launch_command():
         if action == "":
             error_command(msg="Not valid action to execute : " + sys.argv[1])
         elif 3 == len(sys.argv):
-            if check_server():
+            if "cluster" in sys.argv[1] or check_server():
                 call_method(action=action, serverName=sys.argv[2])
             else:
                 error_command(msg=sys.argv[2] + " It is not a valid server name")
@@ -55,6 +55,10 @@ def check_action():
         action = "UPDATE"
     elif "--installenv" == sys.argv[1]:
         action = "ENVIRONMENT"
+    elif "--clusterinst" == sys.argv[1]:
+        action = "INSTALL_CLUSTER"
+    elif "--clusterstart" == sys.argv[1]:
+        action = "LAUNCH_CLUSTER"
     return action
 
 
@@ -71,36 +75,48 @@ def show_command():
     print("\n")
     print(lib.color.BOLD + "DESCRIPTION" + lib.color.END)
     print("     " + lib.color.UNDERLINE + "Install service on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --install                (for all server)")
-    print("         python3 mazerunner.py --install <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --install                     (for all server)")
+    print("         python3 mazerunner.py --install <server_name>       (for a specific server)")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Reinstall service on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --reinstall                (for all server)")
-    print("         python3 mazerunner.py --reinstall <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --reinstall                   (for all server)")
+    print("         python3 mazerunner.py --reinstall <server_name>     (for a specific server)")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Delete service on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --remove                (for all server)")
-    print("         python3 mazerunner.py --remove <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --remove                      (for all server)")
+    print("         python3 mazerunner.py --remove <server_name>        (for a specific server)")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Launch service on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --start                (for all server)")
-    print("         python3 mazerunner.py --start <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --start                       (for all server)")
+    print("         python3 mazerunner.py --start <server_name>         (for a specific server)")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Restart service on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --restart                (for all server)")
-    print("         python3 mazerunner.py --restart <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --restart                     (for all server)")
+    print("         python3 mazerunner.py --restart <server_name>       (for a specific server)")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Stop service on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --stop                (for all server)")
-    print("         python3 mazerunner.py --stop <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --stop                        (for all server)")
+    print("         python3 mazerunner.py --stop <server_name>          (for a specific server)")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Update file on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --update                (for all server)")
-    print("         python3 mazerunner.py --update <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --update                      (for all server)")
+    print("         python3 mazerunner.py --update <server_name>        (for a specific server)")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Define environment on server:\n" + lib.color.END)
-    print("         python3 mazerunner.py --installenv                (for all server)")
-    print("         python3 mazerunner.py --installenv <servername>   (for a specific server)")
+    print("         python3 mazerunner.py --installenv                  (for all server)")
+    print("         python3 mazerunner.py --installenv <server_name>    (for a specific server)")
+    print("\n")
+    print("     " + lib.color.UNDERLINE + "Install cluster :\n" + lib.color.END)
+    print("         python3 mazerunner.py --clusterinst                 <service_name>")
+    print("\n")
+    print("     " + lib.color.UNDERLINE + "Launch cluster :\n" + lib.color.END)
+    print("         python3 mazerunner.py --clusterstart                <service_name>")
+    print("\n")
+    print(lib.color.BOLD + "SERVICE NAME\n" + lib.color.END)
+    print("         spark")
+    print("         hdfs")
+    print("         neo4j")
+    print("         rabbitmq")
     print("\n")
     print(lib.color.BOLD + "SERVER NAME" + lib.color.END)
     print("     " + lib.color.UNDERLINE + "Spark server:\n" + lib.color.END)
@@ -130,7 +146,6 @@ def show_command():
 
 # launch commande in ssh
 def call_method(action, serverName):
-
     if serverName is not None:
         directory = serverName.split('-')[0]
         ip = lib.getIpServerName(config, serverName)
@@ -160,38 +175,42 @@ def call_method(action, serverName):
     if action == "INSTALL":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/install_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 install_' + directory + '.py'])
     elif action == "REINSTALL":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/remove_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 remove_' + directory + '.py'])
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/install_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 install_' + directory + '.py'])
     elif action == "REMOVE":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/remove_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 remove_' + directory + '.py'])
     elif action == "START":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./launch_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 launch_' + directory + '.py'])
     elif action == "STOP":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./stop_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 stop_' + directory + '.py'])
     elif action == "RESTART":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./stop_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 stop_' + directory + '.py'])
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./launch_' + directory + '.py'])
-    elif action == "UPDATE":
-        lib.updateFileServer(config=config, serverName=serverName)
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 launch_' + directory + '.py'])
     elif action == "ENVIRONMENT":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/; ./install_config_machine.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/; python3 install_config_machine.py'])
+    elif action == "UPDATE":
+        lib.updateFileServer(config=config, serverName=serverName)
+    elif action == "INSTALL_CLUSTER":
+        global_service.install_cluster(service_name=serverName)
+    elif action == "LAUNCH_CLUSTER":
+        global_service.launch_cluster(service_name=serverName)
     else:
         error_command("NOT YET IMPLEMENTED")
 
