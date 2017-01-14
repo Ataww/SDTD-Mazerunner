@@ -160,38 +160,38 @@ def call_method(action, serverName):
     if action == "INSTALL":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/install_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 install_' + directory + '.py'])
     elif action == "REINSTALL":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/remove_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 remove_' + directory + '.py'])
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/install_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 install_' + directory + '.py'])
     elif action == "REMOVE":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; ./' + directory + '/remove_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 remove_' + directory + '.py'])
     elif action == "START":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./launch_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 launch_' + directory + '.py'])
     elif action == "STOP":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./stop_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 stop_' + directory + '.py'])
     elif action == "RESTART":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./stop_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 stop_' + directory + '.py'])
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                         'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; ./launch_' + directory + '.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/' + directory + '; python3 launch_' + directory + '.py'])
     elif action == "UPDATE":
         lib.updateFileServer(config=config, serverName=serverName)
     elif action == "ENVIRONMENT":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/; ./install_config_machine.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/; python3 install_config_machine.py'])
     else:
         error_command("NOT YET IMPLEMENTED")
 
