@@ -132,3 +132,4 @@ if __name__ == '__main__':
     install_python()
     install_java()
     install_pika()
+    install_monit()
