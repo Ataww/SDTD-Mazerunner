@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-import logging, sys, subprocess, configparser, socket
+import logging, sys, configparser, socket
+from subprocess import run
+from logging import info
 
-
-home='/home/xnet'
-hadoop_dir=home+'/hadoop-2.7.3'
+home		= '/home/xnet'
+hadoop_dir	= home + '/hadoop-2.7.3'
 
 
 def stop():
-	logging.info('Stopping HDFS cluster')
-	subprocess.run([hadoop_dir+'/sbin/stop-dfs.sh'], check=True)
+	info('Stopping HDFS cluster')
+	run([hadoop_dir+'/sbin/stop-dfs.sh'], check=True)
 
 
 def isDefaultNN():

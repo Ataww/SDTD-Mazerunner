@@ -4,8 +4,8 @@ import logging, sys, configparser, socket
 from subprocess import run
 from logging import info
 
-home='/home/xnet'
-hadoop_dir=home+'/hadoop-2.7.3'
+home 		= '/home/xnet'
+hadoop_dir 	= home + '/hadoop-2.7.3'
 
 
 
@@ -41,7 +41,7 @@ def isActiveNN():
 
 
 if __name__ == '__main__':
-	logging.basicConfig(level=info, format="%(asctime)s :: %(levelname)s :: %(message)s")
+	logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
 	if isActiveNN():
 		format()
