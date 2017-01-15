@@ -75,14 +75,20 @@ def install_zookeeper():
         run([zookeeper_dir + '/bin/zkServer.sh', 'start'], check=True)
 
 
-
-def conf_monit(service):
+def conf_monit():
     """Copy monit config files for service"""
+    hostname = socket.gethostname()
+    config = configparser.ConfigParser()
+    config.read(setup_dir + '/conf.ini')
+
     if not exists('/etc/monit'):
         logging.error('monit is not installed')
     else:
-        info('Copying monit config files for'+service)
-        os.system('sudo cp ' + setup_dir + '/etc/monit/' + service + ' /etc/monit/conf.d/')
+        for service in config.sections():
+            for service_host in config[service]['hosts'].split(','):
+                if service_host in hostname:
+                    info('Copying monit config files for ' + service + ' on host ' + hostname)
+                    os.system('sudo cp ' + setup_dir + '/etc/monit/' + service + ' /etc/monit/conf.d/')
         os.system('sudo monit reload')
 
 
@@ -90,3 +96,4 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO ,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_hdfs()
     install_zookeeper()
+    conf_monit()
