@@ -55,7 +55,7 @@ def install_pika():
 
 # Function for define the hostname
 def define_hostname():
-    components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
+    components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper']
     current_ip = lib.getIp()
     hostname = ''
 

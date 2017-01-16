@@ -10,9 +10,6 @@ from os.path import exists
 version = 'hadoop-2.7.3'
 distrib = 'http://apache.crihan.fr/dist/hadoop/common/'+version+'/'+version+'.tar.gz'
 
-version_zk = 'zookeeper-3.4.9'
-distrib_zk = 'http://apache.crihan.fr/dist/zookeeper/'+version_zk+'/'+version_zk+'.tar.gz'
-
 home            = '/home/xnet'
 
 setup_dir       = home + '/hdfs' # contains the installation scripts and etc
@@ -50,32 +47,7 @@ def install_hdfs():
         run([hadoop_dir + '/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
 
 
-def install_zookeeper():
-    """Install zookeeper"""
-    if not exists(zookeeper_dir):
-        info('Downloading ZK (hdfs)')
-        run(['wget', '-q', '-nc', distrib_zk], check=True)
-
-        info('Uncompressing to /home/xnet')
-        run(['tar', 'xf', version_zk + '.tar.gz', '-C', home], check=True)
-        run(['mv', home + '/' + version_zk, zookeeper_dir])
-
-        info('Copying ZK (hdfs) configuration files')
-        run('cp ' + setup_dir + '/etc/zookeeper/* ' + zookeeper_dir + '/conf', shell=True)
-
-        info('Creating ZK (hdfs) dataDir')
-        run(['mkdir', zookeeper_dir + '/tmp_data'])
-
-        info('Setting ZK (hdfs) service id')
-        with open( zookeeper_dir + '/tmp_data/myid', 'w') as myidFile:
-            # get ZK server id based on the hostname (for instance spark-1-hdfs-1 is 1)
-            run(['echo', socket.gethostname()[-1]], stdout=myidFile, check=True)
-
-        info('Starting ZKQ server')
-        run([zookeeper_dir + '/bin/zkServer.sh', 'start'], check=True)
-
-
-def conf_monit():
+def conf_monit(service):
     """Copy monit config files for service"""
     hostname = socket.gethostname()
     config = configparser.ConfigParser()
@@ -95,5 +67,4 @@ def conf_monit():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO ,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_hdfs()
-    install_zookeeper()
     conf_monit()
