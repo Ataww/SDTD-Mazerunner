@@ -1,0 +1,3 @@
+check process namenode with pidfile /tmp/hadoop-xnet-namenode.pid
+	start = "/bin/bash /home/xnet/hadoop-2.7.3/sbin/hadoop-daemon.sh start namenode"
+	stop = "/bin/bash /home/xnet/hadoop-2.7.3/sbin/hadoop-daemin.sh stop namenode"

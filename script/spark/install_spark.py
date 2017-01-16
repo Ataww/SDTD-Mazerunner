@@ -48,15 +48,8 @@ def install_spark():
         subprocess.run(['sudo', 'chmod', '777', '-R', '/usr/lib/spark/' + spark_version + '/logs'])
         subprocess.run(['sudo', 'mkdir', '/usr/lib/spark/' + spark_version + '/work'])
         subprocess.run(['sudo', 'chmod', '777', '-R', '/usr/lib/spark/' + spark_version + '/work'])
-        with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-env.sh'), 'a') as sparkEnv:
-            subprocess.run(['echo', 'export SPARK_MASTER_HOST="' + get_hostname() + '"'], stdout=sparkEnv,
-                           check=True)
         setSparkDaemonOpts()
         setSparkDefaultsConf()
-        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-env.sh',
-                        '/usr/lib/spark/' + spark_version + '/conf/spark-env.sh'])
-        subprocess.run(['sudo', 'cp', '/home/xnet/spark/conf/spark-defaults.conf',
-                        '/usr/lib/spark/' + spark_version + '/conf/spark-defaults.conf'])
         SPARK_STATUS = os.popen('stop-master 2>&1 ', "r").read()
         if 'not found' not in SPARK_STATUS:
             logging.info("Spark installed [success]")
@@ -92,8 +85,6 @@ def install_zookeeper():
         logging.info("Zookeeper configuration")
         set_server_value_zookeeper()
         define_id_zookeeper()
-        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/zoo.cfg',
-                        '/usr/lib/zookeeper/' + zookeeper_version + '/conf/zoo.cfg'])
         # ZOOKEEPER_STATUS = os.popen('zkServer.sh status 2>&1 ', "r").read()
         # if 'not found' in ZOOKEEPER_STATUS:
         #    logging.info(" Zookeeper is installed with [success]")
@@ -108,21 +99,24 @@ def set_server_value_zookeeper():
     port_com_leader = 2888
     port_elec_leader = 3888
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
+    config.read("conf.ini")
     hosts = getHostsByKey(config, "Zookeeper")
 
-    with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/zoo.cfg'), 'a') as confFile:
-        for host in hosts:
-            subprocess.run(['echo', 'server.' + str(index) + '=' + host + ':' + str(port_com_leader) + ':' + str(
-                port_elec_leader)], stdout=confFile, check=True)
-            index += 1
+    subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-defaults.conf',
+                    '/usr/lib/zookeeper/' + zookeeper_version + '/conf/zoo.cfg'])
+
+    for host in hosts:
+        os.system('echo server.' + str(index) + '=' + host + ':' + str(port_com_leader) + ':' + str(
+            port_elec_leader) + ' | sudo tee -a /usr/lib/zookeeper/' + zookeeper_version + '/conf/zoo.cfg >> /dev/null 2>&1')
+
+        index += 1
     return
 
 
 def define_id_zookeeper():
     id = 1
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
+    config.read("conf.ini")
     hosts = getHostsByKey(config, "Zookeeper")
     hostname = socket.gethostname()
     subprocess.run(['mkdir', '/usr/lib/zookeeper/' + zookeeper_version + '/tmp/'])
@@ -140,7 +134,7 @@ def setSparkDaemonOpts():
     isFirst = True
     export = 'export SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url='
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
+    config.read("conf.ini")
     hosts = getHostsByKey(config, "Zookeeper")
     for host in hosts:
         if isFirst:
@@ -150,8 +144,14 @@ def setSparkDaemonOpts():
             export += ',' + host + ':' + str(port)
 
     export += ' -Dspark.deploy.zookeeper.dir=/usr/lib/zookeeper/zookeeper-3.4.9/tmp"'
-    with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-env.sh'), 'a') as sparkEnv:
-        subprocess.run(['echo', export], stdout=sparkEnv, check=True)
+
+    subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-env.sh',
+                    '/usr/lib/spark/' + spark_version + '/conf/spark-env.sh'])
+
+    os.system(
+        'echo \'export SPARK_MASTER_HOST="' + get_hostname() + '"\' | sudo tee -a /usr/lib/spark/' + spark_version + '/conf/spark-env.sh >> /dev/null 2>&1')
+    os.system(
+        'echo \'' + export + '\' | sudo tee -a /usr/lib/spark/' + spark_version + '/conf/spark-env.sh >> /dev/null 2>&1')
 
     return
 
@@ -161,7 +161,7 @@ def setSparkDefaultsConf():
     isFirst = True
     export = 'spark.master                     spark://'
     config = configparser.ConfigParser()
-    config.read("./spark/conf.ini")
+    config.read("conf.ini")
     hosts = getHostsByKey(config, "Master")
     for host in hosts:
         if isFirst:
@@ -170,10 +170,13 @@ def setSparkDefaultsConf():
         else:
             export += ',' + host + ':' + str(port)
 
-    with open(os.path.expanduser('/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-defaults.conf'), 'a') as sparkEnv:
-        subprocess.run(['echo', export], stdout=sparkEnv, check=True)
+    subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-defaults.conf',
+                    '/usr/lib/spark/' + spark_version + '/conf/spark-defaults.conf'])
+    os.system(
+        'echo ' + export + ' | sudo tee -a /usr/lib/spark/' + spark_version + '/conf/spark-defaults.conf >> /dev/null 2>&1')
 
     return
+
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
@@ -184,6 +187,7 @@ def getHostsByKey(config, key):
         index += 1
     return hosts
 
+
 # Check if String il already present in the file
 def isAlreadyAdd(pathFile, string):
     file = open(pathFile)
@@ -192,7 +196,10 @@ def isAlreadyAdd(pathFile, string):
             return True
     return False
 
+
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
+
     install_spark()
     if isZookeeper():
         install_zookeeper()

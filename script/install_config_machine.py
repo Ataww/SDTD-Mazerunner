@@ -102,6 +102,23 @@ def define_know_host():
     os.system('ssh-keyscan -t rsa 0.0.0.0 >> ~/.ssh/known_hosts 2>&1')
 
 
+def install_monit():
+    '''Ensures monit is installed'''
+    if os.system('which monit'):
+        logging.info('Installing monit')
+        if os.system('sudo apt-get -qq -y install monit >> /dev/null 2>&1'):
+            logging.error('monit installation failed [error]')
+        else:
+            logging.info('monit installed [success]')
+
+        # cfg bit for monit web interface
+        monit_httpd_conf='set httpd port 2812 and allow admin:admin'
+
+        os.system('echo '+monit_httpd_conf+' | sudo tee --append /etc/monit/monitrc > /dev/null')
+
+        os.system('sudo monit reload')
+
+
 if __name__ == '__main__':
     os.sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from script.lib import lib
@@ -115,3 +132,4 @@ if __name__ == '__main__':
     install_python()
     install_java()
     install_pika()
+    install_monit()
