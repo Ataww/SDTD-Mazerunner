@@ -41,6 +41,10 @@ def config_neo4j():
     if hostnumber == '1':
         subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-1.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
+        logging.info("Importing database on neo4j-1...")
+        subprocess.run(['sudo', 'rm', '-rf', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/graph.db'])
+        subprocess.run(['sudo', 'mkdir', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db'])
+        subprocess.run(['sudo', '/usr/lib/neo4j/'+neo4j_path+'/bin/neo4j-import', '--into', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db', '--nodes', 'data/utilisateurs.csv', '--nodes', 'data/titres.csv', '--relationships', 'data/gout.csv'])
     elif hostnumber == '2':
         subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-2.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
@@ -48,7 +52,6 @@ def config_neo4j():
         subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-3.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
     return
-
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
