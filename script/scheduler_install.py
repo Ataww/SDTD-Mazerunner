@@ -54,14 +54,13 @@ def check_function(name_service, key_name, host):
 
 # Function who check zookeeper
 def check_zookeeper(zookeeper_host):
-    zookeeper_host = "149.202.161.176"
 
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + zookeeper_host,
                           'source ~/.profile; zkServer.sh status;'],
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    if "follower" in p.stdout.read().decode("utf-8").strip(' \n') or "leader" in p.stdout.read().decode(
-            "utf-8").strip(' \n'):
+    out = p.stdout.read().decode("utf-8").strip(' \n')
+    if "follower" in out or "leader" in out:
         logging.info("On machine " + zookeeper_host + " Zookeeper Running")
         return True
     else:
@@ -71,7 +70,6 @@ def check_zookeeper(zookeeper_host):
 
 # Function who check spark master
 def check_spark_master(spark_master_host):
-    spark_master_host = "149.202.161.176"
 
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + spark_master_host,
@@ -87,7 +85,6 @@ def check_spark_master(spark_master_host):
 
 # Function who check spark worker
 def check_spark_worker(spark_worker_host):
-    spark_worker_host = "149.202.170.208"
 
     p1 = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                            'xnet@' + spark_worker_host,
@@ -113,7 +110,6 @@ def check_hdfs(hdfs_host):
 
 # Function who check haproxy
 def check_haproxy(haproxy_host):
-    haproxy_host = "149.202.161.167"
 
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + haproxy_host,
@@ -129,7 +125,6 @@ def check_haproxy(haproxy_host):
 
 # Function who check rabbitmq
 def check_rabbitmq(rabbitmq_host):
-    rabbitmq_host = "149.202.161.167"
 
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + rabbitmq_host,
@@ -146,7 +141,6 @@ def check_rabbitmq(rabbitmq_host):
 
 # Function who check neo4j
 def check_neo4j(neo4j_host):
-    neo4j_host = "149.202.170.185"
 
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + neo4j_host,
