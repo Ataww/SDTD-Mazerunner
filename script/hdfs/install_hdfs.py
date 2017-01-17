@@ -32,7 +32,7 @@ def install_hdfs():
         with open(home + '/.profile', 'r+') as proFile:
             if "HADOOP_CONF_DIR" not in proFile.read():
                 run(['echo', "export HADOOP_CONF_DIR=" + conf_dir], stdout=proFile, check=True)
-                run(['echo', 'export HADOOP_PREFIX=' + hadoop_prefix], stdout=proFile, check=True)
+                run(['echo', 'export HADOOP_PREFIX=' + hadoop_dir], stdout=proFile, check=True)
 
         info('Copying HDFS configuration files')
         run('cp ' + setup_dir + '/etc/hadoop/* ' + hadoop_dir + '/etc/hadoop', shell=True)

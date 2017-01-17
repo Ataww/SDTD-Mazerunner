@@ -25,27 +25,31 @@ def global_check():
             if "Log" not in key:
                 hosts = lib_spark.getHostsByKey(config=config, key=key)
                 for host in hosts:
-
-                    if "zookeeper" in service:
-                        result = check_zookeeper(zookeeper_host=host)
-                    elif "spark" in service:
-                        if "Master" in key:
-                            result = check_spark_master(spark_master_host=host)
-                        elif "Slaves" in key:
-                            result = check_spark_worker(spark_worker_host=host)
-                    elif "rabbitmq" in service:
-                        if "Master" in key or "Slaves" in key:
-                            result = check_rabbitmq(rabbitmq_host=host)
-                    elif "neo4j" in service:
-                        if "Master" in key or "Slaves" in key:
-                            result = check_neo4j(neo4j_host=host)
-                    elif "hdfs" in service and "DataNode" in key:
-                        result = check_hdfs(hdfs_host=host)
+                    result = check_function(name_service=service, key_name=key, host=host)
 
                     if not result:
-                        restart(host=host, service=service)
+                        restart(host=host, service=service, key=key)
     logging.info("Finish to check all service")
     return
+
+
+def check_function(name_service, key_name, host):
+    if "zookeeper" in name_service:
+        result = check_zookeeper(zookeeper_host=host)
+    elif "spark" in name_service:
+        if "Master" in key_name:
+            result = check_spark_master(spark_master_host=host)
+        elif "Slaves" in key_name:
+            result = check_spark_worker(spark_worker_host=host)
+    elif "rabbitmq" in name_service:
+        if "Master" in key_name or "Slaves" in key_name:
+            result = check_rabbitmq(rabbitmq_host=host)
+    elif "neo4j" in name_service:
+        if "Master" in key_name or "Slaves" in key_name:
+            result = check_neo4j(neo4j_host=host)
+    elif "hdfs" in name_service and "DataNode" in key_name:
+        result = check_hdfs(hdfs_host=host)
+    return result
 
 
 # Function who check zookeeper
@@ -157,7 +161,7 @@ def check_neo4j(neo4j_host):
         return False
 
 
-def restart(host, service):
+def restart(host, service, key):
     logging.info("On machine " + host + " try to start service " + service)
     # call for stop the service
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
@@ -169,6 +173,14 @@ def restart(host, service):
                     'xnet@' + host,
                     'source ~/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 launch_' + service + '.py;'],
                    stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+
+    result = check_function(name_service=service, key_name=key, host=host)
+
+    if result:
+        logging.info("On machine " + host + " restart service " + service + " [success]")
+    else:
+        logging.info("On machine " + host + " impossible to restart service " + service + "[error]")
+
     return
 
 
