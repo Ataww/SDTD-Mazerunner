@@ -5,6 +5,7 @@ import subprocess
 import configparser
 import os
 
+
 # Function for copy the different script on the different machine
 def install_web_site():
     print("#############################################################")
@@ -13,27 +14,42 @@ def install_web_site():
     logging.info("Start to transfert file ...")
     config = configparser.ConfigParser()
     config.read("conf.ini")
-    host = getHostsByKey(config,'application')[0]
-    out = subprocess.run(['tar','czf','/tmp/SDTD-Mazerunner-Backend.tar.gz','.'],cwd=os.getcwd().replace("/script",""),stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
+    host = getHostsByKey(config, 'application')[0]
+    out = subprocess.run(['tar', 'czf', '/tmp/SDTD-Mazerunner-Backend.tar.gz', '.'],
+                         cwd=os.getcwd().replace("/script", ""), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         check=True)
     if out.returncode == 0:
         logging.info("Compressing directory done [success]")
     else:
-         logging.error("Compressing directory failed [error]")
-    out = subprocess.run(['scp', '-pq','-o','StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), '/tmp/SDTD-Mazerunner-Backend.tar.gz', 'xnet@'+host+':'],check=True)
+        logging.error("Compressing directory failed [error]")
+    out = subprocess.run(
+        ['scp', '-pq', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), '/tmp/SDTD-Mazerunner-Backend.tar.gz',
+         'xnet@' + host + ':'], check=True)
     if out.returncode == 0:
         logging.info("Transfer done [success]")
     else:
         logging.error("Transferring files failed [error]")
-    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@'+host, 'sudo rm -rf SDTD-Mazerunner/backend/'])
-    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@'+host, 'mkdir -p SDTD-Mazerunner/backend/'])
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
+                    'sudo rm -rf SDTD-Mazerunner/backend/'])
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
+                    'mkdir -p SDTD-Mazerunner/backend/'])
     logging.info("Detar file ...")
-    out = subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@'+host, 'tar xzf SDTD-Mazerunner-Backend.tar.gz -C SDTD-Mazerunner/backend/'])
+    out = subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
+                          'tar xzf SDTD-Mazerunner-Backend.tar.gz -C SDTD-Mazerunner/backend/'])
     if out.returncode == 0:
         logging.info("Decompressing directory done [success]")
     else:
         logging.error("Decompressing directory failed [error]")
-    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@'+host, 'python3 SDTD-Mazerunner/backend/script/install_environment.py'])
+
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host, 'rm -rf jar/'],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
+                    'cp -R SDTD-Mazerunner/backend/jar /home/xnet/'], stdout=subprocess.DEVNULL,
+                   stderr=subprocess.DEVNULL)
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
+                    'python3 SDTD-Mazerunner/backend/script/install_environment.py'])
     return
+
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
@@ -44,6 +60,7 @@ def getHostsByKey(config, key):
         index += 1
     return hosts
 
+
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_web_site()

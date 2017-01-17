@@ -1,0 +1,27 @@
+<h1>The more songs you like, the more recommandations you get!</h1>
+{{#each songs as song}}
+   <div class="song">
+     <h2>{{song.artiste}} - {{song.nomChanson}}</h2>
+     <button class="like" onclick="onLike({{user}}, {{song.idTitre}}, this)">J'aime !</button>
+     <button class="dislike" onclick="onDislike({{user}}, {{song.idTitre}}, this)">Bof...</button>
+   </div>
+ {{/each}}
+
+ <script>
+
+function onLike(userId, id, elem) {
+  console.log(elem);
+  $.post('/like?id='+id+'&user='+userId, null, function(resp) {
+    elem.parent.style.display=none;
+  });
+}
+
+function onDislike(userId, id, elem) {
+  console.log(elem);
+  $.post('/dislike?id='+id+'&user='+name, null, function(resp) {
+    elem.parent.style.display=none;
+  });
+
+}
+
+</script>
