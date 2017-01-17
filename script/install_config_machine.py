@@ -121,18 +121,14 @@ def install_monit():
         os.system('sudo monit reload >> /dev/null 2>&1')
 
 
-def install_flask():
-    p = subprocess.Popen(['pip3', '-V'],
-                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    if "pip 8.1.1" not in p.stdout.read().decode("utf-8").strip(' \n'):
-        logging.info('Installing pip3')
-        os.system("sudo apt -qq -y install python3-pip >> /dev/null 2>&1")
-        p = subprocess.Popen(['pip3', 'list'],
-                             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+def install_pip3():
+    logging.info('Installing pip3')
+    os.system("sudo apt-get install -qq -y python3-pip >> /dev/null 2>&1")
 
-        if "Flask" not in p.stdout.read().decode("utf-8").strip(' \n'):
-            logging.info('Installing Flask')
-            subprocess.run(['pip3', 'install', 'flask'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def install_flask():
+    logging.info('Installing Flask')
+    subprocess.run(['pip3', 'install', 'flask'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 if __name__ == '__main__':
@@ -149,4 +145,5 @@ if __name__ == '__main__':
     install_java()
     install_pika()
     install_monit()
+    install_pip3()
     install_flask()
