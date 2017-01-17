@@ -104,7 +104,9 @@ def define_know_host():
 
 def install_monit():
     '''Ensures monit is installed'''
-    if os.system('which monit'):
+    p = subprocess.Popen(['which', 'monit'],
+                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    if '/usr/bin/monit' not in p.stdout.read().decode("utf-8").strip(' \n'):
         logging.info('Installing monit')
         if os.system('sudo apt-get -qq -y install monit >> /dev/null 2>&1'):
             logging.error('monit installation failed [error]')
@@ -112,11 +114,11 @@ def install_monit():
             logging.info('monit installed [success]')
 
         # cfg bit for monit web interface
-        monit_httpd_conf='set httpd port 2812 and allow admin:admin'
+        monit_httpd_conf = 'set httpd port 2812 and allow admin:admin'
 
-        os.system('echo '+monit_httpd_conf+' | sudo tee --append /etc/monit/monitrc > /dev/null')
+        os.system('echo ' + monit_httpd_conf + ' | sudo tee --append /etc/monit/monitrc >> /dev/null 2>&1')
 
-        os.system('sudo monit reload')
+        os.system('sudo monit reload >> /dev/null 2>&1')
 
 
 if __name__ == '__main__':
