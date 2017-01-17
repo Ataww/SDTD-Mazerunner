@@ -43,10 +43,8 @@ def install_web_site():
 
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host, 'rm -rf jar/'],
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host, 'mkdir jar'],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
-                    'mv SDTD-Mazerunner/backend/jar/ /home/xnet/jar/'], stdout=subprocess.DEVNULL,
+                    'cp -R SDTD-Mazerunner/backend/jar /home/xnet/'], stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + host,
                     'python3 SDTD-Mazerunner/backend/script/install_environment.py'])
