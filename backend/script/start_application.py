@@ -12,7 +12,7 @@ def launch_application():
     config = configparser.ConfigParser()
     config.read("conf.ini")
     host = getHostsByKey(config,'application')[0]
-    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host,'cd /home/xnet/SDTD-Mazerunner/backend/target/scala-2.10; spark-submit sdtd-mazerunner-backend_2.10-1.0.jar'])
+    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host,'cd /home/xnet/jar; spark-submit sdtd-mazerunner-backend_2.10-1.0.jar'])
     return
 
 # Recover all ip for one component. Return format ip
