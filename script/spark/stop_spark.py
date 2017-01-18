@@ -2,15 +2,13 @@
 
 import os
 import logging
-from lib_spark import isZookeeper, isMaster
+from lib_spark import isMaster
 
 CODE_STOP = 0
 
 
 # Function for launch Spark
 def stop_environement_spark():
-    if isZookeeper():
-        stop_server_zookeeper()
     if isMaster():
         stop_master()
     else:
@@ -37,19 +35,6 @@ def stop_slave():
         logging.info("Spark slave is stop [success]")
     else:
         logging.error("Spark slave stop failed [error]")
-    return
-
-
-# Function tu stop server zookeeper
-def stop_server_zookeeper():
-    logging.info("stop Server Zookeeper ...")
-    ZOOKEEPER_STATUS = os.popen('zkServer.sh stop 2>&1 ', "r").read()
-    if 'STOPPED' in ZOOKEEPER_STATUS:
-        logging.info("Zookeeper stopped [success]")
-    elif 'no zookeeper to stop' in ZOOKEEPER_STATUS:
-        logging.info("Zookeeper is already stop [success]")
-    else:
-        logging.error("Zookeeper stopped failed [error]")
     return
 
 

@@ -5,7 +5,7 @@ import logging
 import subprocess
 import os
 
-components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
+components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper']
 
 
 # Function who will launch the different component

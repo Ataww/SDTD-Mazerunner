@@ -59,6 +59,8 @@ def check_action():
         action = "INSTALL_CLUSTER"
     elif "--clusterstart" == sys.argv[1]:
         action = "LAUNCH_CLUSTER"
+    elif "--globalstatus_start" == sys.argv[1]:
+        action = "STATUS_APP"
     return action
 
 
@@ -112,11 +114,16 @@ def show_command():
     print("     " + lib.color.UNDERLINE + "Launch cluster :\n" + lib.color.END)
     print("         python3 mazerunner.py --clusterstart                <service_name>")
     print("\n")
+    print(
+        "     " + lib.color.UNDERLINE + "Launch global service (interface web for check status of service) :\n" + lib.color.END)
+    print("         python3 mazerunner.py --globalstatus_start          <server_name>")
+    print("\n")
     print(lib.color.BOLD + "SERVICE NAME\n" + lib.color.END)
     print("         spark")
     print("         hdfs")
     print("         neo4j")
     print("         rabbitmq")
+    print("         zookeeper")
     print("\n")
     print(lib.color.BOLD + "SERVER NAME" + lib.color.END)
     print("     " + lib.color.UNDERLINE + "Spark server:\n" + lib.color.END)
@@ -139,6 +146,11 @@ def show_command():
     print("     " + lib.color.UNDERLINE + "Rabbitmq server:\n" + lib.color.END)
     print("         rabbitmq-1")
     print("         rabbitmq-2")
+    print("\n")
+    print("     " + lib.color.UNDERLINE + "Zookeeper server:\n" + lib.color.END)
+    print("         zookeeper-1")
+    print("         zookeeper-2")
+    print("         zookeeper-3")
     print("\n")
     print("©ensimag ")
     return
@@ -205,6 +217,9 @@ def call_method(action, serverName):
     elif action == "ENVIRONMENT":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
                         'source ~/.profile; cd SDTD-Mazerunner/script/; python3 install_config_machine.py'])
+    elif action == "STATUS_APP":
+        subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                        'source ~/.profile; cd SDTD-Mazerunner/script/web_app_status_service/; python3 mazerunner_web_app.py'])
     elif action == "UPDATE":
         lib.updateFileServer(config=config, serverName=serverName)
     elif action == "INSTALL_CLUSTER":

@@ -3,20 +3,18 @@
 import configparser
 import logging
 import os
-import socket
 import subprocess
 
-from lib_spark import get_hostname, isZookeeper
+from lib_spark import get_hostname
 
 spark_version = 'spark-2.0.2-bin-without-hadoop'
-zookeeper_version = 'zookeeper-3.4.9'
 spark_home = 'SPARK_HOME=/usr/lib/spark/' + spark_version
 spark_conf_dir = 'SPARK_CONF_DIR=/usr/lib/spark/' + spark_version + '/conf'
 
 
 # Function for install Spark and its environment
 def install_spark():
-    SPARK_STATUS = os.popen('stop-master 2>&1 ', "r").read()
+    SPARK_STATUS = os.popen('spark-daemon status org.apache.spark.deploy.master.Master 1 2>&1', "r").read()
     if 'not found' in SPARK_STATUS:
         logging.info("Downloading Spark ...")
         out = subprocess.run(['wget', '-q', 'http://d3kbcqa49mib13.cloudfront.net/' + spark_version + '.tgz'],
@@ -40,6 +38,8 @@ def install_spark():
             ['sudo', 'ln', '-s', '/usr/lib/spark/' + spark_version + '/sbin/stop-slave.sh', '/sbin/stop-slave'])
         subprocess.run(
             ['sudo', 'ln', '-s', '/usr/lib/spark/' + spark_version + '/bin/spark-submit', '/bin/spark-submit'])
+        subprocess.run(
+            ['sudo', 'ln', '-s', '/usr/lib/spark/' + spark_version + '/sbin/spark-daemon.sh', '/sbin/spark-daemon'])
         if not isAlreadyAdd('/etc/environment', spark_home):
             os.system('echo ' + spark_home + ' | sudo tee -a /etc/environment >> /dev/null 2>&1')
         if not isAlreadyAdd('/etc/environment', spark_conf_dir):
@@ -50,7 +50,7 @@ def install_spark():
         subprocess.run(['sudo', 'chmod', '777', '-R', '/usr/lib/spark/' + spark_version + '/work'])
         setSparkDaemonOpts()
         setSparkDefaultsConf()
-        SPARK_STATUS = os.popen('stop-master 2>&1 ', "r").read()
+        SPARK_STATUS = os.popen('spark-daemon status org.apache.spark.deploy.master.Master 1 2>&1', "r").read()
         if 'not found' not in SPARK_STATUS:
             logging.info("Spark installed [success]")
         else:
@@ -58,77 +58,7 @@ def install_spark():
     return
 
 
-# Function for install Zookeeper and its environment
-def install_zookeeper():
-    ZOOKEEPER_STATUS = os.popen('zkServer.sh status 2>&1 ', "r").read()
-    if 'not found' in ZOOKEEPER_STATUS:
-        logging.info("Downloading Zookeeper ...")
-        out = subprocess.run(['wget', '-q',
-                              'http://www-eu.apache.org/dist/zookeeper/' + zookeeper_version + '/' + zookeeper_version + '.tar.gz'],
-                             check=True)
-        if out.returncode == 0:
-            logging.info("Downloading Zookeeper with [success]")
-        else:
-            logging.error("Failed to download Zookeeper [error]")
-        logging.info("Installation of Zookeeper ...")
-        subprocess.run(['sudo', 'rm', '-rf', '/usr/lib/zookeeper'])
-        subprocess.run(['sudo', 'mkdir', '/usr/lib/zookeeper'])
-        out = subprocess.run(['sudo', 'tar', '-xf', 'zookeeper-3.4.9.tar.gz', '-C', '/usr/lib/zookeeper'], check=True)
-        if out.returncode == 0:
-            logging.info("Zookeeper unpacked [success]")
-        else:
-            logging.error("Failed to unpack Zookeeper [error]")
-        subprocess.run(['rm', zookeeper_version + '.tar.gz'])
-        with open(os.path.expanduser('~/.profile'), 'a') as proFile:
-            subprocess.run(['echo', 'export PATH=$PATH:/usr/lib/zookeeper/' + zookeeper_version + '/bin'],
-                           stdout=proFile, check=True)
-        logging.info("Zookeeper configuration")
-        set_server_value_zookeeper()
-        define_id_zookeeper()
-        # ZOOKEEPER_STATUS = os.popen('zkServer.sh status 2>&1 ', "r").read()
-        # if 'not found' in ZOOKEEPER_STATUS:
-        #    logging.info(" Zookeeper is installed with [success]")
-        # else:
-        #    logging.error(" Zookeeper couldn't be install [error]")
-    return
-
-
-# Permit to define the server value for the file zoo.cfg
-def set_server_value_zookeeper():
-    index = 1
-    port_com_leader = 2888
-    port_elec_leader = 3888
-    config = configparser.ConfigParser()
-    config.read("conf.ini")
-    hosts = getHostsByKey(config, "Zookeeper")
-
-    subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-defaults.conf',
-                    '/usr/lib/zookeeper/' + zookeeper_version + '/conf/zoo.cfg'])
-
-    for host in hosts:
-        os.system('echo server.' + str(index) + '=' + host + ':' + str(port_com_leader) + ':' + str(
-            port_elec_leader) + ' | sudo tee -a /usr/lib/zookeeper/' + zookeeper_version + '/conf/zoo.cfg >> /dev/null 2>&1')
-
-        index += 1
-    return
-
-
-def define_id_zookeeper():
-    id = 1
-    config = configparser.ConfigParser()
-    config.read("conf.ini")
-    hosts = getHostsByKey(config, "Zookeeper")
-    hostname = socket.gethostname()
-    subprocess.run(['mkdir', '/usr/lib/zookeeper/' + zookeeper_version + '/tmp/'])
-    for host in hosts:
-        if host in hostname:
-            with open(os.path.expanduser('/usr/lib/zookeeper/' + zookeeper_version + '/tmp/myid'), 'a') as idFile:
-                subprocess.run(['echo', str(id)], stdout=idFile, check=True)
-            return
-        id += 1
-    return
-
-
+# Function for define spark-env.sh
 def setSparkDaemonOpts():
     port = 2181
     isFirst = True
@@ -143,7 +73,7 @@ def setSparkDaemonOpts():
         else:
             export += ',' + host + ':' + str(port)
 
-    export += ' -Dspark.deploy.zookeeper.dir=/usr/lib/zookeeper/zookeeper-3.4.9/tmp"'
+    export += ' -Dspark.deploy.zookeeper.dir=/usr/lib/spark/' + spark_version + '"'
 
     subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-env.sh',
                     '/usr/lib/spark/' + spark_version + '/conf/spark-env.sh'])
@@ -156,6 +86,7 @@ def setSparkDaemonOpts():
     return
 
 
+# Function for define spark-defaults.conf
 def setSparkDefaultsConf():
     port = 7070
     isFirst = True
@@ -201,5 +132,3 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
     install_spark()
-    if isZookeeper():
-        install_zookeeper()
