@@ -1,6 +1,7 @@
 package com.ensimag
 
-import org.apache.spark._
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
 
 /**
   * Created by julien on 06/12/16.
