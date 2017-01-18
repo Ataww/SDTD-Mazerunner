@@ -278,11 +278,11 @@
                 </td>
                 <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
                     <button style="width: 100%" type="button" class="btn btn-success"
-                            onclick="start_service('zookeeper',1)">Start
+                            onclick="start_service('zookeeper',1);status_service('zookeeper',2);status_service('zookeeper',3);">Start
                     </button>
                 </td>
                 <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
-                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',1)">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',1);status_service('zookeeper',3);status_service('zookeeper',2);">
                         Stop
                     </button>
                 </td>
@@ -293,11 +293,11 @@
                 </td>
                 <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
                     <button style="width: 100%" type="button" class="btn btn-success"
-                            onclick="start_service('zookeeper',2)">Start
+                            onclick="start_service('zookeeper',2);status_service('zookeeper',3);status_service('zookeeper',2);">Start
                     </button>
                 </td>
                 <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
-                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',2)">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',2);status_service('zookeeper',1);status_service('zookeeper',3);">
                         Stop
                     </button>
                 </td>
@@ -308,11 +308,11 @@
                 </td>
                 <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
                     <button style="width: 100%" type="button" class="btn btn-success"
-                            onclick="start_service('zookeeper',3)">Start
+                            onclick="start_service('zookeeper',3);status_service('zookeeper',1);status_service('zookeeper',2);">Start
                     </button>
                 </td>
                 <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
-                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',3)">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',3);status_service('zookeeper',1);status_service('zookeeper',2);">
                         Stop
                     </button>
                 </td>
