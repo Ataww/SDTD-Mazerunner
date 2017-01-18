@@ -3,6 +3,7 @@
 import logging
 import subprocess
 import configparser
+import os
 
 # Function for copy the different script on the different machine
 def launch_application():
@@ -12,7 +13,7 @@ def launch_application():
     config = configparser.ConfigParser()
     config.read("conf.ini")
     host = getHostsByKey(config,'application')[0]
-    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host,'cd /home/xnet/jar; spark-submit sdtd-mazerunner-backend_2.10-1.0.jar'])
+    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@'+host,'cd /home/xnet/jar/; spark-submit orchestrator.jar'])
     return
 
 # Recover all ip for one component. Return format ip
