@@ -156,6 +156,23 @@ def launch_cluster(service_name):
             logging.error("Impossible d'accéder à la machine " + host)
     return
 
+# Permit to stop web app
+def stop_web_app(port,ip):
+    cond = True
+    while cond:
+        p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+                              'xnet@' + ip,
+                              'source ~/.profile; netstat -pa | grep '+str(port)+' | grep \'python3\' | grep \'LISTEN\' | awk \'{print $7}\''],
+                             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        out = p.stdout.read().decode("utf-8")
+        if 'python3' in out:
+            pid = out.replace('/python3', '').strip(' \n')
+            subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                            'source ~/.profile; kill -9 ' + pid], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            cond = False
+    return
+
 
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
