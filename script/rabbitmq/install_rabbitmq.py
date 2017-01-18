@@ -100,6 +100,7 @@ def install_rabbitmq():
         #Install
         install_server()
         if hostname == masterHost[0]:
+            install_haproxy()
             configure_user()
             expose_erlang_cookie()
             configure_replication()
@@ -140,5 +141,4 @@ def getHostsByKey(config, key):
 
 # INSTALLATION
 if __name__ == '__main__':
-    install_haproxy()
     install_rabbitmq()
