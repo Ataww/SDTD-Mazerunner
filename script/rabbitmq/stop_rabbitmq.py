@@ -2,7 +2,7 @@
 import subprocess, logging
 
 def stop_rabbitmq():
-    subprocess.run(['sudo', 'rabbitmqctl', 'stop_app'])
+    subprocess.run(['sudo', 'rabbitmqctl', 'stop'])
     return
 
 def stop_haproxy():
