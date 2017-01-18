@@ -8,7 +8,7 @@ import org.apache.spark.SparkContext
   */
 object SparkInit {
 
-  val conf = new SparkConf().setAppName("Mazerunner")
+  val conf = new SparkConf()
   val sc = new SparkContext(conf)
 
   def getSparkContext() ={

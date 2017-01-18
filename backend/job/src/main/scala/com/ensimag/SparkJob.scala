@@ -20,7 +20,7 @@ import org.apache.spark.SparkContext
 /**
   * Created by Ataww on 14/01/2017.
   */
-object SparkJob extends App {
+object SparkJob {
 
   def calculateRecommendations(graph: Graph[String, String], username: String) {
 

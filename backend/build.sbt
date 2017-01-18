@@ -31,7 +31,7 @@ lazy val job = (project in file("job"))
   .settings(common: _*)
   .settings(
     name := "SDTD-job",
-    mainClass in assembly := Some("com.ensimag.ApplicationMain"),
+    mainClass in assembly := Some("com.ensimag.SparkJob"),
     assemblyJarName in assembly := "sparkjob.jar"
   )
 

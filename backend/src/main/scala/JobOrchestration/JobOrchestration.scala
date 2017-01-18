@@ -4,7 +4,7 @@ import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client._
 import org.apache.spark.launcher.SparkLauncher
 import com.typesafe.config._
-import org.apache.spark.SparkContext
+import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.util.control.Breaks
 
@@ -34,18 +34,21 @@ object JobOrchestration {
     .setMainClass(MAINCLASS_LAUNCHER)
     .setMaster(LAUNCHER_MASTER)
 
-  val context = new SparkContext()
+  val sparkConf : SparkConf= new SparkConf().set("spark.executor.cores","1")
+
+  val context : SparkContext = new SparkContext(sparkConf)
+
+  val connection : Connection = cf.newConnection
+
+  val channel : Channel = connection.createChannel
 
   def main(args: Array[String]): Unit = {
     createChannel()
   }
 
   def createChannel() : Unit = {
-    // Create connection
-    val conn = cf.newConnection
 
-    // Get channel
-    val channel = conn.createChannel
+    println("Initializing channel")
 
     // Declare exchange
     channel.exchangeDeclare(EXCHANGE_NAME_TODO, BuiltinExchangeType.FANOUT)
@@ -58,7 +61,7 @@ object JobOrchestration {
 
     // Create Consummer
     val consumer = new DefaultConsumer(channel) {
-      // Define callback function when recivied message
+      // Define callback function when receiving message
       override def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties, body: Array[Byte]):
       Unit = {
         println(" [x] Job to do for user'" + new String(body, "UTF-8") + "'")
@@ -69,6 +72,7 @@ object JobOrchestration {
           val spark_home = System.getenv("SPARK_HOME")
           val spark = sparkLauncher
             .setSparkHome(spark_home)
+            .setConf("spark.executor.cores","2")
             .addAppArgs(payload)
             .setAppName("Job-" + payload)
             .launch()
@@ -83,6 +87,7 @@ object JobOrchestration {
       }
 
     }
+    println("RabbitMQ channel initialized")
     channel.basicConsume(QUEUE_NAME, true, consumer)
   }
 
@@ -91,10 +96,6 @@ object JobOrchestration {
     loop.breakable(
       for(i <- 0 to 10)
         try {
-          // Create connection
-          val conn = cf.newConnection
-          // Get channel
-          val channel = conn.createChannel
           // Declare exchange
           channel.exchangeDeclare(EXCHANGE_NAME_DONE, BuiltinExchangeType.FANOUT)
           channel.basicPublish(EXCHANGE_NAME_DONE, "", null, user)

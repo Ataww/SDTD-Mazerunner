@@ -34,7 +34,7 @@ object JobOrchestration {
     .setMainClass(MAINCLASS_LAUNCHER)
     .setMaster(LAUNCHER_MASTER)
 
-  val sparkConf : SparkConf= new SparkConf().setExecutorEnv("spark.executor.cores","1")
+  val sparkConf : SparkConf= new SparkConf().set("spark.cores.max","2").setMaster("local[2]")
 
   val context : SparkContext = new SparkContext(sparkConf)
 
@@ -72,7 +72,6 @@ object JobOrchestration {
           val spark_home = System.getenv("SPARK_HOME")
           val spark = sparkLauncher
             .setSparkHome(spark_home)
-            .setConf("spark.executor.cores","2")
             .addAppArgs(payload)
             .setAppName("Job-" + payload)
             .launch()
