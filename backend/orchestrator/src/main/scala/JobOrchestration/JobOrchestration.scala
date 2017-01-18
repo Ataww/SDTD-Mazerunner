@@ -20,7 +20,6 @@ object JobOrchestration {
   val RMQ_PWD : String = conf.getString("rabbitmq_pwd")
   val MAINCLASS_LAUNCHER : String = conf.getString("launcher_main_class")
   val LAUNCHER_JAR : String = conf.getString("launcher_jarpath")
-  val LAUNCHER_MASTER : String = conf.getString("launcher_masters")
 
   val cf = new ConnectionFactory
   cf.setHost(LOADBALANCER_HOST)
@@ -32,9 +31,8 @@ object JobOrchestration {
   val sparkLauncher : SparkLauncher = new SparkLauncher()
     .setAppResource(LAUNCHER_JAR)
     .setMainClass(MAINCLASS_LAUNCHER)
-    .setMaster(LAUNCHER_MASTER)
 
-  val sparkConf : SparkConf= new SparkConf().set("spark.cores.max","2").setMaster("local[2]")
+  val sparkConf : SparkConf= new SparkConf().set("spark.cores.max","2")
 
   val context : SparkContext = new SparkContext(sparkConf)
 
@@ -68,18 +66,21 @@ object JobOrchestration {
         try {
           //TODO VOIR AVEC RAKOTO
           // Launch spark job and wait for it
+          println("Before launching")
           val payload = new String(body, "UTF-8")
           val spark_home = System.getenv("SPARK_HOME")
           val spark = sparkLauncher
             .setSparkHome(spark_home)
             .addAppArgs(payload)
             .setAppName("Job-" + payload)
+            .setConf("spark.cores.max","2")
             .launch()
+          println("Launch OK")
           spark.waitFor()
-
+          println("WAIT OK")
           // Post message do say that job is finish
           sendDoneJob(body)
-
+          println("Message send")
         } catch {
           case e: Exception => println(e)
         }
