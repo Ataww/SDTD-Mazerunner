@@ -20,6 +20,11 @@ def install_server() :
 
     return
 
+def enable_management_UI() :
+    logging.info('Enable WEB UI')
+    subprocess.run(['sudo', 'rabbitmq-plugins', 'enable', 'rabbitmq_management'])
+    return
+
 def configure_user() :
     logging.info('Delete default user guest')
     subprocess.run(['sudo', 'rabbitmqctl', 'delete_user', 'guest'])
@@ -99,6 +104,7 @@ def install_rabbitmq():
 
         #Install
         install_server()
+        enable_management_UI()
         if hostname == masterHost[0]:
             install_haproxy()
             configure_user()
