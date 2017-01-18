@@ -2,7 +2,7 @@
 import subprocess, logging
 
 def launch_rabbitmq():
-    subprocess.run(['sudo', 'rabbitmqctl', 'start_app'])
+    subprocess.run(['sudo', 'rabbitmq-server', 'start'])
     return
 
 def launch_haproxy():

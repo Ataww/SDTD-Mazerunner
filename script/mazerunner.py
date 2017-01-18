@@ -60,7 +60,9 @@ def check_action():
     elif "--clusterstart" == sys.argv[1]:
         action = "LAUNCH_CLUSTER"
     elif "--globalstatus_start" == sys.argv[1]:
-        action = "STATUS_APP"
+        action = "STATUS_APP_START"
+    elif "--globalstatus_stop" == sys.argv[1]:
+        action = "STATUS_APP_STOP"
     return action
 
 
@@ -118,6 +120,10 @@ def show_command():
         "     " + lib.color.UNDERLINE + "Launch global service (interface web for check status of service) :\n" + lib.color.END)
     print("         python3 mazerunner.py --globalstatus_start          <server_name>")
     print("\n")
+    print(
+        "     " + lib.color.UNDERLINE + "Stop global service (interface web for check status of service) :\n" + lib.color.END)
+    print("         python3 mazerunner.py --globalstatus_stop          <server_name>")
+    print("\n")
     print(lib.color.BOLD + "SERVICE NAME\n" + lib.color.END)
     print("         spark")
     print("         hdfs")
@@ -156,7 +162,7 @@ def show_command():
     return
 
 
-# launch commande in ssh
+# launch commande in ssh netstat -pa | grep 8079 | grep 'python3' | grep 'LISTEN' | awk '{print $7}'
 def call_method(action, serverName):
     if serverName is not None:
         directory = serverName.split('-')[0]
@@ -217,9 +223,11 @@ def call_method(action, serverName):
     elif action == "ENVIRONMENT":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
                         'source ~/.profile; cd SDTD-Mazerunner/script/; python3 install_config_machine.py'])
-    elif action == "STATUS_APP":
+    elif action == "STATUS_APP_START":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
                         'source ~/.profile; cd SDTD-Mazerunner/script/web_app_status_service/; python3 mazerunner_web_app.py'])
+    elif action == "STATUS_APP_STOP":
+        global_service.stop_web_app(port=8079, ip=ip)
     elif action == "UPDATE":
         lib.updateFileServer(config=config, serverName=serverName)
     elif action == "INSTALL_CLUSTER":
