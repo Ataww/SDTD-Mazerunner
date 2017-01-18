@@ -54,7 +54,6 @@ def check_function(name_service, key_name, host):
 
 # Function who check zookeeper
 def check_zookeeper(zookeeper_host):
-
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + zookeeper_host,
                           'source ~/.profile; zkServer.sh status;'],
@@ -70,7 +69,6 @@ def check_zookeeper(zookeeper_host):
 
 # Function who check spark master
 def check_spark_master(spark_master_host):
-
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + spark_master_host,
                           'source ~/.profile; spark-daemon status org.apache.spark.deploy.master.Master 1;'],
@@ -85,7 +83,6 @@ def check_spark_master(spark_master_host):
 
 # Function who check spark worker
 def check_spark_worker(spark_worker_host):
-
     p1 = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                            'xnet@' + spark_worker_host,
                            'source ~/.profile; spark-daemon status org.apache.spark.deploy.worker.Worker 1;'],
@@ -105,12 +102,21 @@ def check_spark_worker(spark_worker_host):
 
 # Function who check hdfs
 def check_hdfs(hdfs_host):
-    return True
+    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+                          'xnet@' + hdfs_host,
+                          'source ~/.profile; jps;'],
+                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    if "JournalNode" in p.stdout.read().decode("utf-8").strip(
+            ' \n'):
+        logging.info("On machine " + hdfs_host + " hdfs Running")
+        return True
+    else:
+        logging.warning("On machine " + hdfs_host + " hdfs Not Running")
+        return False
 
 
 # Function who check haproxy
 def check_haproxy(haproxy_host):
-
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + haproxy_host,
                           'source ~/.profile; sudo service haproxy status;'],
@@ -125,7 +131,6 @@ def check_haproxy(haproxy_host):
 
 # Function who check rabbitmq
 def check_rabbitmq(rabbitmq_host):
-
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + rabbitmq_host,
                           'source ~/.profile; sudo rabbitmqctl status;'],
@@ -141,7 +146,6 @@ def check_rabbitmq(rabbitmq_host):
 
 # Function who check neo4j
 def check_neo4j(neo4j_host):
-
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + neo4j_host,
                           'source ~/.profile; sudo /usr/lib/neo4j/neo4j-enterprise-3.0.7/bin/neo4j status;'],
