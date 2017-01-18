@@ -99,9 +99,9 @@ def get_data_from_neo4j(username):
         neo4j_client.close()
 
         return True, records
-    except socket.timeout as toe:
+    except (socket.timeout, socket.gaierror) as e:
         to_return["error"] = "There was a problem while trying to connect to Neo4j"
-        to_return["details"] = str(toe)
+        to_return["details"] = str(e)
         logger.debug(str(to_return))
         return False, to_return
 
@@ -141,7 +141,7 @@ def inject_recommendations_into_neo4j(username, records):
 def write_data_to_hdfs(username, records):
     global hdfs_namenodes
     to_return = {}
-    file_path = "/jobs_to_do/"+username+".txt"
+    file_path = "/jobs_to_do/"+username+".csv"
     logger.debug("Writing file " + file_path + " to HDFS")
     try:
         logger.debug("Trying to connect to "+hdfs_namenodes[0]+" namenode")
