@@ -1,0 +1,10 @@
+[Unit]
+Description=Mazerunner API
+
+[Service]
+Environment=PYTHON_PATH=/home/xnet/.local/lib/python3.5/site-packages
+ExecStart=/usr/bin/python3 /home/xnet/mazerunner_api/mazerunner_api.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
