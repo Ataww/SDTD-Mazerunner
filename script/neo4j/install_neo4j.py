@@ -39,17 +39,17 @@ def config_neo4j():
     hostnumber = socket.gethostname().split('-')[1]
     logging.info("Copying neo4j configuration file for hostnumber " + hostnumber)
     if hostnumber == '1':
-        subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-1.conf',
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/neo4j-1.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
         logging.info("Importing database on neo4j-1...")
         subprocess.run(['sudo', 'rm', '-rf', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/graph.db'])
         subprocess.run(['sudo', 'mkdir', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db'])
         subprocess.run(['sudo', '/usr/lib/neo4j/'+neo4j_path+'/bin/neo4j-import', '--into', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db', '--nodes', 'data/utilisateurs.csv', '--nodes', 'data/titres.csv', '--relationships', 'data/gout.csv'])
     elif hostnumber == '2':
-        subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-2.conf',
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/neo4j-2.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
     elif hostnumber == '3':
-        subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/neo4j-3.conf',
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/neo4j-3.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
     return
 
@@ -59,7 +59,7 @@ def config_haproxy():
         subprocess.run(['sudo', 'add-apt-repository', '-y', 'ppa:vbernat/haproxy-1.5'])
         subprocess.run(['sudo', 'apt-get', 'update'])
         subprocess.run(['sudo', 'apt-get', 'install', '-y', 'haproxy'])
-        subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/haproxy.cfg',
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/haproxy.cfg',
         '/etc/haproxy/haproxy.cfg'])
     return
 
