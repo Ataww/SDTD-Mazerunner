@@ -4,7 +4,7 @@
 //var env = require('node-env-file');
 //env('./.env');
 var nodeneo4j = require('node-neo4j');
-var dbnode = new nodeneo4j("http://neo4j:neo4j_pass@149.202.170.185:7474");
+var dbnode = new nodeneo4j("http://neo4j:neo4j_pass@213.32.74.108:7475");
 //var bcrypt   = require('bcrypt-nodejs');
 
 // private constructor:

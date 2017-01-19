@@ -17,7 +17,7 @@ var helmet = require('helmet');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var app = express();
-var db = new neo4j("http://neo4j:neo4j_pass@149.202.170.185:7474");
+var db = new neo4j("http://neo4j:neo4j_pass@213.32.74.108:7475");
 
 var hbs = exphbs.create({
     // Specify helpers which are only registered on this instance.
@@ -61,7 +61,7 @@ app.get('/songs/:name', function(req, res) {
   db.cypherQuery(
     'MATCH (u:Utilisateur {nomUtilisateur:"'+name+'"}) MATCH (t:Titre) WHERE NOT (u)-[:AIME]->(t) RETURN t LIMIT 10',
     function(err, result) {
-        if(err) res.render('error');
+        if(err) res.render('error', {error:err});
         else {
           res.render('songs', {songs:result.data, user:name});
         }
@@ -86,7 +86,7 @@ app.get('/refresh/:name', function(req, res) {
     'MATCH (u:Utilisateur {nomUtilisateur:"'+name+'"}) MATCH (t:Titre) WHERE (u)-[:RECO]->(t) RETURN t LIMIT 10',
     function(err, result) {
         if(err) {
-                res.render('error');
+                res.render('error', {error:err});
                 console.log(err);}
         else {
           res.render('recommandations', {songs:result.data, user:name});
@@ -100,7 +100,7 @@ app.get('/recommandations/:name', function(req, res) {
     'MATCH (u:Utilisateur {nomUtilisateur:"'+name+'"}) MATCH (t:Titre) WHERE (u)-[:RECO]->(t) RETURN t LIMIT 10',
     function(err, result) {
         if(err) {
-		res.render('error');
+		res.render('error', {error:err});
 		console.log(err);}
         else {
           res.render('recommandations', {songs:result.data, user:name});
