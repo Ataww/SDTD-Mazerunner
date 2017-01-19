@@ -1,0 +1,4 @@
+check process rabbitmq-server with PIDFILE "/var/lib/rabbitmq/mnesia/rabbit@rabbitmq-2.pid"
+group rabbitmq
+start program  "/bin/systemctl start rabbitmq-server"
+stop program "/usr/sbin/rabbitmqctl stop"
