@@ -74,7 +74,9 @@ app.get('/recommandations/:name', function(req, res) {
   db.cypherQuery(
     'MATCH (u:Utilisateur {nomUtilisateur:"'+name+'"}) MATCH (t:Titre) WHERE (u)-[:RECO]->(t) RETURN t LIMIT 10',
     function(err, result) {
-        if(err) res.render('error');
+        if(err) {
+		res.render('error');
+		console.log(err);}
         else {
           res.render('songs', {songs:result.data[1], user:name});
         }
