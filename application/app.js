@@ -17,7 +17,7 @@ var helmet = require('helmet');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var app = express();
-var db = new neo4j("http://149.202.170.185:7474");
+var db = new neo4j("http://neo4j:neo4j_pass@149.202.170.185:7474");
 
 var hbs = exphbs.create({
     // Specify helpers which are only registered on this instance.
@@ -63,7 +63,7 @@ app.get('/songs/:name', function(req, res) {
     function(err, result) {
         if(err) res.render('error');
         else {
-          res.render('songs', {songs:result.data[1], user:name});
+          res.render('songs', {songs:result.data, user:name});
         }
       }
     );
@@ -78,7 +78,7 @@ app.get('/recommandations/:name', function(req, res) {
 		res.render('error');
 		console.log(err);}
         else {
-          res.render('songs', {songs:result.data[1], user:name});
+          res.render('songs', {songs:result.data, user:name});
         }
       }
     );
