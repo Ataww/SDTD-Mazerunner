@@ -16,7 +16,7 @@ def install_web_site():
     config.read("conf.ini")
     host = getHostsByKey(config, 'application')[0]
     out = subprocess.run(['tar', 'czf', '/tmp/SDTD-Mazerunner-Backend.tar.gz', '.'],
-                         cwd=os.getcwd().replace("/script", ""), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         cwd=os.getcwd().replace("backend/script", "artifact"), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                          check=True)
     if out.returncode == 0:
         logging.info("Compressing directory done [success]")
@@ -30,24 +30,16 @@ def install_web_site():
     else:
         logging.error("Transferring files failed [error]")
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
-                    'sudo rm -rf SDTD-Mazerunner/backend/'])
+                    'sudo rm -rf SDTD-Mazerunner/artifact/'])
     subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
-                    'mkdir -p SDTD-Mazerunner/backend/'])
+                    'mkdir -p SDTD-Mazerunner/artifact/'])
     logging.info("Detar file ...")
     out = subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
-                          'tar xzf SDTD-Mazerunner-Backend.tar.gz -C SDTD-Mazerunner/backend/'])
+                          'tar xzf SDTD-Mazerunner-Backend.tar.gz -C SDTD-Mazerunner/artifact/'])
     if out.returncode == 0:
         logging.info("Decompressing directory done [success]")
     else:
         logging.error("Decompressing directory failed [error]")
-
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host, 'rm -rf jar/'],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
-                    'cp -R SDTD-Mazerunner/backend/jar /home/xnet/'], stdout=subprocess.DEVNULL,
-                   stderr=subprocess.DEVNULL)
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
-                    'python3 SDTD-Mazerunner/backend/script/install_environment.py'])
     return
 
 
