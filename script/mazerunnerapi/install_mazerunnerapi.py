@@ -23,7 +23,7 @@ def install_mazerunner_api():
         run(['cp', mazerunner_api_script, mazerunner_api_dir], check=True)
 
         info('Copying mazerunnerapi.service file to /etc/systemd/system/')
-        run(['cp', mazerunner_api_service, systemd_dir], check=True)
+        run(['sudo', 'cp', mazerunner_api_service, systemd_dir], check=True)
 
         info('Installing pywebhdfs python module')
         run(['sudo', '-H', 'pip3', 'install', 'pywebhdfs'], check=True)
