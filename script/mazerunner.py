@@ -63,6 +63,8 @@ def check_action():
         action = "STATUS_APP_START"
     elif "--globalstatus_stop" == sys.argv[1]:
         action = "STATUS_APP_STOP"
+    elif "--update-api-mazerunner" == sys.argv[1]:
+        action = "UPDATE_API"
     return action
 
 
@@ -105,6 +107,9 @@ def show_command():
     print("     " + lib.color.UNDERLINE + "Update file on server:\n" + lib.color.END)
     print("         python3 mazerunner.py --update                      (for all server)")
     print("         python3 mazerunner.py --update <server_name>        (for a specific server)")
+    print("\n")
+    print("     " + lib.color.UNDERLINE + "Update mazerunner api on server:\n" + lib.color.END)
+    print("         python3 mazerunner.py --update-api-mazerunner")
     print("\n")
     print("     " + lib.color.UNDERLINE + "Define environment on server:\n" + lib.color.END)
     print("         python3 mazerunner.py --installenv                  (for all server)")
@@ -158,6 +163,10 @@ def show_command():
     print("         zookeeper-2")
     print("         zookeeper-3")
     print("\n")
+    print("     " + lib.color.UNDERLINE + "Mazerunner api server:\n" + lib.color.END)
+    print("         mazerunnerapi-1")
+    print("         mazerunnerapi-2")
+    print("\n")
     print("©ensimag ")
     return
 
@@ -186,6 +195,8 @@ def call_method(action, serverName):
             global_service.install_all_server()
         elif action == "ENVIRONMENT":
             global_service.install_basic_config()
+        elif action == "UPDATE_API":
+            global_service.update_directory_mazerunner_api()
         else:
             error_command("NOT YET IMPLEMENTED")
         return

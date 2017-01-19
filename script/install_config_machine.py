@@ -55,7 +55,7 @@ def install_pika():
 
 # Function for define the hostname
 def define_hostname():
-    components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper']
+    components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper', 'mazerunnerapi', 'webapp']
     current_ip = lib.getIp()
     hostname = ''
 
@@ -87,7 +87,7 @@ def define_hostname():
 # Function to define known_hosts file
 def define_know_host():
     logging.info("Define known_hosts")
-    components = ['hdfs', 'neo4j', 'rabbitmq', 'spark']
+    components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper', 'mazerunnerapi', 'webapp']
     os.system('cp ~/.ssh/xnet ~/.ssh/id_rsa >> /dev/null 2>&1')
     os.system('cp ~/.ssh/xnet.pub ~/.ssh/id_rsa.pub >> /dev/null 2>&1')
     os.system('rm ~/.ssh/known_hosts >> /dev/null 2>&1')

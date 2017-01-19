@@ -5,7 +5,7 @@ import logging
 import subprocess
 import os
 
-components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper']
+components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper', 'mazerunnerapi', 'webapp']
 
 
 # Function who will launch the different component
@@ -193,6 +193,31 @@ def web_app_status(port, ip):
         return False
 
 
+def update_directory_mazerunner_api():
+    print("############################################################")
+    print("################# Update Mazerunner Api ####################")
+    print("############################################################")
+    config = configparser.ConfigParser()
+    config.read("./mazerunner_api/conf.ini")
+    hosts = getHostsByKey(config, 'mazerunner_api_active')
+    for host in hosts:
+        if hostIsUp(host):
+            logging.info("Update component Mazerunner-api on the machine with address " + host)
+            updateFileServer(host)
+            updateFileServerMazerunner(host)
+        else:
+            logging.error("Impossible d'accéder à la machine " + host)
+    hosts = getHostsByKey(config, 'mazerunner_api_standby')
+    for host in hosts:
+        if hostIsUp(host):
+            logging.info("Update component Mazerunner-api on the machine with address " + host)
+            updateFileServer(host)
+            updateFileServerMazerunner(host)
+        else:
+            logging.error("Impossible d'accéder à la machine " + host)
+    return
+
+
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
     hosts = config.get(key, "hosts").split(',')
@@ -208,6 +233,38 @@ def hostIsUp(host):
     if os.system('ping -c 1 ' + host + ' >> /dev/null 2>&1'):
         return False
     return True
+
+
+# Function for update file for api mazerunner
+def updateFileServerMazerunner(ip):
+    out = subprocess.run(['tar', 'czf', '/tmp/SDTD-Mazerunner-api.tar.gz', '.'],
+                         cwd=os.getcwd().replace('/script', '/mazerunner'),
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    if out.returncode == 0:
+        logging.info("Compressing directory done [success]")
+    else:
+        logging.error("Compressing directory failed [error]")
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                    'sudo rm -rf SDTD-Mazerunner/mazerunner/'])
+    out = subprocess.run(
+        ['scp', '-pq', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', '/tmp/SDTD-Mazerunner-api.tar.gz',
+         'xnet@' + ip + ':~/'], check=True)
+    if out.returncode == 0:
+        logging.info("Transfer done [success]")
+    else:
+        logging.error("Transferring files failed [error]")
+    logging.info("Detar file ...")
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                    'mkdir -p SDTD-Mazerunner/mazerunner'])
+    out = subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                          'tar xzf SDTD-Mazerunner-api.tar.gz -C SDTD-Mazerunner/mazerunner/'])
+    if out.returncode == 0:
+        logging.info("Decompressing directory done [success]")
+    else:
+        logging.error("Decompressing directory failed [error]")
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                    'rm SDTD-Mazerunner-api.tar.gz'])
+    return
 
 
 # Function for update file on specific server
