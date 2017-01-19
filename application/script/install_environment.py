@@ -13,6 +13,7 @@ def install_environment():
     subprocess.run(['sudo','apt-get','install','-y','npm'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
     logging.info("install dependencies ...")
     subprocess.run(['npm','install'],cwd='/home/xnet/SDTD-Mazerunner/application/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    subprocess.run(['npm','install', 'http'],cwd='/home/xnet/SDTD-Mazerunner/application/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     return
 
 if __name__ == '__main__':
