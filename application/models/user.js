@@ -4,7 +4,7 @@
 //var env = require('node-env-file');
 //env('./.env');
 var nodeneo4j = require('node-neo4j');
-var dbnode = new nodeneo4j("http://149.202.170.185:7474");
+var dbnode = new nodeneo4j("http://neo4j:neo4j_pass@149.202.170.185:7474");
 //var bcrypt   = require('bcrypt-nodejs');
 
 // private constructor:
@@ -18,16 +18,16 @@ var User = module.exports = function User(_node) {
 User.addUserRelationship = function(relation, userName, titreId, callback) {
 	switch (relation) {
 		case 'like':
-			var query = 'MATCH (user:Utilisateur),(titre:Titre) WHERE user.nomUtilisateur = '+userName+' AND titre.idTitre = '+titreId+
-					' MERGE (user)-[rel:AIME]->(titre) RETURN rel';
+			var query = 'MATCH (user:Utilisateur),(titre:Titre) WHERE user.nomUtilisateur = "'+userName+'" AND titre.idTitre = "'+titreId+
+					'" MERGE (user)-[rel:AIME]->(titre) RETURN rel';
 		break;
 		case 'dislike':
-    var query = 'MATCH (user:Utilisateur),(titre:Titre) WHERE user.nomUtilisateur = '+userName+' AND titre.idTitre = '+titreId+
-        ' MERGE (user)-[rel:DISLIKE]->(titre) RETURN rel';
+    var query = 'MATCH (user:Utilisateur),(titre:Titre) WHERE user.nomUtilisateur = "'+userName+'" AND titre.idTitre = "'+titreId+
+        '" MERGE (user)-[rel:DISLIKE]->(titre) RETURN rel';
 		break;
     case 'unreco':
-    var query = 'MATCH (user:Utilisateur),(titre:Titre) WHERE user.nomUtilisateur = '+userName+' AND titre.idTitre = '+titreId+
-        ' MERGE (user)-[rel:RECO]->(titre) DELETE rel';
+    var query = 'MATCH (user:Utilisateur),(titre:Titre) WHERE user.nomUtilisateur = "'+userName+'" AND titre.idTitre = '+titreId+
+        '" MERGE (user)-[rel:RECO]->(titre) DELETE rel';
 		break;
 
 	}
