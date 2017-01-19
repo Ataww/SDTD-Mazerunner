@@ -16,11 +16,18 @@ A réaliser à la racine de l'application
     ```bash
     $ sbt compile
     ```  
-2. Package
+2. Update dependencies
+
+    ```bash
+    $ sbt update
+    ```
+    
+3. Package
 
     ```bash
     $ sbt package
     ```  
+    
 ## Run application in cluster spark
 
 1. Run 
@@ -32,3 +39,9 @@ A réaliser à la racine de l'application
     # Pour lancer le spark-submit (Vérifier que spark est lancer sur les serveurs)
     $ python3 start_application.py
     ``` 
+    
+## Problèmes courant
+* Erreur de résolution des dépendances
+
+ 1. Supprimer le dossier ~/.ivy2/cache
+ 2. Relancer l'assembly
