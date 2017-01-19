@@ -13,6 +13,7 @@ var exphbs  = require('express-handlebars');
 var flash = require('connect-flash');
 var session = require('cookie-session');
 var helmet = require('helmet');
+var http = require('http');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -70,16 +71,16 @@ app.get('/songs/:name', function(req, res) {
 });
 
 app.get('/refresh/:name', function(req, res) {
-  var options = { host:'localhost:5000', path: '/compute_recommandation/'+req.params.name};
+  var options = { host:'127.0.0.1', port:'5000', path: '/compute_recommendation/'+req.params.name};
   //var options = { host:'google.fr', path: '/'};
   var req_get = http.get(options, function(res) {
         console.log(res.statusCode);
-        if (res.statusCode != 200) {
+        /*if (res.statusCode != 200) {
           var options = {host: '149.202.161.163:5000', path: '/compute_recommandation/'+req.params.name}
           var req_get2 = http.get(options, function(res) {
             console.log(res.statusCode);
           });
-        }
+        }*/
   });
   var name = req.params.name;
   db.cypherQuery(
