@@ -69,6 +69,7 @@ object JobOrchestration {
           println("Before launching")
           val payload = new String(body, "UTF-8")
           val spark_home = System.getenv("SPARK_HOME")
+          println("Le spark home "+spark_home)
           val spark = sparkLauncher
             .setSparkHome(spark_home)
             .addAppArgs(payload)
@@ -92,6 +93,7 @@ object JobOrchestration {
   }
 
   def sendDoneJob(user: Array[Byte]) : Unit = {
+    println("job finished")
     val loop = new Breaks
     loop.breakable(
       for(i <- 0 to 10)
@@ -99,6 +101,7 @@ object JobOrchestration {
           // Declare exchange
           channel.exchangeDeclare(EXCHANGE_NAME_DONE, BuiltinExchangeType.FANOUT)
           channel.basicPublish(EXCHANGE_NAME_DONE, "", null, user)
+          println("Retour fait")
           loop.break
         } catch{
           case e : Exception => println(e)
