@@ -93,7 +93,7 @@ app.post('/dislike', function(req, res) {
 });
 
 app.post('/unreco', function(req, res) {
-  User.addUserRelationship('unlike', req.query.name, req.query.id, function(err){
+  User.addUserRelationship('unreco', req.query.user, req.query.id, function(err){
     if (err) res.sendStatus(500);
     else res.sendStatus(200);
   });

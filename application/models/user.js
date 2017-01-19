@@ -26,8 +26,8 @@ User.addUserRelationship = function(relation, userName, titreId, callback) {
         '" MERGE (user)-[rel:DISLIKE]->(titre) RETURN rel';
 		break;
     case 'unreco':
-    var query = 'MATCH (user:Utilisateur),(titre:Titre) WHERE user.nomUtilisateur = "'+userName+'" AND titre.idTitre = '+titreId+
-        '" MERGE (user)-[rel:RECO]->(titre) DELETE rel';
+    var query = 'MATCH (user:Utilisateur)-[rel:RECO]->(titre:Titre) WHERE user.nomUtilisateur = "'+userName+'" AND titre.idTitre = "'+titreId+
+        '" DELETE rel';
 		break;
 
 	}
