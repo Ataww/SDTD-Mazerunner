@@ -4,8 +4,10 @@ import configparser
 import logging
 import os
 import subprocess
+from os.path import exists
+import socket
 
-from lib_spark import get_hostname
+from lib_spark import get_hostname, isMaster
 
 spark_version = 'spark-2.0.2-bin-without-hadoop'
 spark_home = 'SPARK_HOME=/usr/lib/spark/' + spark_version
@@ -109,6 +111,31 @@ def setSparkDefaultsConf():
     return
 
 
+def conf_monit():
+    """Copy monit config files for service"""
+    hostname = socket.gethostname()
+    config = configparser.ConfigParser()
+    config.read('conf.ini')
+
+    if not exists('/etc/monit'):
+        logging.error('monit is not installed')
+    else:
+        if isMaster():
+            key = 'Master'
+        else:
+            key = 'Slaves'
+
+        index = 1
+        for host in getHostsByKey(config, key=key):
+            if host in hostname:
+                logging.info('Copying monit config files for Spark ' + key + ' on host ' + hostname)
+                os.system(
+                    'sudo cp /home/xnet/SDTD-Mazerunner/script/spark/conf/MonitSpark' + key + '_' + str(index) + ' /etc/monit/conf.d/')
+            index += 1
+        os.system('sudo monit reload')
+    return
+
+
 # Recover all ip for one component. Return format ip
 def getHostsByKey(config, key):
     hosts = config.get(key, "hosts").split(',')
@@ -132,3 +159,4 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
     install_spark()
+    #conf_monit()

@@ -6,7 +6,6 @@ $(document).ready(function () {
     status_service('hdfs', 1)
     status_service('hdfs', 2)
     status_service('hdfs', 3)
-    status_service('hdfs', 4)
     status_service('neo4j', 1)
     status_service('neo4j', 2)
     status_service('neo4j', 3)

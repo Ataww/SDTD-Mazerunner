@@ -6,17 +6,15 @@ from subprocess import run
 from logging import info
 from os.path import exists
 
-
 version = 'hadoop-2.7.3'
-distrib = 'http://apache.crihan.fr/dist/hadoop/common/'+version+'/'+version+'.tar.gz'
+distrib = 'http://apache.crihan.fr/dist/hadoop/common/' + version + '/' + version + '.tar.gz'
 
-home            = '/home/xnet'
+home = '/home/xnet'
 
-setup_dir       = home + '/hdfs' # contains the installation scripts and etc
-hadoop_dir      = home + '/' + version
-zookeeper_dir   = home + '/hdfs_zk'
-conf_dir        = hadoop_dir + "/etc/hadoop"
-
+setup_dir = home + '/SDTD-Mazerunner/script/hdfs'  # contains the installation scripts and etc
+hadoop_dir = home + '/' + version
+zookeeper_dir = home + '/hdfs_zk'
+conf_dir = hadoop_dir + "/etc/hadoop"
 
 
 def install_hdfs():
@@ -37,7 +35,7 @@ def install_hdfs():
         info('Copying HDFS configuration files')
         run('cp ' + setup_dir + '/etc/hadoop/* ' + hadoop_dir + '/etc/hadoop', shell=True)
 
-        run(['mkdir', '-p', hadoop_dir +'/data/namenode'])
+        run(['mkdir', '-p', hadoop_dir + '/data/namenode'])
 
         # Remove any previous tmp files
         info('Removing any previous tmp files')
@@ -46,8 +44,7 @@ def install_hdfs():
         info('Starting journalnode')
         run([hadoop_dir + '/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
 
-
-def conf_monit(service):
+def conf_monit():
     """Copy monit config files for service"""
     hostname = socket.gethostname()
     config = configparser.ConfigParser()
@@ -65,6 +62,6 @@ def conf_monit(service):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO ,format="%(asctime)s :: %(levelname)s :: %(message)s")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_hdfs()
     conf_monit()

@@ -53,7 +53,18 @@ def config_neo4j():
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
     return
 
+def config_haproxy():
+    hostnumber = socket.gethostname().split('-')[1]
+    if hostnumber == '3':
+        subprocess.run(['sudo', 'add-apt-repository', '-y', 'ppa:vbernat/haproxy-1.5'])
+        subprocess.run(['sudo', 'apt-get', 'update'])
+        subprocess.run(['sudo', 'apt-get', 'install', '-y', 'haproxy'])
+        subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/haproxy.cfg',
+        '/etc/haproxy/haproxy.cfg'])
+    return
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_neo4j()
     config_neo4j()
+    config_haproxy()
