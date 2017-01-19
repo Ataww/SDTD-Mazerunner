@@ -102,12 +102,10 @@ def setSparkDefaultsConf():
             isFirst = False
         else:
             export += ',' + host + ':' + str(port)
-
     subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/spark/conf/spark-defaults.conf',
                     '/usr/lib/spark/' + spark_version + '/conf/spark-defaults.conf'])
     os.system(
         'echo ' + export + ' | sudo tee -a /usr/lib/spark/' + spark_version + '/conf/spark-defaults.conf >> /dev/null 2>&1')
-
     return
 
 

@@ -7,7 +7,7 @@ from lib_spark import isMaster
 CODE_STOP = 0
 
 
-# Function for launch Spark
+# Function to launch Spark
 def stop_environement_spark():
     if isMaster():
         stop_master()
@@ -16,7 +16,7 @@ def stop_environement_spark():
     return
 
 
-# Function for stop master
+# Function to stop master
 def stop_master():
     logging.info("Stopping Spark Master ...")
     out = os.system('stop-master >> /dev/null 2>&1')
@@ -37,6 +37,17 @@ def stop_slave():
         logging.error("Spark slave stop failed [error]")
     return
 
+# Permit to know if it is zookeeper
+def isZookeeper():
+    config = configparser.ConfigParser()
+    config.read("./spark/conf.ini")
+    hosts = getHostsByKey(config, "Zookeeper")
+    hostname = socket.gethostname()
+
+    for host in hosts:
+        if host in hostname:
+            return True
+    return False
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
