@@ -24,6 +24,8 @@ hdfs_namenodes = ["hdfs-1", "hdfs-2"]
 # RabbitMQ configuration
 rabbitmq_host = "rabbitmq-1"
 rabbitmq_port = 5672
+rabbitmq_user = "neo4j_user"
+rabbitmq_password = "neo4j_user"
 
 # Neo4j configuration
 neo4j_username = "neo4j"
@@ -202,7 +204,7 @@ def notify_spark_via_rabbitmq(username):
     # Configure RabbitMQ connection
     to_return = {}
     try:
-        credentials = pika.PlainCredentials("neo4j_user", "neo4j_user")
+        credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_password)
         sending_connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, rabbitmq_port, '/', credentials))
         rabbitmq_sending_channel = sending_connection.channel()
         rabbitmq_sending_channel.exchange_declare(exchange='jobs_to_do', type='fanout')
@@ -219,7 +221,7 @@ class RabbitMQConsumerClient():
     def __init__(self, username):
         # Configure RabbitMQ connection
         self.username = username
-        self.credentials = pika.PlainCredentials("neo4j_user", "neo4j_user")
+        self.credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_password)
 
         self.receiving_connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, rabbitmq_port, '/', self.credentials))
         self.receiving_channel = self.receiving_connection.channel()
