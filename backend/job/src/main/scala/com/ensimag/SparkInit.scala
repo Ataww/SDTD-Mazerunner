@@ -1,14 +1,13 @@
 package com.ensimag
 
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
+import org.apache.spark._
 
 /**
   * Created by julien on 06/12/16.
   */
 object SparkInit {
 
-  val conf = new SparkConf()
+  val conf = new SparkConf().setAppName("Mazerunner")
   val sc = new SparkContext(conf)
 
   def getSparkContext() ={
