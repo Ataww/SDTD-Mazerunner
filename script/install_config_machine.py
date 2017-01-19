@@ -25,7 +25,7 @@ def install_python():
 # Function for install Java
 def install_java():
     JAVA_VERSION = os.popen('java -version 2>&1 |awk \'NR==1{ gsub(/"/,""); print $3 }\'', "r").read()
-    if '1.8.0_111' in JAVA_VERSION:
+    if '1.8.0_111' not in JAVA_VERSION:
         logging.info("Installation of OpenJDK 8")
         out = os.system("sudo apt-get update >> /dev/null 2>&1")
         out = os.system("sudo apt-get -qq -y install openjdk-8-jdk >> /dev/null 2>&1")

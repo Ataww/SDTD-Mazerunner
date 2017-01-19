@@ -6,6 +6,9 @@ import os
 
 # Function for copy the different script on the different machine
 def install_environment():
+    print("#############################################################")
+    print("#######      Install environment for the WEB_APP     ########")
+    print("#############################################################")
     logging.info("Start to install nodeJs ...")
     subprocess.run(['sudo','apt-get','install','-y','nodejs'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)
     subprocess.run(['sudo','apt-get','install','-y','nodejs-legacy'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,check=True)

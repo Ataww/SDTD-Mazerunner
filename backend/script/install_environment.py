@@ -6,6 +6,9 @@ import os
 
 # Function for copy the different script on the different machine
 def install_environment():
+    print("#############################################################")
+    print("#######    Install environment for the for JobSpark     #####")
+    print("#############################################################")
     return
 
 if __name__ == '__main__':
