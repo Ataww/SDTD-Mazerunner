@@ -43,6 +43,7 @@ def isActiveNN():
     config.read(setup_dir + '/conf.ini')
     return config.get('NameNode', 'default_active') in socket.gethostname()
 
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
 
