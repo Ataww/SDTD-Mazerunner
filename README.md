@@ -47,4 +47,7 @@ La répartition des adresses ip pour les services se fait dans le fichier conf.i
     
     [rabbitmq]
     hosts: 149.202.161.167, 149.202.161.163
+    
+    [webapp + API mazerunner]
+    hosts: 149.202.161.246
 ```
