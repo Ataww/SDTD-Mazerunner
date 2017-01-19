@@ -4,6 +4,7 @@
 import pika
 import logging
 import socket
+import os
 from pywebhdfs.webhdfs import PyWebHdfsClient
 from pywebhdfs.errors import PyWebHdfsException, ActiveHostNotFound
 from requests.exceptions import ConnectionError
@@ -55,7 +56,9 @@ def compute_recommendation(username):
 
     # Notify Spark via RabbitMQ that a subgraph is available
     logger.info("Notifying Spark via RabbitMQ...")
-    notify_spark_via_rabbitmq(username)
+    notified, error = notify_spark_via_rabbitmq(username)
+    if notified is not True:
+        return jsonify(error)
 
     # Wait until the computing finish
     logger.info("Wait for the end of calculation...")
@@ -84,7 +87,10 @@ def get_data_from_neo4j(username):
     to_return = {}
     socket.setdefaulttimeout(10)
     try:
+
         logger.debug("Trying to connect to bolt://"+neo4j_node+":"+neo4j_bolt_port+" ...")
+        # Erase known hosts
+        os.system("sudo rm -r /home/xnet/.neo4j/known_hosts")
         neo4j_client = GraphDatabase.driver("bolt://"+neo4j_node+":"+neo4j_bolt_port, auth=basic_auth(neo4j_username, neo4j_password)).session()
         result = neo4j_client.run("MATCH (n:Utilisateur)-[r1:AIME]->(t:Titre)<-[r2:AIME]-(n2:Utilisateur)-[r3:AIME]->(t2:Titre) WHERE n.nomUtilisateur = \""+username+"\" AND n2.nomUtilisateur <> \""+username+"\" AND t <> t2 RETURN DISTINCT  n2, type(r3), t2")
         records = ""
@@ -114,6 +120,7 @@ def inject_recommendations_into_neo4j(username, records):
     socket.setdefaulttimeout(10)
     try:
         logger.debug("Trying to connect to bolt://" + neo4j_node + ":" + neo4j_bolt_port + " ...")
+        os.system("sudo rm -r /home/xnet/.neo4j/known_hosts")
         neo4j_client = GraphDatabase.driver("bolt://" + neo4j_node + ":" + neo4j_bolt_port, auth=basic_auth(neo4j_username, neo4j_password)).session()
 
         for record in records.decode("utf-8").split("\n"):
@@ -142,11 +149,13 @@ def write_data_to_hdfs(username, records):
     global hdfs_namenodes
     to_return = {}
     file_path = "/jobs_to_do/"+username+".txt"
+    result_path = "/jobs_done/" + username
     logger.debug("Writing file " + file_path + " to HDFS")
     try:
         logger.debug("Trying to connect to "+hdfs_namenodes[0]+" namenode")
         hdfs_client = PyWebHdfsClient(host=hdfs_namenodes[0], port='50070', user_name='xnet', timeout=100)
         hdfs_client.delete_file_dir(file_path)
+        hdfs_client.delete_file_dir(result_path)
         hdfs_client.create_file(file_path, records.encode("utf-8"))
     except (ConnectionError, PyWebHdfsException) as ce:
         to_return["details_1"] = str(ce)
@@ -191,11 +200,19 @@ def read_result_from_hdfs(username):
 
 def notify_spark_via_rabbitmq(username):
     # Configure RabbitMQ connection
-    credentials = pika.PlainCredentials("neo4j_user", "neo4j_user")
-    sending_connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, rabbitmq_port, '/', credentials))
-    rabbitmq_sending_channel = sending_connection.channel()
-    rabbitmq_sending_channel.exchange_declare(exchange='jobs_to_do', type='fanout')
-    rabbitmq_sending_channel.basic_publish(exchange='jobs_to_do', routing_key='', body=username)
+    to_return = {}
+    try:
+        credentials = pika.PlainCredentials("neo4j_user", "neo4j_user")
+        sending_connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, rabbitmq_port, '/', credentials))
+        rabbitmq_sending_channel = sending_connection.channel()
+        rabbitmq_sending_channel.exchange_declare(exchange='jobs_to_do', type='fanout')
+        rabbitmq_sending_channel.basic_publish(exchange='jobs_to_do', routing_key='', body=username)
+    except Exception as e:
+        to_return["error"] = "There was a a problem while notifying Spark via Rabbitmq"
+        to_return["details"] = str(e)
+        return False, to_return
+
+    return True, None
 
 
 class RabbitMQConsumerClient():
