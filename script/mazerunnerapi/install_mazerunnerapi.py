@@ -7,22 +7,22 @@ from logging import info
 from os.path import exists
 
 home = '/home/xnet'
-mazerunner_api_script = home + "SDTD-Mazerunner/mazerunner/mazerunner_api.py"
-mazerunner_api_service = home + "SDTD-Mazerunner/mazerunner/mazerunner_api.service"
-mazerunner_api_dir = home + '/mazerunner_api' # contains the api script
+mazerunner_api_script = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.py"
+mazerunner_api_service = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.service"
+mazerunner_api_dir = home + '/mazerunnerapi' # contains the api script
 systemd_dir = "/etc/systemd/system/"
 
 
 def install_mazerunner_api():
-    """Install mazerunner_api """
+    """Install mazerunnerapi """
     if not exists(mazerunner_api_dir):
-        info('Creating mazerunner_api folder')
+        info('Creating mazerunnerapi folder')
         run(['mkdir', mazerunner_api_dir], check=True)
 
-        info('Copying mazerunner_api script into its installation folder')
+        info('Copying mazerunnerapi script into its installation folder')
         run(['cp', mazerunner_api_script, mazerunner_api_dir], check=True)
 
-        info('Copying mazerunner_api.service file to /etc/systemd/system/')
+        info('Copying mazerunnerapi.service file to /etc/systemd/system/')
         run(['cp', mazerunner_api_service, systemd_dir], check=True)
 
         info('Installing pywebhdfs python module')
@@ -37,8 +37,8 @@ def install_mazerunner_api():
         info('Installing pika python module')
         run(['sudo', '-H', 'pip3', 'install', 'pika'], check=True)
 
-        info('Activating mazerunner_api service')
-        run(['sudo', 'systemctl', 'enable', 'mazerunner_api'], check=True)
+        info('Activating mazerunnerapi service')
+        run(['sudo', 'systemctl', 'enable', 'mazerunnerapi'], check=True)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO ,format="%(asctime)s :: %(levelname)s :: %(message)s")

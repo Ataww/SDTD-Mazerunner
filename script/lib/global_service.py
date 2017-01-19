@@ -198,7 +198,7 @@ def update_directory_mazerunner_api():
     print("################# Update Mazerunner Api ####################")
     print("############################################################")
     config = configparser.ConfigParser()
-    config.read("./mazerunner_api/conf.ini")
+    config.read("./mazerunnerapi/conf.ini")
     hosts = getHostsByKey(config, 'mazerunner_api_active')
     for host in hosts:
         if hostIsUp(host):
