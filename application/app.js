@@ -78,7 +78,7 @@ app.get('/recommandations/:name', function(req, res) {
 		res.render('error');
 		console.log(err);}
         else {
-          res.render('songs', {songs:result.data, user:name});
+          res.render('recommandations', {songs:result.data, user:name});
         }
       }
     );
