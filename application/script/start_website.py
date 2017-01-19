@@ -6,7 +6,7 @@ import subprocess
 # Function for copy the different script on the different machine
 def launch_web_site():
     print("#############################################################")
-    print("#######      Launch the web-site on the machine      ########")
+    print("#######      Launch the website on the machine       ########")
     print("#############################################################")
     subprocess.run(['npm','start'],cwd='/home/xnet/SDTD-Mazerunner/application',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     return

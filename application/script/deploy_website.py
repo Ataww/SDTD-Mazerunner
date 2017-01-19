@@ -30,6 +30,7 @@ def install_web_site():
     else:
         logging.error("Decompressing directory failed [error]")
     subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host, './SDTD-Mazerunner/application/script/install_environment.py'])
+    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '~/.ssh/xnet', 'xnet@'+host, './SDTD-Mazerunner/application/script/start_website.py'])
     return
 
 # Recover all ip for one component. Return format ip
