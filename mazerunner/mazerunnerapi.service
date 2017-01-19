@@ -3,7 +3,7 @@ Description=Mazerunner API
 
 [Service]
 Environment=PYTHON_PATH=/home/xnet/.local/lib/python3.5/site-packages
-ExecStart=/usr/bin/python3 /home/xnet/mazerunner_api/mazerunner_api.py
+ExecStart=/usr/bin/python3 /home/xnet/mazerunnerapi/mazerunnerapi.py
 Restart=always
 
 [Install]

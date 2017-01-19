@@ -1,0 +1,4 @@
+check process haproxy with PIDFILE "/var/run/haproxy.pid "
+group haproxy
+start program  "/usr/sbin/service haproxy start"
+stop program "/usr/sbin/service haproxy stop"

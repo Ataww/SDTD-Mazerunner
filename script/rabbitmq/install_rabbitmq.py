@@ -72,8 +72,8 @@ def take_erlang_cookie(master) :
 
 def install_haproxy():
     subprocess.run(['sudo','apt-get','-qq','-y','install','haproxy'])
-    subprocess.run(['mkdir','-p','/etc/haproxy'])
-    subprocess.run(['sudo','mv','/home/xnet/SDTD-Mazerunner/script/rabbitmq/conf/haproxy.cfg','/etc/haproxy/'])
+    subprocess.run(['mkdir','-p','/etc/haproxyh'])
+    subprocess.run(['sudo','cp','/home/xnet/SDTD-Mazerunner/script/rabbitmq/conf/haproxy.cfg','/etc/haproxy/'])
     subprocess.run(['sudo', 'service', 'haproxy', 'restart'])
     return
 
@@ -145,6 +145,38 @@ def getHostsByKey(config, key):
         index += 1
     return hosts
 
+# Copy monit script on hostname
+def copy_monit_file(monitFile, hostname):
+    logging.info('Copying monit config files ' + monitFile + ' on host ' + hostname)
+    subprocess.run(['sudo', 'cp', 'etc/monit/' + monitFile, '/etc/monit/conf.d/'])
+    return
+
+# Deploy monit conf script
+def conf_monit():
+    logging.info('Add monit config file')
+    hostname = socket.gethostname()
+    config = configparser.ConfigParser()
+    config.read('conf.ini')
+
+    masterMonitHosts = config.get("Master", 'hosts').split(',')
+    slavesMonitHosts = config.get("Slaves", 'hosts').split(',')
+    masterMonitFile = config.get("Master", 'monitFile').split(',')
+    slavesMonitFile = config.get("Slaves", 'monitFile').split(',')
+
+    if not exists('/etc/monit'):
+        logging.error('monit is not installed')
+    else:
+        for host in masterMonitHosts:
+            if hostname == host:
+                for monitFile in masterMonitFile:
+                    copy_monit_file(monitFile, hostname)
+        for host in slavesMonitHosts:
+            if hostname == host:
+                for monitFile in slavesMonitFile:
+                    copy_monit_file(monitFile, hostname)
+    subprocess.run(['sudo', 'monit', 'reload'])
+
 # INSTALLATION
 if __name__ == '__main__':
     install_rabbitmq()
+    conf_monit()
