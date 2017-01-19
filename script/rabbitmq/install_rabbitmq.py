@@ -154,7 +154,7 @@ def copy_monit_file(monitFile, hostname):
 # Deploy monit conf script
 def conf_monit():
     logging.info('Add monit config file')
-    hostname = 'rabbitmq-2'
+    hostname = socket.gethostname()
     config = configparser.ConfigParser()
     config.read('conf.ini')
 
