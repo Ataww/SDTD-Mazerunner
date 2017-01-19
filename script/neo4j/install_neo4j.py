@@ -59,7 +59,7 @@ def config_haproxy():
         subprocess.run(['sudo', 'add-apt-repository', '-y', 'ppa:vbernat/haproxy-1.5'])
         subprocess.run(['sudo', 'apt-get', 'update'])
         subprocess.run(['sudo', 'apt-get', 'install', '-y', 'haproxy'])
-        subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/haproxy.conf',
+        subprocess.run(['sudo', 'cp', '/home/xnet/neo4j/conf/haproxy.cfg',
         '/etc/haproxy/haproxy.cfg'])
     return
 
