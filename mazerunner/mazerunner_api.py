@@ -27,8 +27,8 @@ rabbitmq_port = 5672
 # Neo4j configuration
 neo4j_username = "neo4j"
 neo4j_password = "neo4j_pass"
-neo4j_node = "neo4j-1"
-neo4j_bolt_port = "7687"
+neo4j_node = "neo4j-3"
+neo4j_bolt_port = "7688"
 
 
 @app.route("/compute_recommendation", defaults={'username': None})
@@ -87,14 +87,14 @@ def get_data_from_neo4j(username):
         logger.debug("Trying to connect to bolt://"+neo4j_node+":"+neo4j_bolt_port+" ...")
         neo4j_client = GraphDatabase.driver("bolt://"+neo4j_node+":"+neo4j_bolt_port, auth=basic_auth(neo4j_username, neo4j_password)).session()
         result = neo4j_client.run("MATCH (n:Utilisateur)-[r1:AIME]->(t:Titre)<-[r2:AIME]-(n2:Utilisateur)-[r3:AIME]->(t2:Titre) WHERE n.nomUtilisateur = \""+username+"\" AND n2.nomUtilisateur <> \""+username+"\" AND t <> t2 RETURN DISTINCT  n2, type(r3), t2")
-        records = "n2,type(r3),t2\n"
+        records = ""
         for record in result:
             n2 = record["n2"]
             type = record["type(r3)"]
             t2 = record["t2"]
 
             # Generate GraphX needed format
-            records += n2.get("idUtilisateur")+","+n2.get("nomUtilisateur")+","+type+","+t2.get("idTitre")
+            records += n2.get("idUtilisateur")+","+n2.get("nomUtilisateur")+","+type+","+t2.get("idTitre")+"\n"
 
         neo4j_client.close()
 
@@ -141,7 +141,7 @@ def inject_recommendations_into_neo4j(username, records):
 def write_data_to_hdfs(username, records):
     global hdfs_namenodes
     to_return = {}
-    file_path = "/jobs_to_do/"+username+".csv"
+    file_path = "/jobs_to_do/"+username+".txt"
     logger.debug("Writing file " + file_path + " to HDFS")
     try:
         logger.debug("Trying to connect to "+hdfs_namenodes[0]+" namenode")
@@ -229,4 +229,4 @@ if __name__ == "__main__":
     logging.getLogger(__name__).setLevel(logging.DEBUG)
 
     # Run the service
-    app.run(threaded=True)
+    app.run(host='0.0.0.0', threaded=True)
