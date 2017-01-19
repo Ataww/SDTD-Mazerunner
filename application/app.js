@@ -69,6 +69,25 @@ app.get('/songs/:name', function(req, res) {
     );
 });
 
+app.get('/refresh/:name', function(req, res) {
+ // var options = { host:'localhost:5000', path: '/compute_recommandation/'+req.params.name};
+  var options = { host:'google.fr', path: '/'};
+  var req_get = http.get(options, function(res) {
+        console.log(res.statusCode);
+  });
+  var name = req.params.name;
+  db.cypherQuery(
+    'MATCH (u:Utilisateur {nomUtilisateur:"'+name+'"}) MATCH (t:Titre) WHERE (u)-[:RECO]->(t) RETURN t LIMIT 10',
+    function(err, result) {
+        if(err) {
+                res.render('error');
+                console.log(err);}
+        else {
+          res.render('recommandations', {songs:result.data, user:name});
+        }
+     });
+});
+
 app.get('/recommandations/:name', function(req, res) {
   var name = req.params.name;
   db.cypherQuery(
