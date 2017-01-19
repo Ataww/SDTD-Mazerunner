@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type=text/javascript src="{{ url_for('static', filename='jquery-3.1.1.min.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/javascript.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{{ render_option["title"] }}</title>
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{{ render_option["title"] }}</a>
+        </div>
+
+        <div class="collapse navbar-collapse">
+            <div class="navbar-form" align="right">
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="row">
+    <div class="col-lg-6">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center">Cluster SPARK</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center" class="align-bottom col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span  id="spark-1" class="label label-danger">spark-1</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('spark',1)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('spark',1)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="align-bottom col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span  id="spark-2" class="label label-danger">spark-2</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('spark',2)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('spark',2)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="align-bottom col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span  id="spark-3" class="label label-danger">spark-3</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('spark',3)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('spark',3)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="align-bottom col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span  id="spark-4" class="label label-danger">spark-4</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('spark',4)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('spark',4)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-6">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center">Cluster HDFS</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="hdfs-1" class="label label-danger">hdfs-1</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('hdfs',1)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('hdfs',1)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="hdfs-2" class="label label-danger">hdfs-2</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('hdfs',2)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('hdfs',2)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="hdfs-3" class="label label-danger">hdfs-3</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('hdfs',3)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('hdfs',3)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-6">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center">Cluster NEO4J</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="neo4j-1" class="label label-danger">neo4j-1</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('neo4j',1)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('neo4j',1)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="neo4j-2" class="label label-danger">neo4j-2</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('neo4j',2)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('neo4j',2)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="neo4j-3" class="label label-danger">neo4j-3</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('neo4j',3)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('neo4j',3)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-6">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th colspan="3" style="text-align: center">Cluster RABBITMQ</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="rabbitmq-1" class="label label-danger">rabbitmq-1</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('rabbitmq',1)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('rabbitmq',1)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="rabbitmq-2" class="label label-danger">rabbitmq-2</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('rabbitmq',2)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('rabbitmq',2)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-6">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center">Cluster ZOOKEEPER</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="zookeeper-1" class="label label-danger">zookeeper-1</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('zookeeper',1)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',1)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="zookeeper-2" class="label label-danger">zookeeper-2</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('zookeeper',2)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',2)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <span id="zookeeper-3" class="label label-danger">zookeeper-3</span>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-success"
+                            onclick="start_service('zookeeper',3)">Start
+                    </button>
+                </td>
+                <td class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                    <button style="width: 100%" type="button" class="btn btn-danger" onclick="stop_service('zookeeper',3)">
+                        Stop
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+</body>
+</html>

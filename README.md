@@ -11,24 +11,11 @@ Stack comprenant les outils :
 
 ## Deploiment
 
-#### Start the deployment
-Pour effectuer le deploiment il est nécessaire de se placer à la racine du dossier script
+#### Mazerunner commande
+Pour voir les différentes possibilités lancer la commande suivantes :
 
 ```bash
-    $ ./launch_deployment
-```
-
-## Fonctionnement
-Pour pouvoir lancer et arréter les services il est nécessaire de se placer à la racine du dossier script
-#### Start all services
-```bash
-    $ ./start_services
-```
-
-#### Stop all services
-
-```bash
-    $ ./stop_services
+    $ python3 mazerunner.py --help
 ```
 
 ## Configuration

@@ -21,6 +21,7 @@ def install_server() :
     return
 
 def enable_management_UI() :
+    logging.info('Enable WEB UI')
     subprocess.run(['sudo', 'rabbitmq-plugins', 'enable', 'rabbitmq_management'])
     return
 
@@ -69,6 +70,13 @@ def take_erlang_cookie(master) :
     subprocess.run(['sudo', 'service', 'rabbitmq-server', 'start'])
     return
 
+def install_haproxy():
+    subprocess.run(['sudo','apt-get','-qq','-y','install','haproxy'])
+    subprocess.run(['mkdir','-p','/etc/haproxyh'])
+    subprocess.run(['sudo','cp','/home/xnet/SDTD-Mazerunner/script/rabbitmq/conf/haproxy.cfg','/etc/haproxy/'])
+    subprocess.run(['sudo', 'service', 'haproxy', 'restart'])
+    return
+
 def configure_logger(debug):
     logging.basicConfig(format="%(asctime)s :: %(levelname)s :: %(message)s")
     logger = logging.getLogger()
@@ -81,7 +89,7 @@ def configure_logger(debug):
 def install_rabbitmq():
     # Read configuration
     config = configparser.ConfigParser()
-    config.read("./rabbitmq/conf.ini")
+    config.read("conf.ini")
     masterHost = getHostsByKey(config, "Master")
     slaveHosts = config.get("Slaves", 'hosts').split(',')
     DEBUG = config.get("Log", "debug")
@@ -98,6 +106,7 @@ def install_rabbitmq():
         install_server()
         enable_management_UI()
         if hostname == masterHost[0]:
+            install_haproxy()
             configure_user()
             expose_erlang_cookie()
             configure_replication()
@@ -112,7 +121,7 @@ def install_rabbitmq():
 # Permit to know the hostname
 def get_hostname():
     config = configparser.ConfigParser()
-    config.read("./rabbitmq/conf.ini")
+    config.read("conf.ini")
     hosts = getHostsByKey(config, "Master")
     hostname = socket.gethostname()
 
@@ -136,6 +145,38 @@ def getHostsByKey(config, key):
         index += 1
     return hosts
 
+# Copy monit script on hostname
+def copy_monit_file(monitFile, hostname):
+    logging.info('Copying monit config files ' + monitFile + ' on host ' + hostname)
+    subprocess.run(['sudo', 'cp', 'etc/monit/' + monitFile, '/etc/monit/conf.d/'])
+    return
+
+# Deploy monit conf script
+def conf_monit():
+    logging.info('Add monit config file')
+    hostname = socket.gethostname()
+    config = configparser.ConfigParser()
+    config.read('conf.ini')
+
+    masterMonitHosts = config.get("Master", 'hosts').split(',')
+    slavesMonitHosts = config.get("Slaves", 'hosts').split(',')
+    masterMonitFile = config.get("Master", 'monitFile').split(',')
+    slavesMonitFile = config.get("Slaves", 'monitFile').split(',')
+
+    if not exists('/etc/monit'):
+        logging.error('monit is not installed')
+    else:
+        for host in masterMonitHosts:
+            if hostname == host:
+                for monitFile in masterMonitFile:
+                    copy_monit_file(monitFile, hostname)
+        for host in slavesMonitHosts:
+            if hostname == host:
+                for monitFile in slavesMonitFile:
+                    copy_monit_file(monitFile, hostname)
+    subprocess.run(['sudo', 'monit', 'reload'])
+
 # INSTALLATION
 if __name__ == '__main__':
     install_rabbitmq()
+    conf_monit()

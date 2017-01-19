@@ -1,15 +1,37 @@
+import Dependencies._
+
+
 lazy val common = Seq(
   version := "1.0",
-  scalaVersion := "2.10.4"
+  scalaVersion := "2.12.1",
+  organization := "fr.ensimag",
+  test in assembly := {},
+  libraryDependencies ++= dependencies,
+  assemblyMergeStrategy in assembly := {
+    case PathList(ps@_*) if ps.last endsWith ".conf" => MergeStrategy.concat
+    case x =>
+      val oldStrategy = (assemblyMergeStrategy in assembly).value
+      oldStrategy(x)
+  }
 )
 
-lazy val deps = Seq(
-  "org.apache.spark" % "spark-core_2.10" % "2.0.2",
-  "org.apache.spark" % "spark-graphx_2.10" % "2.0.2",
-  "com.rabbitmq" % "amqp-client" % "4.0.0"
-)
+lazy val root = (project in file("."))
+  .settings(common: _*)
+  .aggregate(orchestrator, job)
 
-lazy val root = (project in file(".")).settings(common: _*).settings(
-  name := "SDTD-Mazerunner-Backend",
-  libraryDependencies ++= deps
-)
+lazy val orchestrator = (project in file("orchestrator"))
+  .settings(common: _*)
+  .settings(
+    name := "SDTD-orchestrator",
+    mainClass in assembly := Some("JobOrchestration.JobOrchestration"),
+    assemblyJarName in assembly := "orchestrator.jar"
+  )
+
+lazy val job = (project in file("job"))
+  .settings(common: _*)
+  .settings(
+    name := "SDTD-job",
+    mainClass in assembly := Some("com.ensimag.SparkJob"),
+    assemblyJarName in assembly := "sparkjob.jar"
+  )
+

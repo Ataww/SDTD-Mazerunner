@@ -1,0 +1,31 @@
+<h1>Here are your recommandations!</h1>
+{{#each songs}}
+   <div class="song">
+     <h2>{{this.artiste}} - {{this.nomChanson}}</h2>
+     <button class="like" onclick="onLike('{{this.idTitre}}', this)">J'aime !</button>
+     <button class="dislike" onclick="onDislike('{{this.idTitre}}', this)">Bof...</button>
+   </div>
+ {{/each}}
+  <button><a href='/refresh/{{user}}'>Get more!</a></button>
+
+ <script>
+
+function onLike(id, elem) {
+  console.log(elem);
+  $.post('/like?id='+id+'&user='+'{{user}}', null, function(resp) {
+    elem.parentNode.style.display='none';
+  });
+  $.post('/unreco?id='+id+'&user='+'{{user}}', null, function(resp) {
+  });
+}
+
+function onDislike(id, elem) {
+  console.log(elem);
+  $.post('/dislike?id='+id+'&user='+'{{user}}', null, function(resp) {
+    elem.parentNode.style.display='none';
+  });
+  $.post('/unreco?id='+id+'&user='+'{{user}}', null, function(resp) {
+  });
+}
+
+</script>
