@@ -15,7 +15,7 @@ function onLike(id, elem) {
   $.post('/like?id='+id+'&user='+'{{user}}', null, function(resp) {
     elem.parentNode.style.display='none';
   });
-  $.post('/unreco?id='+id+'&user='+'{{user}}', null, function(resp)) {
+  $.post('/unreco?id='+id+'&user='+'{{user}}', null, function(resp) {
   });
 }
 
@@ -24,7 +24,7 @@ function onDislike(id, elem) {
   $.post('/dislike?id='+id+'&user='+'{{user}}', null, function(resp) {
     elem.parentNode.style.display='none';
   });
-  $.post('/unreco?id='+id+'&user='+'{{user}}', null, function(resp)) {
+  $.post('/unreco?id='+id+'&user='+'{{user}}', null, function(resp) {
   });
 }
 
