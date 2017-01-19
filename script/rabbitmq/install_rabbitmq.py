@@ -74,7 +74,7 @@ def install_haproxy():
     subprocess.run(['sudo','apt-get','-qq','-y','install','haproxy'])
     subprocess.run(['mkdir','-p','/etc/haproxy'])
     subprocess.run(['sudo','mv','/home/xnet/SDTD-Mazerunner/script/rabbitmq/conf/haproxy.cfg','/etc/haproxy/'])
-
+    subprocess.run(['sudo', 'service', 'haproxy', 'restart'])
     return
 
 def configure_logger(debug):
