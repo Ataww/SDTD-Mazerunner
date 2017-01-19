@@ -40,12 +40,6 @@ def install_web_site():
         logging.info("Decompressing directory done [success]")
     else:
         logging.error("Decompressing directory failed [error]")
-
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host, 'rm -rf jar/'],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@' + host,
-                    'cp -R SDTD-Mazerunner/backend/jar /home/xnet/'], stdout=subprocess.DEVNULL,
-                   stderr=subprocess.DEVNULL)
     return
 
 

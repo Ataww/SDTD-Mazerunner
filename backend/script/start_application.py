@@ -13,7 +13,7 @@ def launch_application():
     config = configparser.ConfigParser()
     config.read("conf.ini")
     host = getHostsByKey(config,'application')[0]
-    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@'+host,'cd /home/xnet/jar/; spark-submit orchestrator.jar'])
+    subprocess.run(['ssh','-o','StrictHostKeyChecking=no','-i', '%s/.ssh/xnet' % os.path.expanduser("~"), 'xnet@'+host,'cd /home/xnet/SDTD-Mazerunner/artifact/; spark-submit orchestrator.jar'])
     return
 
 # Recover all ip for one component. Return format ip
