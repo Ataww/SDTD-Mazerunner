@@ -19,7 +19,7 @@ def global_check():
     logging.info("Start to check all service")
     for service in components:
         config = configparser.ConfigParser()
-        config.read("./" + service + "/conf.ini")
+        config.read("/home/xnet/SDTD-Mazerunner/script/" + service + "/conf.ini")
         keys = config.sections()
         for key in keys:
             if "Log" not in key:
@@ -34,6 +34,7 @@ def global_check():
 
 
 def check_function(name_service, key_name, host):
+    result = True
     if "zookeeper" in name_service:
         result = check_zookeeper(zookeeper_host=host)
     elif "spark" in name_service:
@@ -104,15 +105,33 @@ def check_spark_worker(spark_worker_host):
 def check_hdfs(hdfs_host):
     p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
                           'xnet@' + hdfs_host,
-                          'source ~/.profile; jps;'],
+                          'source ~/.profile; sudo jps;'],
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    if "JournalNode" in p.stdout.read().decode("utf-8").strip(
-            ' \n'):
-        logging.info("On machine " + hdfs_host + " hdfs Running")
-        return True
+    out = p.stdout.read().decode("utf-8").strip(' \n')
+
+    if 'hdfs-1' in hdfs_host:
+        if "JournalNode" in out and "NameNode" in out:
+            logging.info("On machine " + hdfs_host + " hdfs Running")
+            return True
+        else:
+            logging.warning("On machine " + hdfs_host + " hdfs Not Running")
+            return False
+    elif 'hdfs-2' in hdfs_host:
+        if "JournalNode" in out and "NameNode" in out and "DataNode" in out:
+            logging.info("On machine " + hdfs_host + " hdfs Running")
+            return True
+        else:
+            logging.warning("On machine " + hdfs_host + " hdfs Not Running")
+            return False
+    elif 'hdfs-3' in hdfs_host:
+        if "JournalNode" in out and "DataNode" in out:
+            logging.info("On machine " + hdfs_host + " hdfs Running")
+            return True
+        else:
+            logging.warning("On machine " + hdfs_host + " hdfs Not Running")
+            return False
     else:
-        logging.warning("On machine " + hdfs_host + " hdfs Not Running")
-        return False
+        return True
 
 
 # Function who check haproxy
@@ -162,29 +181,29 @@ def check_neo4j(neo4j_host):
 def restart(host, service, key):
     logging.info("On machine " + host + " try to start service " + service)
     # call for stop the service
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
-                    'xnet@' + host,
-                    'source ~/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 stop_' + service + '.py;'],
-                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    #subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    #                'xnet@' + host,
+    #                'source ~/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 stop_' + service + '.py;'],
+    #               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     # call for start the service
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
-                    'xnet@' + host,
-                    'source ~/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 launch_' + service + '.py;'],
-                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    #subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    #                'xnet@' + host,
+    #                'source ~/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 launch_' + service + '.py;'],
+    #               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
 
-    result = check_function(name_service=service, key_name=key, host=host)
+    #result = check_function(name_service=service, key_name=key, host=host)
 
-    if result:
-        logging.info("On machine " + host + " restart service " + service + " [success]")
-    else:
-        logging.info("On machine " + host + " impossible to restart service " + service + "[error]")
+    #if result:
+    #    logging.info("On machine " + host + " restart service " + service + " [success]")
+    #else:
+    #    logging.info("On machine " + host + " impossible to restart service " + service + "[error]")
 
     return
 
 
 if __name__ == '__main__':
     os.sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from script.spark import lib_spark
+    from spark import lib_spark
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
     scheduler = Timer(5, job_server)

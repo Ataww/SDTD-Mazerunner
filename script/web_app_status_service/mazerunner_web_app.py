@@ -63,7 +63,7 @@ def stop_service(service_name, id):
 
 if __name__ == "__main__":
     os.sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from scheduler_install import check_function
+    from global_server.scheduler_server import check_function
 
     # Change diretory to script one
     try:

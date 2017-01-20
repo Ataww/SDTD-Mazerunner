@@ -8,7 +8,7 @@ from os.path import exists
 
 home = '/home/xnet'
 mazerunner_api_script = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.py"
-mazerunner_api_service = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.service"
+mazerunner_api_service = home + "/SDTD-Mazerunner/mazerunner/scheduler_server.service"
 mazerunner_api_dir = home + '/mazerunnerapi' # contains the api script
 systemd_dir = "/etc/systemd/system/"
 
@@ -22,8 +22,8 @@ def install_mazerunner_api():
         info('Copying mazerunnerapi script into its installation folder')
         run(['cp', mazerunner_api_script, mazerunner_api_dir], check=True)
 
-        info('Copying mazerunnerapi.service file to /etc/systemd/system/')
-        run(['sudo', 'rm', systemd_dir+'mazerunnerapi.service'])
+        info('Copying scheduler_server.service file to /etc/systemd/system/')
+        run(['sudo', 'rm', systemd_dir+'scheduler_server.service'])
         run(['sudo', 'cp', mazerunner_api_service, systemd_dir], check=True)
 
         info('Installing pywebhdfs python module')
