@@ -5,6 +5,7 @@ import logging
 import os
 import socket
 import subprocess
+from os.path import exists
 
 java_export = 'JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64'
 
@@ -121,6 +122,35 @@ def install_monit():
         os.system('sudo monit reload >> /dev/null 2>&1')
 
 
+def install_server():
+    if not exists('/home/xnet/server'):
+        logging.info('Installing Status Server')
+        subprocess.run(['rm', '-rf', '/home/xnet/server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['mkdir', '-p', '/home/xnet/server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'rm', '/etc/systemd/system/scheduler_server.service'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'rm', '/etc/systemd/system/webapp_status.service'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/global_server/scheduler_server.service',
+                        '/etc/systemd/system/'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/web_app_status_service/webapp_status.service',
+                        '/etc/systemd/system/'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/spark/', '/home/xnet/server/'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/global_server/', '/home/xnet/server/'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/web_app_status_service/', '/home/xnet/server/'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'systemctl', 'enable', 'scheduler_server'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'systemctl', 'enable', 'webapp_status'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'systemctl', 'daemon-reload'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+
+    return
+
+
 def install_pip3():
     logging.info('Installing pip3')
     os.system("sudo apt-get install -qq -y python3-pip >> /dev/null 2>&1")
@@ -147,3 +177,4 @@ if __name__ == '__main__':
     install_monit()
     install_pip3()
     install_flask()
+    install_server()

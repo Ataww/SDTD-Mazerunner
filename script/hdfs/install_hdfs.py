@@ -7,7 +7,10 @@ from logging import info
 from os.path import exists
 
 version = 'hadoop-2.7.3'
-distrib = 'http://apache.crihan.fr/dist/hadoop/common/' + version + '/' + version + '.tar.gz'
+distrib = 'http://apache.crihan.fr/dist/hadoop/common/'+version+'/'+version+'.tar.gz'
+
+version_zk = 'zookeeper-3.4.9'
+distrib_zk = 'http://apache.crihan.fr/dist/zookeeper/'+version_zk+'/'+version_zk+'.tar.gz'
 
 home = '/home/xnet'
 
@@ -43,6 +46,7 @@ def install_hdfs():
 
         info('Starting journalnode')
         run([hadoop_dir + '/sbin/hadoop-daemon.sh', 'start', 'journalnode'], check=True)
+
 
 def conf_monit():
     """Copy monit config files for service"""

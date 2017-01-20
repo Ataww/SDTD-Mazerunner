@@ -22,7 +22,7 @@ def launch():
     # It has to be done from StandbyNN
     config = configparser.ConfigParser()
     config.read(setup_dir + '/conf.ini')
-    run('ssh xnet@' + config.get('NameNode',
+    run('yes Y | ssh xnet@' + config.get('NameNode',
                                  'default_standby') + ' \"' + hadoop_dir + '/bin/hdfs namenode -bootstrapStandby\"',
         shell=True)
 
@@ -42,6 +42,7 @@ def isActiveNN():
     config = configparser.ConfigParser()
     config.read(setup_dir + '/conf.ini')
     return config.get('NameNode', 'default_active') in socket.gethostname()
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")

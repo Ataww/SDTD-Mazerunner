@@ -5,6 +5,7 @@ import logging
 from subprocess import run
 from logging import info
 from os.path import exists
+import subprocess
 
 home = '/home/xnet'
 mazerunner_api_script = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.py"
@@ -22,7 +23,8 @@ def install_mazerunner_api():
         info('Copying mazerunnerapi script into its installation folder')
         run(['cp', mazerunner_api_script, mazerunner_api_dir], check=True)
 
-        info('Copying mazerunnerapi.service file to /etc/systemd/system/')
+        info('Copying scheduler_server.service file to /etc/systemd/system/')
+        run(['sudo', 'rm', systemd_dir+'mazerunnerapi.service'])
         run(['sudo', 'cp', mazerunner_api_service, systemd_dir], check=True)
 
         info('Installing pywebhdfs python module')
@@ -39,6 +41,8 @@ def install_mazerunner_api():
 
         info('Activating mazerunnerapi service')
         run(['sudo', 'systemctl', 'enable', 'mazerunnerapi'], check=True)
+        run(['sudo', 'systemctl', 'daemon-reload'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO ,format="%(asctime)s :: %(levelname)s :: %(message)s")

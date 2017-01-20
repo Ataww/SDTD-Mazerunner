@@ -1,9 +1,9 @@
 [Unit]
-Description=Mazerunner API
+Description=Mazerunner Server
 
 [Service]
 Environment=PYTHON_PATH=/home/xnet/.local/lib/python3.5/site-packages
-ExecStart=/usr/bin/python3 /home/xnet/mazerunnerapi/mazerunnerapi.py
+ExecStart=/usr/bin/python3 /home/xnet/server/web_app_status_service/mazerunner_web_app.py
 Restart=always
 
 [Install]
