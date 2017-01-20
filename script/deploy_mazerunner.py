@@ -29,10 +29,10 @@ def launch_deployement():
     subprocess.run(['python3', 'mazerunner.py', '--start', 'neo4j-3'], cwd=os.getcwd())
     subprocess.run(['python3', 'mazerunner.py', '--globalstatus_start', 'webapp-1'], cwd=os.getcwd())
     subprocess.run(['python3', 'mazerunner.py', '--globalserver_start', 'webapp-1'], cwd=os.getcwd())
+    subprocess.run(['python3', 'deploy_website.py', 'run'],
+                    cwd=os.getcwd().replace('/script', '/application/script'))
 
     # Not Use because block the script
-    # subprocess.run(['python3', 'deploy_website.py', 'run'],
-    #               cwd=os.getcwd().replace('/script', '/application/script'))
     # subprocess.run(['python3', 'start_application.py'], cwd=os.getcwd().replace('/script', '/backend/script'))
     return
 

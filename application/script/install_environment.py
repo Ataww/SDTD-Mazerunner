@@ -17,6 +17,14 @@ def install_environment():
     logging.info("install dependencies ...")
     subprocess.run(['npm','install'],cwd='/home/xnet/SDTD-Mazerunner/application/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     subprocess.run(['npm','install', 'http'],cwd='/home/xnet/SDTD-Mazerunner/application/',stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    subprocess.run(['sudo', 'rm', '/etc/systemd/system/webapp_mazerunner.service'], stdout=subprocess.DEVNULL,
+                   stderr=subprocess.DEVNULL)
+    subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/application/script/webapp_mazerunner.service',
+                    '/etc/systemd/system/'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(['sudo', 'systemctl', 'enable', 'webapp_mazerunner'], stdout=subprocess.DEVNULL,
+                  stderr=subprocess.DEVNULL)
+    subprocess.run(['sudo', 'systemctl', 'daemon-reload'], stdout=subprocess.DEVNULL,
+                   stderr=subprocess.DEVNULL)
     return
 
 if __name__ == '__main__':
