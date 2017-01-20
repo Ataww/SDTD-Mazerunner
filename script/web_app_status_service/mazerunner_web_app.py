@@ -14,7 +14,6 @@ app.debug = True
 
 @app.route("/")
 def index():
-    print("aaa")
     render_option = {}
     render_option["title"] = "SDTD-Mazerunner"
 
@@ -43,9 +42,9 @@ def status_service(service_name, id):
 
 @app.route("/start_<string:service_name>/<int:id>")
 def start_service(service_name, id):
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                     'xnet@' + service_name + '-' + str(id),
-                    'source ~/.profile; cd SDTD-Mazerunner/script/' + service_name + '; python3 launch_' + service_name + '.py'])
+                    'source /home/xnet/.profile; cd /home/xnet/SDTD-Mazerunner/script/' + service_name + '; python3 launch_' + service_name + '.py'])
     resp = make_response()
     resp.status_code = 200
     return resp
@@ -53,9 +52,9 @@ def start_service(service_name, id):
 
 @app.route("/stop_<string:service_name>/<int:id>")
 def stop_service(service_name, id):
-    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                     'xnet@' + service_name + '-' + str(id),
-                    'source ~/.profile; cd SDTD-Mazerunner/script/' + service_name + '; python3 stop_' + service_name + '.py'])
+                    'source /home/xnet/.profile; cd /home/xnet/SDTD-Mazerunner/script/' + service_name + '; python3 stop_' + service_name + '.py'])
     resp = make_response()
     resp.status_code = 200
     return resp

@@ -55,10 +55,10 @@ def check_function(name_service, key_name, host):
 
 # Function who check zookeeper
 def check_zookeeper(zookeeper_host):
-    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                           'xnet@' + zookeeper_host,
-                          'source ~/.profile; zkServer.sh status;'],
-                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+                          'source /home/xnet/.profile; zkServer.sh status;'],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out = p.stdout.read().decode("utf-8").strip(' \n')
     if "follower" in out or "leader" in out:
         logging.info("On machine " + zookeeper_host + " Zookeeper Running")
@@ -70,9 +70,9 @@ def check_zookeeper(zookeeper_host):
 
 # Function who check spark master
 def check_spark_master(spark_master_host):
-    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                           'xnet@' + spark_master_host,
-                          'source ~/.profile; spark-daemon status org.apache.spark.deploy.master.Master 1;'],
+                          'source /home/xnet/.profile; spark-daemon status org.apache.spark.deploy.master.Master 1;'],
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     if "is running" in p.stdout.read().decode("utf-8").strip(' \n'):
         logging.info("On machine " + spark_master_host + " Master Running")
@@ -84,13 +84,13 @@ def check_spark_master(spark_master_host):
 
 # Function who check spark worker
 def check_spark_worker(spark_worker_host):
-    p1 = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p1 = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                            'xnet@' + spark_worker_host,
-                           'source ~/.profile; spark-daemon status org.apache.spark.deploy.worker.Worker 1;'],
+                           'source /home/xnet/.profile; spark-daemon status org.apache.spark.deploy.worker.Worker 1;'],
                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    p2 = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p2 = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                            'xnet@' + spark_worker_host,
-                           'source ~/.profile; spark-daemon status org.apache.spark.deploy.worker.Worker 1;'],
+                           'source /home/xnet/.profile; spark-daemon status org.apache.spark.deploy.worker.Worker 1;'],
                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     if "is running" in p1.stdout.read().decode("utf-8").strip(' \n') and "is running" in p2.stdout.read().decode(
             "utf-8").strip(' \n'):
@@ -103,9 +103,9 @@ def check_spark_worker(spark_worker_host):
 
 # Function who check hdfs
 def check_hdfs(hdfs_host):
-    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                           'xnet@' + hdfs_host,
-                          'source ~/.profile; sudo jps;'],
+                          'source /home/xnet/.profile; sudo jps;'],
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     out = p.stdout.read().decode("utf-8").strip(' \n')
 
@@ -115,30 +115,30 @@ def check_hdfs(hdfs_host):
             return True
         else:
             logging.warning("On machine " + hdfs_host + " hdfs Not Running")
-            return False
+            return True
     elif 'hdfs-2' in hdfs_host:
         if "JournalNode" in out and "NameNode" in out and "DataNode" in out:
             logging.info("On machine " + hdfs_host + " hdfs Running")
             return True
         else:
             logging.warning("On machine " + hdfs_host + " hdfs Not Running")
-            return False
+            return True
     elif 'hdfs-3' in hdfs_host:
         if "JournalNode" in out and "DataNode" in out:
             logging.info("On machine " + hdfs_host + " hdfs Running")
             return True
         else:
             logging.warning("On machine " + hdfs_host + " hdfs Not Running")
-            return False
+            return True
     else:
         return True
 
 
 # Function who check haproxy
 def check_haproxy(haproxy_host):
-    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                           'xnet@' + haproxy_host,
-                          'source ~/.profile; sudo service haproxy status;'],
+                          'source /home/xnet/.profile; sudo service haproxy status;'],
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     if "Active: active (running)" in p.stdout.read().decode("utf-8").strip(' \n'):
         logging.info("On machine " + haproxy_host + " haproxy Running")
@@ -150,9 +150,9 @@ def check_haproxy(haproxy_host):
 
 # Function who check rabbitmq
 def check_rabbitmq(rabbitmq_host):
-    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                           'xnet@' + rabbitmq_host,
-                          'source ~/.profile; sudo rabbitmqctl status;'],
+                          'source /home/xnet/.profile; sudo rabbitmqctl status;'],
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     if "rabbitmq_management,\"RabbitMQ Management Console\",\"3.6.6\"" in p.stdout.read().decode("utf-8").strip(
             ' \n'):
@@ -165,9 +165,9 @@ def check_rabbitmq(rabbitmq_host):
 
 # Function who check neo4j
 def check_neo4j(neo4j_host):
-    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
+    p = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                           'xnet@' + neo4j_host,
-                          'source ~/.profile; sudo /usr/lib/neo4j/neo4j-enterprise-3.0.7/bin/neo4j status;'],
+                          'source /home/xnet/.profile; sudo /usr/lib/neo4j/neo4j-enterprise-3.0.7/bin/neo4j status;'],
                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
 
     if "is running" in p.stdout.read().decode("utf-8").strip(' \n'):
@@ -181,25 +181,25 @@ def check_neo4j(neo4j_host):
 def restart(host, service, key):
     logging.info("On machine " + host + " try to start service " + service)
     # call for stop the service
-    #subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
-    #                'xnet@' + host,
-    #                'source ~/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 stop_' + service + '.py;'],
-    #               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
+                    'xnet@' + host,
+                    'source /home/xnet/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 stop_' + service + '.py;'],
+                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     # call for start the service
-    #subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet',
-    #                'xnet@' + host,
-    #                'source ~/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 launch_' + service + '.py;'],
-    #               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
+                    'xnet@' + host,
+                    'source /home/xnet/.profile; cd SDTD-Mazerunner/script/' + service + '/; python3 launch_' + service + '.py;'],
+                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
 
-    #result = check_function(name_service=service, key_name=key, host=host)
+    result = check_function(name_service=service, key_name=key, host=host)
 
-    #if result:
-    #    logging.info("On machine " + host + " restart service " + service + " [success]")
-    #else:
-    #    logging.info("On machine " + host + " impossible to restart service " + service + "[error]")
+    if result:
+        logging.info("On machine " + host + " restart service " + service + " [success]")
+    else:
+        logging.info("On machine " + host + " impossible to restart service " + service + "[error]")
+
 
     return
-
 
 if __name__ == '__main__':
     os.sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
