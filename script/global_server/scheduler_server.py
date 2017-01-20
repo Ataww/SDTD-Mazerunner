@@ -115,21 +115,21 @@ def check_hdfs(hdfs_host):
             return True
         else:
             logging.warning("On machine " + hdfs_host + " hdfs Not Running")
-            return True
+            return False
     elif 'hdfs-2' in hdfs_host:
         if "JournalNode" in out and "NameNode" in out and "DataNode" in out:
             logging.info("On machine " + hdfs_host + " hdfs Running")
             return True
         else:
             logging.warning("On machine " + hdfs_host + " hdfs Not Running")
-            return True
+            return False
     elif 'hdfs-3' in hdfs_host:
         if "JournalNode" in out and "DataNode" in out:
             logging.info("On machine " + hdfs_host + " hdfs Running")
             return True
         else:
             logging.warning("On machine " + hdfs_host + " hdfs Not Running")
-            return True
+            return False
     else:
         return True
 

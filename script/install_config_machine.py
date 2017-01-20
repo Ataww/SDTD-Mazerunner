@@ -123,7 +123,7 @@ def install_monit():
 
 
 def install_server():
-    if exists('/home/xnet/server'):
+    if not exists('/home/xnet/server'):
         logging.info('Installing Status Server')
         subprocess.run(['rm', '-rf', '/home/xnet/server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(['mkdir', '-p', '/home/xnet/server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
