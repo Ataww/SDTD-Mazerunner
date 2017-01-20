@@ -8,7 +8,7 @@ from os.path import exists
 
 home = '/home/xnet'
 mazerunner_api_script = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.py"
-mazerunner_api_service = home + "/SDTD-Mazerunner/mazerunner/scheduler_server.service"
+mazerunner_api_service = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.service"
 mazerunner_api_dir = home + '/mazerunnerapi' # contains the api script
 systemd_dir = "/etc/systemd/system/"
 
