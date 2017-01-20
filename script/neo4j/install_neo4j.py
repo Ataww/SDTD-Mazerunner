@@ -60,7 +60,7 @@ def config_haproxy():
     hostnumber = socket.gethostname()
     if 'neo4j-3' in hostnumber:
         subprocess.run(['sudo', 'apt-get', '-qq', '-y', 'install', 'haproxy'])
-        subprocess.run(['mkdir', '-p', '/etc/haproxyh'])
+        subprocess.run(['mkdir', '-p', '/etc/haproxy'])
         subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/haproxy.cfg', '/etc/haproxy/'])
         subprocess.run(['sudo', 'service', 'haproxy', 'restart'])
     return
