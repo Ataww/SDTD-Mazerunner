@@ -5,6 +5,7 @@ import logging
 from subprocess import run
 from logging import info
 from os.path import exists
+import subprocess
 
 home = '/home/xnet'
 mazerunner_api_script = home + "/SDTD-Mazerunner/mazerunner/mazerunnerapi.py"
@@ -40,6 +41,8 @@ def install_mazerunner_api():
 
         info('Activating mazerunnerapi service')
         run(['sudo', 'systemctl', 'enable', 'mazerunnerapi'], check=True)
+        run(['sudo', 'systemctl', 'daemon-reload'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO ,format="%(asctime)s :: %(levelname)s :: %(message)s")

@@ -145,6 +145,9 @@ def install_server():
                        stderr=subprocess.DEVNULL)
         subprocess.run(['sudo', 'systemctl', 'enable', 'webapp_status'], stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'systemctl', 'daemon-reload'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+
     return
 
 
