@@ -42,9 +42,11 @@ def config_neo4j():
         subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/neo4j-1.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
         logging.info("Importing database on neo4j-1...")
-        subprocess.run(['sudo', 'rm', '-rf', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/graph.db'])
-        subprocess.run(['sudo', 'mkdir', '-p', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db'])
-        subprocess.run(['sudo', '/usr/lib/neo4j/'+neo4j_path+'/bin/neo4j-import', '--into', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db', '--nodes', 'data/utilisateurs.csv', '--nodes', 'data/titres.csv', '--relationships', 'data/gout.csv'])
+        subprocess.run(['sudo', 'rm', '-rf', '/usr/lib/neo4j/' + neo4j_path + '/data/databases/graph.db'])
+        subprocess.run(['sudo', 'mkdir', '-p', '/usr/lib/neo4j/' + neo4j_path + '/data/databases/music.db'])
+        subprocess.run(['sudo', '/usr/lib/neo4j/' + neo4j_path + '/bin/neo4j-import', '--into',
+                        '/usr/lib/neo4j/' + neo4j_path + '/data/databases/music.db', '--nodes', 'data/utilisateurs.csv',
+                        '--nodes', 'data/titres.csv', '--relationships', 'data/gout.csv'])
     elif 'neo4j-2' in hostnumber:
         subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/neo4j-2.conf',
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
@@ -53,21 +55,27 @@ def config_neo4j():
                         '/usr/lib/neo4j/' + neo4j_path + '/conf/neo4j.conf'])
     return
 
+
 def config_haproxy():
     hostnumber = socket.gethostname()
     if 'neo4j-3' in hostnumber:
-        subprocess.run(['sudo', 'add-apt-repository', '-y', 'ppa:vbernat/haproxy-1.5'])
-        subprocess.run(['sudo', 'apt-get', 'update'])
-        subprocess.run(['sudo', 'apt-get', 'install', '-y', 'haproxy'])
+        subprocess.run(['sudo', 'apt-get', '-qq', '-y', 'install', 'haproxy'])
+        subprocess.run(['mkdir', '-p', '/etc/haproxyh'])
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/neo4j/conf/haproxy.cfg', '/etc/haproxy/'])
+        subprocess.run(['sudo', 'service', 'haproxy', 'restart'])
     return
+
 
 def set_database():
     logging.info("Importing database")
-    subprocess.run(['sudo', 'mkdir', '/usr/lib/neo4j'+neo4j_path+'/data/databases/music.db'])
-    subprocess.run(['sudo', '/usr/lib/neo4j/'+neo4j_path+'/bin/neo4j-import', '--into', '/usr/lib/neo4j/'+neo4j_path+'/data/databases/music.db', '--nodes', 'data/utilisateurs.csv', '--nodes', 'data/titres.csv', '--relationships', 'data/gout.csv'])
+    subprocess.run(['sudo', 'mkdir', '/usr/lib/neo4j' + neo4j_path + '/data/databases/music.db'])
+    subprocess.run(['sudo', '/usr/lib/neo4j/' + neo4j_path + '/bin/neo4j-import', '--into',
+                    '/usr/lib/neo4j/' + neo4j_path + '/data/databases/music.db', '--nodes', 'data/utilisateurs.csv',
+                    '--nodes', 'data/titres.csv', '--relationships', 'data/gout.csv'])
+
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,format="%(asctime)s :: %(levelname)s :: %(message)s")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
     install_neo4j()
     config_neo4j()
     config_haproxy()
