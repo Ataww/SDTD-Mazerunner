@@ -24,7 +24,7 @@ def install_mazerunner_api():
         run(['cp', mazerunner_api_script, mazerunner_api_dir], check=True)
 
         info('Copying scheduler_server.service file to /etc/systemd/system/')
-        run(['sudo', 'rm', systemd_dir+'scheduler_server.service'])
+        run(['sudo', 'rm', systemd_dir+'mazerunnerapi.service'])
         run(['sudo', 'cp', mazerunner_api_service, systemd_dir], check=True)
 
         info('Installing pywebhdfs python module')

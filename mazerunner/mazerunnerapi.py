@@ -92,9 +92,11 @@ def get_data_from_neo4j(username):
 
         logger.debug("Trying to connect to bolt://"+neo4j_node+":"+neo4j_bolt_port+" ...")
         # Erase known hosts
-        os.system("sudo rm -r /home/xnet/.neo4j/known_hosts")
-        neo4j_client = GraphDatabase.driver("bolt://"+neo4j_node+":"+neo4j_bolt_port, auth=basic_auth(neo4j_username, neo4j_password)).session()
-        result = neo4j_client.run("MATCH (n:Utilisateur)-[r1:AIME]->(t:Titre)<-[r2:AIME]-(n2:Utilisateur)-[r3:AIME]->(t2:Titre) WHERE n.nomUtilisateur = \""+username+"\" AND n2.nomUtilisateur <> \""+username+"\" AND t <> t2 RETURN DISTINCT  n2, type(r3), t2")
+        # os.system("sudo rm -r /home/xnet/.neo4j/known_hosts")
+        driver = GraphDatabase.driver("bolt://"+neo4j_node+":"+neo4j_bolt_port, auth=basic_auth(neo4j_username, neo4j_password))
+        session = driver.session()
+        logger.debug("Connected to bolt://" + neo4j_node + ":" + neo4j_bolt_port + " ...")
+        result = session.run("MATCH (n:Utilisateur)-[r1:AIME]->(t:Titre)<-[r2:AIME]-(n2:Utilisateur)-[r3:AIME]->(t2:Titre) WHERE n.nomUtilisateur = \""+username+"\" AND n2.nomUtilisateur <> \""+username+"\" AND t <> t2 RETURN DISTINCT  n2, type(r3), t2")
         records = ""
         for record in result:
             n2 = record["n2"]
@@ -104,7 +106,7 @@ def get_data_from_neo4j(username):
             # Generate GraphX needed format
             records += n2.get("idUtilisateur")+","+n2.get("nomUtilisateur")+","+type+","+t2.get("idTitre")+"\n"
 
-        neo4j_client.close()
+        session.close()
 
         return True, records
     except (socket.timeout, socket.gaierror) as e:
@@ -122,19 +124,20 @@ def inject_recommendations_into_neo4j(username, records):
     socket.setdefaulttimeout(10)
     try:
         logger.debug("Trying to connect to bolt://" + neo4j_node + ":" + neo4j_bolt_port + " ...")
-        os.system("sudo rm -r /home/xnet/.neo4j/known_hosts")
-        neo4j_client = GraphDatabase.driver("bolt://" + neo4j_node + ":" + neo4j_bolt_port, auth=basic_auth(neo4j_username, neo4j_password)).session()
+        # os.system("sudo rm -r /home/xnet/.neo4j/known_hosts")
+        driver = GraphDatabase.driver("bolt://" + neo4j_node + ":" + neo4j_bolt_port, auth=basic_auth(neo4j_username, neo4j_password))
+        session = driver.session()
 
         for record in records.decode("utf-8").split("\n"):
             values = record.split(",")
             track_id = values[len(values)-1]
             if track_id:
-                result = neo4j_client.run("MATCH (u:Utilisateur {nomUtilisateur:'"+ username +"'}), (t:Titre {idTitre:'"+track_id+"'}) CREATE (u)-[:RECO]->(t)")
+                result = session.run("MATCH (u:Utilisateur {nomUtilisateur:'"+ username +"'}), (t:Titre {idTitre:'"+track_id+"'}) CREATE (u)-[:RECO]->(t)")
                 summary = result.consume()
                 logger.debug(str(summary.counters.relationships_created)+" recommendation added ("+username+" --RECO--> "+track_id+")")
                 nb_relationships_created += summary.counters.relationships_created
 
-        neo4j_client.close()
+        session.close()
 
         logger.info(str(nb_relationships_created)+" RECO relationships have been created")
         return True, to_return
@@ -156,8 +159,9 @@ def write_data_to_hdfs(username, records):
     try:
         logger.debug("Trying to connect to "+hdfs_namenodes[0]+" namenode")
         hdfs_client = PyWebHdfsClient(host=hdfs_namenodes[0], port='50070', user_name='xnet', timeout=100)
-        hdfs_client.delete_file_dir(file_path)
-        hdfs_client.delete_file_dir(result_path)
+        logger.debug("Trying to erase "+file_path)
+        hdfs_client.delete_file_dir(file_path, recursive=True)
+        hdfs_client.delete_file_dir(result_path, recursive=True)
         hdfs_client.create_file(file_path, records.encode("utf-8"))
     except (ConnectionError, PyWebHdfsException) as ce:
         to_return["details_1"] = str(ce)

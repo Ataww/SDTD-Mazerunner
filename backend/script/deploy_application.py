@@ -60,11 +60,10 @@ def getHostsByKey(config, key):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
+    components = ['neo4j', 'rabbitmq', 'spark', 'webapp']
     config = configparser.ConfigParser()
-    config.read("conf.ini")
-    host = getHostsByKey(config, 'application_active')[0]
-    transfer_application(host)
-    config = configparser.ConfigParser()
-    config.read("conf.ini")
-    host = getHostsByKey(config, 'application_standby')[0]
-    transfer_application(host)
+    config.read(os.getcwd().replace("backend/script", "script/conf.ini"))
+    for component in components:
+        hosts = getHostsByKey(config, component)
+        for host in hosts:
+            transfer_application(host)
