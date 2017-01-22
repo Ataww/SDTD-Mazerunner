@@ -5,6 +5,7 @@ import logging
 import os
 import socket
 import subprocess
+from os.path import exists
 
 java_export = 'JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64'
 
@@ -25,7 +26,7 @@ def install_python():
 # Function for install Java
 def install_java():
     JAVA_VERSION = os.popen('java -version 2>&1 |awk \'NR==1{ gsub(/"/,""); print $3 }\'', "r").read()
-    if '1.8.0_111' in JAVA_VERSION:
+    if '1.8.0_111' not in JAVA_VERSION:
         logging.info("Installation of OpenJDK 8")
         out = os.system("sudo apt-get update >> /dev/null 2>&1")
         out = os.system("sudo apt-get -qq -y install openjdk-8-jdk >> /dev/null 2>&1")
@@ -121,6 +122,35 @@ def install_monit():
         os.system('sudo monit reload >> /dev/null 2>&1')
 
 
+def install_server():
+    if not exists('/home/xnet/server'):
+        logging.info('Installing Status Server')
+        subprocess.run(['rm', '-rf', '/home/xnet/server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['mkdir', '-p', '/home/xnet/server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'rm', '/etc/systemd/system/scheduler_server.service'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'rm', '/etc/systemd/system/webapp_status.service'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/global_server/scheduler_server.service',
+                        '/etc/systemd/system/'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '/home/xnet/SDTD-Mazerunner/script/web_app_status_service/webapp_status.service',
+                        '/etc/systemd/system/'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/spark/', '/home/xnet/server/'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/global_server/', '/home/xnet/server/'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/web_app_status_service/', '/home/xnet/server/'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'systemctl', 'enable', 'scheduler_server'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'systemctl', 'enable', 'webapp_status'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'systemctl', 'daemon-reload'], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+
+    return
+
+
 def install_pip3():
     logging.info('Installing pip3')
     os.system("sudo apt-get install -qq -y python3-pip >> /dev/null 2>&1")
@@ -147,3 +177,4 @@ if __name__ == '__main__':
     install_monit()
     install_pip3()
     install_flask()
+    install_server()

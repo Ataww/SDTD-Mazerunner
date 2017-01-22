@@ -22,7 +22,7 @@ def launch():
     # It has to be done from StandbyNN
     config = configparser.ConfigParser()
     config.read(setup_dir + '/conf.ini')
-    run('ssh xnet@' + config.get('NameNode',
+    run('yes Y | ssh xnet@' + config.get('NameNode',
                                  'default_standby') + ' \"' + hadoop_dir + '/bin/hdfs namenode -bootstrapStandby\"',
         shell=True)
 

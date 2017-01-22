@@ -65,6 +65,8 @@ def check_action():
         action = "STATUS_APP_STOP"
     elif "--update-api-mazerunner" == sys.argv[1]:
         action = "UPDATE_API"
+    elif "--globalserver_start" == sys.argv[1]:
+        action = "START_SERVER"
     return action
 
 
@@ -128,6 +130,10 @@ def show_command():
     print(
         "     " + lib.color.UNDERLINE + "Stop global service (interface web for check status of service) :\n" + lib.color.END)
     print("         python3 mazerunner.py --globalstatus_stop          <server_name>")
+    print("\n")
+    print(
+        "     " + lib.color.UNDERLINE + "Start global server (service for know if the service if available) :\n" + lib.color.END)
+    print("         python3 mazerunner.py --globalserver_start          <server_name>")
     print("\n")
     print(lib.color.BOLD + "SERVICE NAME\n" + lib.color.END)
     print("         spark")
@@ -236,7 +242,10 @@ def call_method(action, serverName):
                         'source ~/.profile; cd SDTD-Mazerunner/script/; python3 install_config_machine.py'])
     elif action == "STATUS_APP_START":
         subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
-                        'source ~/.profile; cd SDTD-Mazerunner/script/web_app_status_service/; python3 mazerunner_web_app.py'])
+                        'source ~/.profile; cd SDTD-Mazerunner/script/web_app_status_service/; python3 launch_statuswebapp.py'])
+    elif action == "START_SERVER":
+        subprocess.run(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '~/.ssh/xnet', 'xnet@' + ip,
+                        'source ~/.profile; cd SDTD-Mazerunner/script/global_server/; python3 launch_server.py'])
     elif action == "STATUS_APP_STOP":
         global_service.stop_web_app(port=8079, ip=ip)
     elif action == "UPDATE":
