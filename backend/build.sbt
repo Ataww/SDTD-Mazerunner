@@ -3,7 +3,7 @@ import Dependencies._
 
 lazy val common = Seq(
   version := "1.0",
-  scalaVersion := "2.12.1",
+  scalaVersion := "2.11.8",
   organization := "fr.ensimag",
   test in assembly := {},
   libraryDependencies ++= dependencies,
@@ -31,7 +31,7 @@ lazy val job = (project in file("job"))
   .settings(common: _*)
   .settings(
     name := "SDTD-job",
-    mainClass in assembly := Some("com.ensimag.SparkJob"),
+    mainClass in assembly := Some("com.ensimag.ApplicationMain"),
     assemblyJarName in assembly := "sparkjob.jar"
   )
 
