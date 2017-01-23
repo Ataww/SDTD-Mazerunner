@@ -1,0 +1,13 @@
+\section{Limitations}
+
+\subsection{Résilience}
+
+Le problème de la résilience se pose au niveau de l'API Mazerunner et de l'application web. 
+En effet en l'état ces applications sont situées sur une seule machine et par conséquent une panne sur cette machine entraine l'indisponibilité de tout le système. 
+Le même problème se pose pour les load balancers ou HA proxies mis en place pour pallier aux potentiels crash des machines. 
+En l'état nous avons installé un voire deux proxy pour chaque composant, hors si ces proxy tombent alors le composant est inaccessible. 
+La solution évidente serait donc d'augmenter le nombre de machines dédiée pour améliorer la résilience mais se pose dés lors la question de savoir à quel moment on considère la robustesse du système suffisante. 
+Dans notre cas nous avons décidé d'accepter ces points de faiblesse mais dans un environnement de production nous recommandons une plus grand exigence en terme de redondance.
+
+\subsection{Scala}
+
