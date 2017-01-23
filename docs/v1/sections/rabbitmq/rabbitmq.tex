@@ -22,10 +22,83 @@ RabbitMQ propose les fonctionnalités suivantes :
 \subsection{Principes de fonctionnement}
 
 RabbitMQ propose les différents cas d'utilisation :
-
 \begin{itemize}
 	\item Point à point : Une seule application productrice et une seule consommatrice. Le message est retiré de la file d’attente lorsque le consommateur l’a lu ;
 	\item Publish-subscribe : Les applications consommatrices des messages s'abonnent à un channel correspondant à une catégorie de messages qu’elles veulent recevoir. Tous les messages du channel restent disponibles tant que tous les abonnés ne les ont pas lu ;
 	\item Work queue : Une application remplit une file de job à exécuter. Des serveurs viennent récupérer ces tâches pour les réaliser.
 	\item Routing : Les messages sont distribués dans les queues en fonction de leur type.
 \end{itemize}
+\ \\
+La compréhension de RabbitMQ se limite à deux concepts :
+\begin{itemize}
+	\item la queue : c'est une file virtuelle de type FIFO dans laquelle des clients vont venir déposer ou récupérer des messages.
+	\item l'exchange : c'est une sorte de routeur qu'un émetteur va créer et dans lequel il va déposer des messages. Sa fonction de routeur réside dans le fait que l'on peut configurer la manière dont il va diffuser les messages. Par exemple, je fais suivre tout les messages de type "error" dans toutes les queues dont le nom correspond au partern "*error*".
+\end{itemize}
+Dans les faits, les émetteurs créent des exchanges dans lesquelles ils publient des messages. Les récepteurs eux, viennent brancher des queues aux exchanges pour récupérer les messages.
+
+\subsection{Infrastructure mise en place}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{pics/rabbitmq-infra.png}
+    \caption{Schéma globale de l'infrastructure mise en place pour RabbitMQ}
+\end{figure}
+\FloatBarrier
+\subsubsection{Haute disponibilité}
+
+Pour se prémunir d'une éventuelle panne d'un serveur RabbitMQ et pour garantir une disponibilité du service, RabbitMQ propose un système de cluster. Dans notre application deux serveurs RabbitMQ forme un cluster. La réplication des queues de message peut être configurée. Dans notre cas nous avons fait le choix du répliquer par défaut toutes les queues présentes.
+
+\subsubsection{Sécurité}
+
+L'accès au service de RabbitMQ est sécurisé par des crédentials. Deux utilisateurs existent : spark\_user et neo4j\_user. Les services souhaitant publier des messages au sein du cluster doivent obligatoirement être authentifié auprès de ce dernier. Dans le cas contraire, la requête est rejetée. Là encore les droits applicable sur les utilisateurs peuvent être configuré (droit en lecture, droit en écriture, type de queue, espace virtuel, etc...). Dans notre application nous n'avons pas configuré de droit spécifique car un isolement plus fin n'était pas pertinent.
+
+\subsubsection{Répartition de charge / DNS}
+
+Malgré la présence d'un cluster RabbitMQ, un client qui souhaite poster/récupérer un message doit quand même spécifié le serveur sur lequel il doit se connecter. Pour supprimer au sein des clients l'intelligence de se connecter sur un serveur A ou B suivant les machines disponibles, nous avons mis en place un load balancer, ici HaProxy. Ce dernier à la responsabilité de rediriger et répartir les requêtes en fonction des machines disponibles qu'il connait. Ainsi, les clients ne se posent plus de questions. Ils n'ont à connaître qu'une seule adresse/port. Bien sur ce choix technique est critiquable. En effet, si la machine qui héberge le load balancer tombe nous aurons une indisponibilité de service. Mais c'est un choix que nous avons fait pour décharger les clients de la problématique décrite plus haut.
+
+\subsubsection{Monitoring}
+
+Sur les deux machines rabbitmq-1 et rabbitmq-2 un Monit est installé. Il surveille l'état de certains services et est capable, lorsqu'il le détecte, de redémarrer les services qui seraient potentiellement hors service. La configuration de la surveillance est la suivante :
+\begin{itemize}
+	\item rabbitmq-1 : rabbitmq-server et haproxy ;
+	\item rabbitmq-2 : rabbitmq-server.
+\end{itemize}
+\ \\
+De plus, une interface de management est disponible. Elle permet de voir plusieurs paramètres concernant le cluster:
+\begin{itemize}
+	\item état du cluster ;
+	\item queue/exhange en cours ;
+	\item connections en cours ;
+	\item activité en lecture et écriture ;
+	\item poster/lire des messages ;
+	\item etc ...
+\end{itemize}
+
+Cette interface web est disponible via l'url \textit{http://[rabbitmq-1|rabbitmq-2]:15672}
+
+\subsubsection{Déploiement}
+
+Le déploiement des serveurs, du HaProxy et du Monit est totalement automatisé et est assuré par des scripts python. Le déroulement de cette phase est la suivante :
+\ \\
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{pics/rabbitmq_deploy.png}
+    \caption{Fluxs de la procédure de déploiement de RabbitMQ}
+\end{figure}
+\ \\
+Remarques:
+\begin{itemize}
+	\item La récupération du Erlang cookie de rabbitmq-1 par rabbitmq-2 est une condition nécessaire pour permettre la formation du cluster.
+	\item La configuration des utilisateurs et des paramètres de réplication n'est obligatoire que sur un serveur. En effet, lors de la création du cluster les serveurs se synchronisent.
+\end{itemize}
+
+\subsubsection{Rôle applicatif}
+
+Dans notre application, RabbitMQ fait le lien entre les demandes de recommandation pour un utilisateur faites par Mazerunner API et le calcul de la recommandation calculer par orchestrator/jobSpark. Il y a donc 2 exchanges et 2 queues (jobs\_to\_do et jobs\_done). Le schéma suivant résume son rôle:
+\ \\
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{pics/rabbitmq_role.png}
+    \caption{Schéma synthétique illustrant le rôle applicatif de RabbitMQ}
+\end{figure}
+\FloatBarrier
