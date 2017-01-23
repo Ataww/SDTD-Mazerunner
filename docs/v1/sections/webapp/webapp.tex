@@ -1,0 +1,35 @@
+\section{Application de démonstration}
+
+\subsection{Présentation générale}
+
+L'application de démonstration permet a un utilisateur de donner ses préférences musicales ainsi que d'accéder a ses recommandations personnalisées.
+Elle tourne sous node.js.
+\subsection{Fonctionnalités}
+
+Notre site de démonstration est composé principalement de deux pages en plus de la page d'accueil :
+
+La premiere page permet aux utilisateurs d'aimer ou de ne pas aimer différentes chansons que l'application lui propose. Il y accede avec l'URL /songs/<username>.
+10 chansons lui sont proposées. Chaque chanson disparait lorsque l'utilisateur a exprimé son choix. Ceci lui permet de pouvoir générer des recommandations dans la page suivante.
+
+La deuxieme page affiche donc les recommandations par utilisateur et lui permet aussi d'exprimer son avis sur ces recommandations. L'utilisateur accede a cette page avec l'URL /recommandations/<username>.
+10 recommandations sont proposées. Sur l'exemple de la page /songs, elles disparaissent une fois que l'utilisateur a exprimé son avis sur les chansons proposées. L'utilisateur peut demander a la plateforme de lui génerer de nouvelles recommandations.
+
+\subsection{Interactions avec les autres composants}
+
+La webapp ne communique qu'avec deux autres composants : la base de données et l'API MazeRunner.
+
+Elle communique avec neo4j en faisant des requetes cypher sur le port 7475 du load balancer se trouvant sur neo4j-3. Celui-ci répartit la requete vers neo4j-1 ou neo4j-2. Cela permet au site de récuperer les recommandations ou les chansons qu'elle doit proposer a l'utilisateur.
+Aussi, l'application utilise une API interne pour aimer, ne pas aimer et enlever une recommandation. Elle envoie donc des requetes cypher pour modifier la base de données. Les types de relation sont : :AIME, :DISLIKE, :RECO.
+Quand un utilisateur réagit a une recommandation, la webapp supprime la recommandation de la base de données pour la remplacer par un lien :AIME ou :DISLIKE afin de ne plus recommander la chanson.
+
+Enfin, la webapp dialogue avec l'API MazeRunner sur l'URL /compute_recommendation/<username> pour demander au systeme de génerer des recommandations pour l'utilisateur fourni dans l'adresse.
+
+\subsubsection{Répartition de charge / Monitoring}
+
+La webapp n'est pas répliquée. Cependant, elle est redémarrée si le processus s'arrete. Toutes les 10 secondes, le systeme vérifie que le processus npm tourne toujours, le redémarre sinon.
+
+\subsubsection{Déploiement}
+
+Le déploiement de l'application est totalement automatisé et est assuré par des scripts python.
+Lors de l'installation de la machine, il faut seulement installer nodejs, npm pour installer les paquets de dépendances, puis copier les fichiers du serveur.
+Ainsi, une fois l'application installée, un script lance la commande 'npm start'.
