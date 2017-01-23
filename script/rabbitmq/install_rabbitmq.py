@@ -72,7 +72,7 @@ def take_erlang_cookie(master) :
 
 def install_haproxy():
     subprocess.run(['sudo','apt-get','-qq','-y','install','haproxy'])
-    subprocess.run(['mkdir','-p','/etc/haproxyh'])
+    subprocess.run(['mkdir','-p','/etc/haproxy'])
     subprocess.run(['sudo','cp','/home/xnet/SDTD-Mazerunner/script/rabbitmq/conf/haproxy.cfg','/etc/haproxy/'])
     subprocess.run(['sudo', 'service', 'haproxy', 'restart'])
     return
