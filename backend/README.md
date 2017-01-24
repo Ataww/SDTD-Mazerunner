@@ -13,36 +13,40 @@ A réaliser à la racine de l'application
  
 1. Compilation
 
-    ```bash
-    $ sbt compile
-    ```  
+ ```bash
+ $ sbt compile
+ ```  
+    
 2. Mise à jour des dépendances
 
-    ```
-    $ sbt update
-    ```
+ ```bash
+ $ sbt update
+ ```  
     
 3. Package (alias pour assembly)
 
-    ```bash
-    $ sbt package
-    ```  
+ ```
+ $ sbt package
+ ```  
 4. Déplacer les jars dans le dossier artifact pour déploiement
-   ```
-   $ cd ..
-   $ ./move_artifacts
-   ```
+
+ ```
+ $ cd ..
+ 
+ $ ./move_artifacts
+ ```  
+      
 ## Run application in cluster spark
 
 1. Run 
 
-    ```bash
-    # Pour envoyer les sources sur le serveurs
-    $ python3 deploy_application.py
+ ```bash
+ # Pour envoyer les sources sur le serveurs
+ $ python3 deploy_application.py
      
-    # Pour lancer le spark-submit (Vérifier que spark est lancer sur les serveurs)
-    $ python3 start_application.py
-    ``` 
+ # Pour lancer le spark-submit (Vérifier que spark est lancer sur les serveurs)
+ $ python3 start_application.py
+ ``` 
     
 ## Problèmes courant
 * Erreur de résolution des dépendances
