@@ -2,7 +2,7 @@
 
 \subsection{Présentation générale}
 
-De manière globale, en plus des différents outils utilisés pour la résilience telle que zookeeper ou haproxy, cette stack dispose d'un serveur globale pour la gestion des pannes. Ce serveur va avoir pour rôle de lancer de manière période des vérifications de status des différents service. Selon les résultats obtenue, le service pourra être redémarré ou même installé sur une nouvelle machine. De plus pour permettre un suivie facile des erreurs de fonctionnement des status, un mail est envoyé dés lors qu'une erreur est détecté. Dans le message du mail est indiqué si l'erreur à put être solutionné de maniére automatique.
+De manière globale, en plus des différents outils utilisés pour la résilience telle que Zookeeper ou HAproxy, cette stack dispose d'un serveur global pour la gestion des pannes. Ce serveur va avoir pour rôle de lancer de manière périodique des vérifications de statuts des différents services deployés. Selon les résultats obtenus, le service pourra être redémarré ou même installé sur une nouvelle machine. De plus pour permettre un suivi facile des erreurs de fonctionnement des statuts, un mail est envoyé dès lors qu'une erreur est détectée. Dans le message du mail est indiqué si l'erreur a pu être résolue de manière automatique.
 
 \subsection{Infrastructure mise en place}
 \ \\

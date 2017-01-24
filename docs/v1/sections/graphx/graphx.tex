@@ -2,7 +2,9 @@
 
 \subsection{Présentation générale}
 
-GraphX est l'API de spark pour tout ce qui est traitement de graphes. GraphX étend l'objet RDD en introduisant le Resilient Distributed Property Graph. Pour permettre d'effectuer des traitements sur des graphes on peut stocker les informations dans des tableaux. Un graphe est structuré de plusieurs sommets et d'arrétes de ce fait, il est facile de pouvoir représenter un graphe sous forme de tableau où les deux premiéres colonnes correspondent aux sommets source et destination. Ce tableau comprendra une troisiéme colonne pour permettre d'y stocker la propriéte qui est présente entre les deux sommets. A partir de ce tableau spark à la possibilités de créer des collecion parallélisées en s'appuyant sur ces données. Ce jeu de données distribué pourra être utilisé en paralléle.
+GraphX est l'API de Spark pour tout ce qui s'apparente au traitement de graphes. GraphX étend l'objet RDD en introduisant le Resilient Distributed Property Graph. Pour permettre d'effectuer des traitements sur des graphes, on peut stocker les informations dans des tableaux.
+Un graphe est structuré de plusieurs sommets et d'arêtes. De ce fait, il est facile de pouvoir représenter un graphe sous forme de tableau où les deux premières colonnes correspondent aux sommets source et destination. Ce tableau comprendra une troisième colonne pour permettre d'y stocker la propriété qui est présente entre les deux sommets. 
+A partir de ce tableau, Spark à la possibilité de créer des collections parallélisées en mémoire en s'appuyant sur ces données. Ce jeu de données distribué pourra être utilisé en parallèle (de manière distribuée).
 
 \subsection{Cas d'utilisation graphes}
 
@@ -11,3 +13,8 @@ GraphX est l'API de spark pour tout ce qui est traitement de graphes. GraphX ét
       \item Publicité ciblée
       \item Modélisation astrophysique
 \end{itemize}
+
+\subsection{Utilisation dans le cadre du projet}
+- L'algorithme d'exemple de ce projet utilise l'API Graphx afin de créer un graphe des données des musiques aimées par d'autres personnes et qui ont également aimé au moins une musique de l'utilisateur sur laquelle on réalise la requête Neo4j.
+- L'utilisation des RDD (Resilient Distributed Dataset) pour la création des différents éléments du graphe ("vertices" pour les noeuds et "edges" pour les arêtes) nous permet d'utiliser des fonctions de collections (notamment ici pour récupérer les voisins des noeuds utilisateurs, donc les musiques qu'ils aiment).
+- Le tableau retourné nous permet de récupérer un sample des musiques, qui représenteront les recommendations faites à l'utilisateur de la requête.
