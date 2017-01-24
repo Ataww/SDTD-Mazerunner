@@ -7,7 +7,7 @@ from logging import info
 
 def launch():
     info('Starting Mazerunner Server Status')
-    run(['sudo', 'systemctl', 'start', 'scheduler_server'], check=True)
+    run(['sudo', 'systemctl', 'restart', 'scheduler_server'], check=True)
 
 
 if __name__ == '__main__':

@@ -137,6 +137,8 @@ def install_server():
                         '/etc/systemd/system/'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/spark/', '/home/xnet/server/'],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/lib/', '/home/xnet/server/'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/global_server/', '/home/xnet/server/'],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(['sudo', 'cp', '-R', '/home/xnet/SDTD-Mazerunner/script/web_app_status_service/', '/home/xnet/server/'],

@@ -1,2 +1,2 @@
-cp backend/orchestrator/target/scala-2.12/orchestrator.jar artifact/
-cp backend/job/target/scala-2.12/sparkjob.jar artifact/
+cp backend/orchestrator/target/scala-2.11/orchestrator.jar artifact/
+cp backend/job/target/scala-2.11/sparkjob.jar artifact/

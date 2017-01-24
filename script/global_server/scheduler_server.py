@@ -5,13 +5,14 @@ from threading import Timer
 import subprocess
 import configparser
 import os
+import smtplib
 
 components = ['hdfs', 'neo4j', 'rabbitmq', 'spark', 'zookeeper']
 
 
 def job_server():
     global_check()
-    scheduler = Timer(5, job_server)
+    scheduler = Timer(60, job_server)
     scheduler.start()
 
 
@@ -35,20 +36,20 @@ def global_check():
 
 def check_function(name_service, key_name, host):
     result = True
-    if "zookeeper" in name_service:
+    if "zookeeper" in name_service and check_host(host):
         result = check_zookeeper(zookeeper_host=host)
     elif "spark" in name_service:
-        if "Master" in key_name:
+        if "Master" in key_name and check_host(host):
             result = check_spark_master(spark_master_host=host)
-        elif "Slaves" in key_name:
+        elif "Slaves" in key_name and check_host(host):
             result = check_spark_worker(spark_worker_host=host)
-    elif "rabbitmq" in name_service:
-        if "Master" in key_name or "Slaves" in key_name:
+    elif "rabbitmq" in name_service and check_host(host):
+        if ("Master" in key_name or "Slaves" in key_name) and check_host(host):
             result = check_rabbitmq(rabbitmq_host=host)
     elif "neo4j" in name_service:
-        if "Master" in key_name or "Slaves" in key_name:
+        if ("Master" in key_name or "Slaves" in key_name) and check_host(host):
             result = check_neo4j(neo4j_host=host)
-    elif "hdfs" in name_service and "DataNode" in key_name:
+    elif "hdfs" in name_service and "DataNode" in key_name and check_host(host):
         result = check_hdfs(hdfs_host=host)
     return result
 
@@ -90,7 +91,7 @@ def check_spark_worker(spark_worker_host):
                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     p2 = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/home/xnet/.ssh/xnet',
                            'xnet@' + spark_worker_host,
-                           'source /home/xnet/.profile; spark-daemon status org.apache.spark.deploy.worker.Worker 1;'],
+                           'source /home/xnet/.profile; spark-daemon status org.apache.spark.deploy.worker.Worker 2;'],
                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     if "is running" in p1.stdout.read().decode("utf-8").strip(' \n') and "is running" in p2.stdout.read().decode(
             "utf-8").strip(' \n'):
@@ -195,15 +196,35 @@ def restart(host, service, key):
 
     if result:
         logging.info("On machine " + host + " restart service " + service + " [success]")
+        send_mail("Service " + service + " on machine " + host + "was stopped but was restart with success")
     else:
         logging.info("On machine " + host + " impossible to restart service " + service + "[error]")
-
+        send_mail("Service " + service + " on machine " + host + "was stopped and could not be restart ")
 
     return
+
+def check_host(host):
+    if lib.hostIsUp(host):
+        return True
+
+    send_mail("machine " + host + " is not accessible [error]")
+    logging.error("machine " + host + " is not accessible [error]")
+    return False
+
+def send_mail(msg):
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login("sdtdmazerunner@gmail.com", "Lgd-nf3-tTP-6yQ")
+
+    server.sendmail("sdtdmazerunner@gmail.com", "sdtdmazerunner@gmail.com", msg)
+    server.quit()
+    return
+
 
 if __name__ == '__main__':
     os.sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from spark import lib_spark
+    from lib import lib
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s")
     scheduler = Timer(5, job_server)
