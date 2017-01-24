@@ -54,3 +54,14 @@ L'équilibrage de charge est réalisé en mode proxy à l'aide de HAproxy. Il fa
 
 Bolt est utilisé à la place de HTTP comme protocole réseau. Ce nouveau protocole a été créé spécifiquement pour Neo4j de manière à optimiser les performances.
 
+\subsection{Import de données}
+
+Neo4j fournit un outil très utile pour l'import automatique de données de fichiers .csv : neo4j-import. Il faut combiner les options de la commande neo4j-import avec les bons headers dans les fichiers .csv :
+
+\begin{itemize}
+      \item --into : pour spécifier l'emplacement de la base à créer
+      \item --nodes : pour créer de nouveaux noeuds. Dans le fichier .csv, on doit identifier une colonne d'ID en ajoutant le suffixe ':ID' au nom de la colonne, et on donne le nom de la classe du noeud dans une colonne portant le header ':LABEL'
+      \item --relationships : pour créer des relations. Trois colonnes sont nécessaires : la première porte le header ':START_ID' et la deuxième ':END_ID' pour signifier l'origine et le point d'arrivée de la relation. La troisième colonne doit être intitulée ':TYPE' et indiquer le nom de la relation.
+\end{itemize}
+
+L'import de la base dans ce projet est réalisé dans le script neo4j_install, dans la fonction config_neo4j.
