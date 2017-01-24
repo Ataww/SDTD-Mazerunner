@@ -41,20 +41,20 @@ Dans les faits, les émetteurs créent des exchanges dans lesquelles ils publien
 \begin{figure}
     \centering
     \includegraphics[scale=0.5]{pics/rabbitmq-infra.png}
-    \caption{Schéma globale de l'infrastructure mise en place pour RabbitMQ}
+    \caption{Schéma global de l'infrastructure mise en place pour RabbitMQ}
 \end{figure}
 \FloatBarrier
 \subsubsection{Haute disponibilité}
 
-Pour se prémunir d'une éventuelle panne d'un serveur RabbitMQ et pour garantir une disponibilité du service, RabbitMQ propose un système de cluster. Dans notre application deux serveurs RabbitMQ forme un cluster. La réplication des queues de message peut être configurée. Dans notre cas nous avons fait le choix du répliquer par défaut toutes les queues présentes.
+Pour se prémunir d'une éventuelle panne d'un serveur et pour garantir une disponibilité du service, RabbitMQ propose un système de cluster. Dans notre application deux serveurs RabbitMQ forment un cluster. La réplication des queues de message peut être configurée. Dans notre cas nous avons fait le choix du répliquer par défaut toutes les queues présentes.
 
 \subsubsection{Sécurité}
 
-L'accès au service de RabbitMQ est sécurisé par des crédentials. Deux utilisateurs existent : spark\_user et neo4j\_user. Les services souhaitant publier des messages au sein du cluster doivent obligatoirement être authentifié auprès de ce dernier. Dans le cas contraire, la requête est rejetée. Là encore les droits applicable sur les utilisateurs peuvent être configuré (droit en lecture, droit en écriture, type de queue, espace virtuel, etc...). Dans notre application nous n'avons pas configuré de droit spécifique car un isolement plus fin n'était pas pertinent.
+L'accès au service de RabbitMQ est sécurisé par des crédentials. Deux utilisateurs existent : spark\_user et neo4j\_user. Les services souhaitant publier des messages au sein du cluster doivent obligatoirement être authentifié auprès de ce dernier. Dans le cas contraire, la requête est rejetée. Là encore les droits applicable sur les utilisateurs peuvent être configurés (droit en lecture, droit en écriture, type de queue, espace virtuel, etc...). Dans notre application nous n'avons pas configuré de droit spécifique car un isolement plus fin n'était pas pertinent.
 
 \subsubsection{Répartition de charge / DNS}
 
-Malgré la présence d'un cluster RabbitMQ, un client qui souhaite poster/récupérer un message doit quand même spécifié le serveur sur lequel il doit se connecter. Pour supprimer au sein des clients l'intelligence de se connecter sur un serveur A ou B suivant les machines disponibles, nous avons mis en place un load balancer, ici HaProxy. Ce dernier à la responsabilité de rediriger et répartir les requêtes en fonction des machines disponibles qu'il connait. Ainsi, les clients ne se posent plus de questions. Ils n'ont à connaître qu'une seule adresse/port. Bien sur ce choix technique est critiquable. En effet, si la machine qui héberge le load balancer tombe nous aurons une indisponibilité de service. Mais c'est un choix que nous avons fait pour décharger les clients de la problématique décrite plus haut.
+Malgré la présence d'un cluster RabbitMQ, un client qui souhaite poster/récupérer un message doit quand même spécifier le serveur sur lequel il doit se connecter. Pour supprimer au sein des clients l'intelligence de se connecter sur un serveur A ou B suivant les machines disponibles, nous avons mis en place un load balancer, ici HaProxy. Ce dernier à la responsabilité de rediriger et répartir les requêtes en fonction des machines disponibles qu'il connait. Ainsi, les clients ne se posent plus de questions. Ils n'ont à connaître qu'une seule adresse/port. Bien sûr ce choix technique est critiquable. En effet, si la machine qui héberge le load balancer tombe nous aurons une indisponibilité de service. Mais c'est un choix que nous avons fait pour décharger les clients de la problématique décrite plus haut.
 
 \subsubsection{Monitoring}
 
@@ -89,12 +89,12 @@ Le déploiement des serveurs, du HaProxy et du Monit est totalement automatisé 
 Remarques:
 \begin{itemize}
 	\item La récupération du Erlang cookie de rabbitmq-1 par rabbitmq-2 est une condition nécessaire pour permettre la formation du cluster.
-	\item La configuration des utilisateurs et des paramètres de réplication n'est obligatoire que sur un serveur. En effet, lors de la création du cluster les serveurs se synchronisent.
+	\item La configuration des utilisateurs et des paramètres de réplication n'est obligatoire que sur un serveur. En effet, lors de la création du cluster ils se synchronisent.
 \end{itemize}
 
 \subsubsection{Rôle applicatif}
 
-Dans notre application, RabbitMQ fait le lien entre les demandes de recommandation pour un utilisateur faites par Mazerunner API et le calcul de la recommandation calculer par orchestrator/jobSpark. Il y a donc 2 exchanges et 2 queues (jobs\_to\_do et jobs\_done). Le schéma suivant résume son rôle:
+Dans notre application, RabbitMQ fait le lien entre les demandes de recommandation pour un utilisateur faites par Mazerunner API et le calcul de la recommandation calculer par orchestrator/jobSpark. Il y a donc 2 exchanges et 2 queues (jobs\_to\_do et jobs\_done). Ils ont la respectivement la responsibilité de faire suivre les noms d'utilisateurs pour lesquels les recommandations sont à calculer, et ceux pour lesquels le calcul est terminé. Le schéma suivant résume son rôle:
 \ \\
 \begin{figure}[h]
     \centering
