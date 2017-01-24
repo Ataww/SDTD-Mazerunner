@@ -37,3 +37,20 @@ Pour démarrer le serveur :
 /etc/init.d/neo4j-service start
 Après extraction du dossier, 
 \end{lstlisting}
+
+\subsection{Clusterisation}
+
+Pour que neo4j fonctionne en cluster, trois rôles doivent être mis en place via les fichiers de configuration :
+
+\begin{itemize}
+      \item Master : c'est le point d'entrée principal en écriture. Lorsqu'un changement est effectué sur la base, il réplique l'information vers les esclaves.
+      \item Slave : il assure la pérénité de l'information si le master venait à tomber. On y accède également en lecture.
+      \item Arbitre : il échange régulièrement des heartbeats avec l'ensemble des serveurs pour déterminer l'état du cluster. Il pilote l'élection du master lorsque c'est nécesaire.
+\end{itemize}
+
+L'équilibrage de charge est réalisé en mode proxy à l'aide de HAproxy. Il fait l'interface avec les requêtes HTTP et Bolt et les redirige vers les serveurs master ou slave selon leur état d'occupation.
+
+\subsection{Bolt}
+
+Bolt est utilisé à la place de HTTP comme protocole réseau. Ce nouveau protocole a été créé spécifiquement pour Neo4j de manière à optimiser les performances.
+
