@@ -7,7 +7,7 @@ Spark est un framework open-source qui permet de traiter de larges volumes de do
 \subsection{Usages}
 
 Spark permet de répondre à différents cas d'utilisations :
-\newline
+
 \begin{itemize}
   \item Faire de l'analyse de logs
   \item Traiter des fichiers de texte
@@ -19,7 +19,7 @@ Spark permet de répondre à différents cas d'utilisations :
 \subsection{Aspect fondamentale}
 
 Spark tourne au seins d'un cluster  :
-\newline
+
 \begin{itemize}
   \item Spark peut fonctionner de différentes façon au niveau de la gestion du cluster. Il pourra être en standalone ainsi se débrouiller de maniéres autonome ou alors être managé par les gestionnaires de cluster YARN ou Mesos. Dans un cluster qui contiendra on y trouvera un Master et plusieurs Workers. Dans cette configuration le master joue le role de distribuer les différentes traitement à effectuer aux différents Workers. Par ailleurs, si l'on souhaite être tolérants au pannes le cluster doit disposer d'un master en standby pour prévénir en cas de perte du premier master. Au fur et à mesure du traitement le master principale fait des sauvegardes dans le second master pour qu'il le master en stand-by soit capable de prendre le relais.
   \item Spark permet de faire du traitement de maniéres distribué en répartissant le travaille sur différents noeuds.
@@ -30,7 +30,7 @@ Spark tourne au seins d'un cluster  :
 \subsection{Resilient Distributed Dataset}
 
 Les RDD sont au centre du framework spark. Ils peuvent être vue comme des collections oû l'on y stocke des données. Ils possédent plusieurs propriétes :
-\newline
+
 \begin{itemize}
 	\item Persitante : Il peuvent être soit sur le disque ou/et sur la mémoire. Le faite de stocker les objects RDD en mémoire permet à spark de réaliser des traitements plus rapide que peut proposer Hadoop (Hadoop réalise des accées disque qui coûte chére).
 	\item Resilient : Cela permet à spark d'être tolérant aux pannes. Car dans un cluster les risques qu'un noeud tombe en panne et ne soit plus accessible est bien réaliste (probléme de réseau, de disque ....). De ce faite spark est capable de détecter qu'un noeud est encore en vie ou pas. Ainsi, il va pouvoir être capble de relancer les traitements de l'objet RDD qui ont échoué sur un autre noeud.
@@ -41,10 +41,10 @@ Les RDD sont au centre du framework spark. Ils peuvent être vue comme des colle
 \subsection{Performances}
 
 Pour montrer son efficacité au niveau du traitement des données spark à battu le record précedement détenue par Hadoop sur un trie distribué. Or comme spécifier avant les données sont en mémoires ce qui permet aux traitements d'être fait jusqu'à 100 fois plus vite qu'avec Hadoop.
-\newline
 
+\ \\
 Trie de 100 TB de données de maniéres distribué :
-\newline
+\ \\
 \begin{itemize}
 	\item Hadoop :
         \begin{itemize}
@@ -57,3 +57,13 @@ Trie de 100 TB de données de maniéres distribué :
         	\item Configuration : 206 noeuds (6592 cores)
         \end{itemize}
 \end{itemize}
+
+\subsection{Infrastructure mise en place}
+\ \\
+\centerline{\includegraphics[scale=0.50]{pics/spark-infra.png}}
+\centerline{\caption{Schéma globale de l'infrastructure mise en place pour SPARK}}
+\ \\
+\subsection{Haute disponibilité}
+Pour permettre à notre cluster spark d'être résilient on va s'appuyer sur l'outils zookeeper. Il va nous permettre d'élire un leader entre les deux spark. Ainsi dans le cas où un leader meurt zookeeper se chargeras de basculer sur le second master spark en étant à jour le second master selon l'état du premier master. Cette opération de basculement entre les deux master peut prendre 1 à 2 minutes (le temps de détecter que le master spart est meurt et de mettre à jour l'état du second). Au niveau des workers spark gère lui même l'aspect resilience. Car comme dit plus haut si un worker tombe l'opération qui était en cours d'exécutions dessus seras lancé sur un nouveau worker par l'intermédiaire du master spark.
+
+
