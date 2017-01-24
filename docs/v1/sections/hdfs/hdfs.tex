@@ -1,70 +1,101 @@
 \section{HDFS - Hadoop Distributed File System}
 
-\subsection{Présentation}
+Version utilisée : \textbf{2.7.3} en Standalone (sans YARN, ni MapReduce)
 
-HDFS est un système de fichiers distribué, redondant et fiable. Il est tolérant aux fautes, par conception.
-HDFS fait partie du framework Hadoop (HDFS, YARN, MR). Dans le cadre de la stack Mazerunner, YARN ne sera pas utilisé et Spark sera directement sur HDFS (Standalone Mode).
-Version utilisée : 2.7.3
+\subsection{Présentation générale}
 
+HDFS est un système de fichiers distribué. Il est constitué essentiellement de :
 
-\subsection{Eléments d'architecture}
-
-Un cluster HDFS est composé d'un \textbf{NameNode} et de \textbf{DataNodes}.
-Les fichiers sont divisés en blocs, qui sont répliqués sur les DataNodes. \\
-
-\paragraph{}Le NameNode :
 \begin{itemize}
-	\item centralisé, gére les métadonnées et le namespace.
-	\item reçoit les requêtes client.
-	\item est un \textit{single point of failure}. Il peut être dédoublé (cf \textbf{Secondary NameNode} et \textbf{HA})
+	\item Un \textbf{NameNode}. Il stocke les méta-données du système de fichiers et reçoit les requêtes client.
+	\item Des \textbf{DataNodes}. Ils stockent les données.
 \end{itemize}
 
-\paragraph{}Les DataNodes :
+Les fichiers sont divisés en blocs de taille élémentaire. Ces blocs sont dupliqués sur les différents DataNodes. Chauque DataNode envoit régulièrement au NameNode des \textit{HeartBeats} et des \textit{BlockReports} (liste des blocs stockés sur le DataNode). Le NameNode fait la translation entre un fichier et les blocs qui le constituent, et les DataNodes possédant ces blocs.
+
+Les \textbf{pannes} possibles :
+
 \begin{itemize}
-	\item stockent les blocs.
-	\item n'ont aucune connaissance des fichiers d'origine.
-	\item envoient régulièrement des \textbf{HeartBeats} au NameNode.
-	\item envoient la liste des blocs stockés  - \textbf{BlockReport}
+	\item Crash d'un DataNode
+	\item Crash d'un NameNode. Pour contrer, on utilise HDFS High Availability + automatic failover.
+	\item Network partition !!
 \end{itemize}
 
+La partition du réseau, même avec HDFS High Availability, peut rendre des blocs indisponibles ou encore rendre le cluster complétement indisponible, par une séparation des NameNodes du reste du cluster. La \textit{meilleure} solution, augmenter la réplication des éléments.
 
-\subsection{failures}
+\subsection{Fonctionnalités}
 
-\paragraph{3 types de pannes,}
-\begin{enumerate}
-	\item NameNode failure :
-
-
-	\item DataNode failure :
-
-	DataNode déclaré mort après 10min (par défaut) sans HeartBeat
-
-	\item Network partition :
-\end{enumerate}
-
-\paragraph{Pour tester les pannes,}
-\begin{enumerate}
-	\item Trouver le pid du daemon concerné :
-	\begin{lstlisting}
-	$ jps
-	\end{lstlisting}
-	\item Terminer brutalement :
-	\begin{lstlisting}
-	$ sudo kill -9 <pid>
-	\end{lstlisting}
-\end{enumerate}
-(à wrap dans un script à lancer dps la machine "manager")
-
-
-\subsection{Intégration}
-Installation du client :
 \begin{itemize}
-	\item Installation classique d'Hadoop
-	\item Copie des fichiers de configuration du cluster /etc/hadoop/
-	\item accés via CLI : 
-	\begin{lstlisting}
-	$ hdfs dfs <commande>
-	\end{lstlisting}
-	\item accés via API python avec l'URI du cluster (\texttt{hdfs://...})
+	\item \textbf{Scalabilité verticale et horizontale} : sur des configurations hétérogènes
+	\item \textbf{Fiable et tolérant à la panne} : des DataNodes par défaut, des NameNodes avec de la configuration supplémentaire
+	\item \textbf{Intégrité des données} : les checksums sont périodiquement vérifiées pour détecter des blocs corrompus, et le cas échéant, dupliquer les originaux.
+	\item \textbf{Localité des données} : possible avec YARN et MapReduce
 \end{itemize}
 
+\subsection{Architecture fonctionelle dans Mazerunner}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{pics/hdfs_functional_view.png}
+    \caption{Schéma représentant l'architecture fonctionelle de HDFS}
+\end{figure}
+\FloatBarrier
+
+\subsection{Haute disponibilité}
+
+Dans un cluster HDFS standard (sans HA), l'unique NameNode est un single point of failure. En cas de maintenance du serveur ou de crash du NameNode, le cluster entier devient inaccessible. HDFS High Availability, disponible depuis HDFS 2, permet de gérer simultanément 2 NameNodes : l'un en mode Active, l'autre en mode StandBy. En cas de crash de l'Active NameNode, le StandBy NameNode passe automatiquement en mode Active.\\
+
+Pour maintenir la consistence du cluster :
+
+\begin{itemize}
+	\item les métadonnées des deux NameNodes sont synchronisées. Pour ce faire, les 2 NameNodes communiquent en permanence avec des démons JournalNodes (dupliqués pour la redondance), qui storent l'EditLog (log des modifications). L'Active NameNode publit ses modifications aux JournalNodes. Le StandBy NameNode lit les modifications et les applique à son propre namespace. Avant de passer en mode Active, il s'assure d'avoir récupérer toutes les modifications.
+	\item un seul NameNode doit être en mode Active à un instant donné. Dans le cas contraire, les métadonnées des deux NameNodes vont divergées (Split-brain scenario). Pour ce faire, un seul NameNode est autorisé à écrire par les JournalNodes (lock). Un Quorum ZooKeeper permet l'élection de l'Active NameNode.
+	\item Les ZKFailoverControllers sont des démons surveillant les NameNodes. Ils sont présents sur les machines des NameNodes et se chargent de les représenter auprés du Quorum ZooKeeper et de passer le Standby NameNode en Active.
+\end{itemize}
+
+\subsection{Monitoring}
+
+Chaque instance de processus est surveillée à l'aide de Monit, qui assure le rétablissement des processus en cas de crash.
+
+Pour voir le status des processus, par l'interface web de monit (server-address:2812, admin:admin) ou se connecter via cli :
+
+\begin{lstlisting}
+$ sudo monit status
+\end{lstlisting}
+
+
+Le Quorum ZooKeeper est surveillé par l'intermédiaire de script/global\_server.
+
+\subsection{Infrastructure}
+Les différents services liés à l'outil HDFS sont déployés de la sorte sur nos machines :
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{pics/HDFS_infrastructure.png}
+    \caption{Schéma représentant l'infrastructure déployée pour HDFS}
+\end{figure}
+\FloatBarrier
+
+Rq: Le nombre de machines que nous utilisons nous a contraint à placer des services différents sur les mêmes machines, ce qui n'est pas à reproduire dans une réelle application en production dans un soucis de tolérance aux pannes.
+
+\subsection{Déploiement}
+
+Le déploiement des machines HDFS est automatisé dans des scripts Python et suit la logique suivante: 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{pics/HDFS_deployment.png}
+    \caption{Schéma représentant les étapes de déploiement de l'outil HDFS}
+\end{figure}
+\FloatBarrier
+
+\subsection{Rôle applicatif}
+
+HDFS permet la circulation des données tout au long du processus. Il stocke temporairement les données à traiter pour le calcul des recommendations d'un utilisateur ainsi que le résultat du calcul.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{pics/HDFS_role.png}
+    \caption{Schéma explicitant le rôle applicatif de HDFS dans notre implémentation}
+\end{figure}
+\FloatBarrier
