@@ -42,7 +42,7 @@ Les RDD sont au centre du framework Spark. Ils peuvent être vue comme des colle
 
 \subsection{Performances}
 
-Pour montrer son efficacité au niveau du traitement des données Spark à battu le record précedement détenue par Hadoop sur un trie distribué. Or comme spécifier avant les données sont en mémoires ce qui permet aux traitements d'être fait jusqu'à 100 fois plus vite qu'avec Hadoop.
+Pour montrer son efficacité au niveau du traitement des données, il est intéressant de savoir que Spark à battu le record de temps minimal précedemment détenu par Hadoop sur un tri distribué. Or, comme spécifié avant, les données sont en mémoire, ce qui permet aux traitements d'être réalisés jusqu'à 100 fois plus vite qu'avec Hadoop.
 
 \ \\
 Trie de 100 TB de données de maniéres distribué :
@@ -60,12 +60,19 @@ Trie de 100 TB de données de maniéres distribué :
         \end{itemize}
 \end{itemize}
 
+\subsection{Utilisation dans le cadre du projet}
+- Un job Spark, qui sera démarré par un orchestrateur Spark, va réaliser une sélection des musiques qui seront recommandées à un utilisateur cible d'une requête. Ce job récupère d'un filesystem basé sur HDFS un fichier résultat d'une requête: celle-ci va chercher les musiques aimées par d'autres personnes et qui ont également aimées au moins une musique de l'utilisateur cible.
+- On parse les différentes données du fichier récupéré
+- On utilise la fonction map des collections Spark pour sauvegarder en mémoire les noeuds et les arêtes que l'on va utiliser pour la création d'un graphe (sur lequel on effectuera nos algorithmes, voir partie la Graphx de la documentation).
+- Une fois les traitements réalisés, on crée un fichier résultat contenant les "id" des titres recommandés pour l'utilisateur cible, et on l'envoie sur notre système de fichier HDFS.
+
 \subsection{Infrastructure mise en place}
 \ \\
 \centerline{\includegraphics[scale=0.50]{pics/spark-infra.png}}
 \centerline{\caption{Schéma globale de l'infrastructure mise en place pour SPARK}}
 \ \\
 \subsection{Haute disponibilité}
-Pour permettre à notre cluster spark d'être résilient on va s'appuyer sur l'outils zookeeper. Il va nous permettre d'élire un leader entre les deux spark. Ainsi dans le cas où un leader meurt zookeeper se chargeras de basculer sur le second master spark en étant à jour le second master selon l'état du premier master. Cette opération de basculement entre les deux master peut prendre 1 à 2 minutes (le temps de détecter que le master spart est meurt et de mettre à jour l'état du second). Au niveau des workers spark gère lui même l'aspect resilience. Car comme dit plus haut si un worker tombe l'opération qui était en cours d'exécutions dessus seras lancé sur un nouveau worker par l'intermédiaire du master spark.
+Pour permettre à notre cluster Spark d'être résilient, on va s'appuyer sur l'outil Zookeeper. Il va nous permettre d'élire un leader entre les deux Masters Spark. Ainsi, dans le cas où un leader meurt, Zookeeper se chargera de basculer sur le second Master Spark (en synchronisant le second Master selon l'état du premier). Cette opération de basculement entre les deux Masters peut prendre 1 à 2 minutes (le temps de détecter que le Master Spark est down et de mettre à jour l'état du second). 
+Au niveau des workers, Spark gère lui-même l'aspect résilience de son cluster. Car comme cité plus haut, si un worker tombe, l'opération qui était en cours d'exécution dessus sera relancé sur un nouveau worker par l'intermédiaire du Master Spark.
 
 
