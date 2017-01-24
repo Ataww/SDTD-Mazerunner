@@ -160,6 +160,7 @@ def write_data_to_hdfs(username, records):
         logger.debug("Trying to connect to "+hdfs_namenodes[0]+" namenode")
         hdfs_client = PyWebHdfsClient(host=hdfs_namenodes[0], port='50070', user_name='xnet', timeout=100)
         logger.debug("Trying to erase "+file_path)
+        logger.debug("Trying to erase "+result_path)
         hdfs_client.delete_file_dir(file_path, recursive=True)
         hdfs_client.delete_file_dir(result_path, recursive=True)
         hdfs_client.create_file(file_path, records.encode("utf-8"))
@@ -169,7 +170,10 @@ def write_data_to_hdfs(username, records):
         try:
             logger.debug("Trying to connect to " + hdfs_namenodes[1] + " namenode")
             hdfs_client = PyWebHdfsClient(host=hdfs_namenodes[1], port='50070', user_name='xnet', timeout=100)
-            hdfs_client.delete_file_dir(file_path)
+            logger.debug("Trying to erase "+file_path)
+            logger.debug("Trying to erase "+result_path)
+            hdfs_client.delete_file_dir(file_path, recursive=True)
+            hdfs_client.delete_file_dir(result_path, recursive=True)
             hdfs_client.create_file(file_path, records.encode("utf-8"))
         except (ConnectionError, PyWebHdfsException) as ce:
             to_return["error"] = "There was a problem while trying to connect to HDFS namenode."
