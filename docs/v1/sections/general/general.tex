@@ -17,11 +17,12 @@ Nous avons ensuite créé des utilisateurs a l'image des participants au projet.
 
 \subsection{Architecture générale}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[scale=0.7]{pics/schema_architecture_global.jpg}
     \caption{Représentation de l'architecture générale du projet}
 \end{figure}
+\FloatBarrier
 
 Comme l'indique le schéma, il y a trois machines pour les composants Spark/GraphX, trois machines pour HDFS, une machine pour l'application web, deux machines pour l'API MazeRunner, deux machines pour RabbitMQ et 3 machines pour le cluster neo4j.
 Pour tous les composants sauf l'application web, le nombre de machines nous permet de garantir le fonctionnement du systeme malgré la panne franche d'une machine. Aussi, l'état actuel du code de l'application de démonstration ne prend pas en compte la réplication de l'API MazeRunner bien qu'effective.
@@ -31,11 +32,12 @@ Le paragraphe suivant va décrire l'exécution de la boucle permettant de géné
 
 Le diagramme d'interaction permet la compréhension de la boucle d'exécution et d'expliciter comment les composants communiquent entre eux.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[scale=0.4]{pics/diagramme_interaction.png}
     \caption{Diagramme d'interaction général}
 \end{figure}
+\FloatBarrier
 
 Pour accompagner le diagramme voici un descriptif de la boucle d'exécution :
 \begin{itemize}
