@@ -22,7 +22,7 @@ Elle communique avec neo4j en faisant des requetes cypher sur le port 7475 du lo
 Aussi, l'application utilise une API interne pour aimer, ne pas aimer et enlever une recommandation. Elle envoie donc des requetes cypher pour modifier la base de données. Les types de relation sont : :AIME, :DISLIKE, :RECO.
 Quand un utilisateur réagit a une recommandation, la webapp supprime la recommandation de la base de données pour la remplacer par un lien :AIME ou :DISLIKE afin de ne plus recommander la chanson.
 
-Enfin, la webapp dialogue avec l'API MazeRunner sur l'URL /compute_recommendation/<username> pour demander au systeme de génerer des recommandations pour l'utilisateur fourni dans l'adresse.
+Enfin, la webapp dialogue avec l'API MazeRunner sur l'URL /compute\_recommendation/<username> pour demander au systeme de génerer des recommandations pour l'utilisateur fourni dans l'adresse.
 
 \subsubsection{Répartition de charge / Monitoring}
 
