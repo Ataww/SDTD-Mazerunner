@@ -50,3 +50,14 @@ Pour accompagner le diagramme voici un descriptif de la boucle d'exécution :
   \item L'API MazeRunner répond alors a la requete de l'application web lui indiquant que les recommandations sont disponibles sur neo4j.
   \item L'application web peut alors récupérer les recommandations calculées.
 \end{itemize}
+\break
+\subsection{Développements réalisés par l'équipe}
+
+En plus des composants imposés par la stack, nous avons réalisé une suite de développements nécessaires pour le fonctionnement de notre application : 
+\begin{itemize}
+	\item \textbf{Application web de démonstration :} il s'agit d'un site web sur lequel un utilisateur peut, après avoir indiqué les chansons qu'il aime, avoir une liste de recommandations personnalisées. Elle est développée en javascript sur un serveur node.js ;
+	\item \textbf{Mazerunner API :} cette application fait le lien entre l'application web (frontend) et le système de calcul de recommandations (backend). Elle est développée en python sur un serveur flask ;
+	\item \textbf{Orchestrator et sparkJob :} ce sont deux applications codées en scala et s'exécutant sur l'environnement spark. L'orchestrator reçoit les demandes de recommandation. Pour chaque demande, il démarre une nouvelle instance de sparkJob qui effectue le calcul de la recommandation pour un utilisateur donné. Il indique aussi à l'API Mazerunner quand ce calcul est terminé ;
+	\item \textbf{Scripts de déploiement :} ces scripts effectuent la configuration de toutes les machines de notre système. Ils sont codés en python ;
+	\item \textbf{Application pour la gestion du cycle de vie :} il s'agit d'une application web qui nous indique l'état des différents élément de notre système. Elle permet en autre de stopper ou démarrer des services. Elle est codé en python sur un serveur flask.
+\end{itemize}
