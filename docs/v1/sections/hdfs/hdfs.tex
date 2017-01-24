@@ -8,17 +8,17 @@ HDFS est un système de fichiers distribué. Il est constitué essentiellement d
 
 \begin{itemize}
 	\item Un \textbf{NameNode}. Il stocke les méta-données du système de fichiers et reçoit les requêtes client.
-	\item Des \textbf{DataNodes}. Ils stockent les données.
+	\item Des \textbf{DataNodes}. Ils stockent les données.\\
 \end{itemize}
 
-Les fichiers sont divisés en blocs de taille élémentaire. Ces blocs sont dupliqués sur les différents DataNodes. Chauque DataNode envoit régulièrement au NameNode des \textit{HeartBeats} et des \textit{BlockReports} (liste des blocs stockés sur le DataNode). Le NameNode fait la translation entre un fichier et les blocs qui le constituent, et les DataNodes possédant ces blocs.
+Les fichiers sont divisés en blocs de taille élémentaire. Ces blocs sont dupliqués sur les différents DataNodes. Chaque DataNode envoie régulièrement au NameNode des \textit{HeartBeats} et des \textit{BlockReports} (liste des blocs stockés sur le DataNode). Le NameNode fait la translation entre un fichier et les blocs qui le constituent, et les DataNodes possédant ces blocs.\\
 
 Les \textbf{pannes} possibles :
 
 \begin{itemize}
 	\item Crash d'un DataNode
 	\item Crash d'un NameNode. Pour contrer, on utilise HDFS High Availability + automatic failover.
-	\item Network partition !!
+	\item Network partition\\
 \end{itemize}
 
 La partition du réseau, même avec HDFS High Availability, peut rendre des blocs indisponibles ou encore rendre le cluster complétement indisponible, par une séparation des NameNodes du reste du cluster. La \textit{meilleure} solution, augmenter la réplication des éléments.
@@ -36,7 +36,7 @@ La partition du réseau, même avec HDFS High Availability, peut rendre des bloc
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.4]{pics/hdfs_functional_view.png}
+    \includegraphics[scale=0.5]{pics/hdfs_functional_view.png}
     \caption{Schéma représentant l'architecture fonctionelle de HDFS}
 \end{figure}
 \FloatBarrier
@@ -71,12 +71,12 @@ Les différents services liés à l'outil HDFS sont déployés de la sorte sur n
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.4]{pics/HDFS_infrastructure.png}
+    \includegraphics[scale=0.45]{pics/HDFS_infrastructure.png}
     \caption{Schéma représentant l'infrastructure déployée pour HDFS}
 \end{figure}
 \FloatBarrier
 
-Rq: Le nombre de machines que nous utilisons nous a contraint à placer des services différents sur les mêmes machines, ce qui n'est pas à reproduire dans une réelle application en production dans un soucis de tolérance aux pannes.
+Rq: Le nombre de machines que nous utilisons nous a contraint à augmenter le nombre de services différents sur les mêmes machines, ce qui n'est pas à reproduire dans une réelle application en production dans un soucis de tolérance aux pannes.
 
 \subsection{Déploiement}
 
