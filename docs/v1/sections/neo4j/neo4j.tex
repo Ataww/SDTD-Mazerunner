@@ -48,11 +48,13 @@ Pour que neo4j fonctionne en cluster, trois rôles doivent être mis en place vi
       \item Arbitre : il échange régulièrement des heartbeats avec l'ensemble des serveurs pour déterminer l'état du cluster. Il pilote l'élection du master lorsque c'est nécesaire.
 \end{itemize}
 
-L'équilibrage de charge est réalisé en mode proxy à l'aide de HAproxy. Il fait l'interface avec les requêtes HTTP et Bolt et les redirige vers les serveurs master ou slave selon leur état d'occupation.
+Pour MazeRunner, on a un noeud master, neo4j-1, un noeud esclave, neo4j-2 et enfin un noeud arbitre, neo4j-3.
+
+L'équilibrage de charge est réalisé en mode proxy à l'aide de HAproxy. Il fait l'interface avec les requêtes HTTP et Bolt et les redirige vers les serveurs master ou slave selon leur état d'occupation. Ainsi, tous les composants ayant à intéragir avec la base de données dirigent leurs requêtes vers neo4j-3, qui contient la configuration HAproxy.
 
 \subsection{Bolt}
 
-Bolt est utilisé à la place de HTTP comme protocole réseau. Ce nouveau protocole a été créé spécifiquement pour Neo4j de manière à optimiser les performances.
+Bolt est utilisé à la place de HTTP comme protocole réseau. Ce nouveau protocole a été créé spécifiquement pour Neo4j de manière à optimiser les performances. Ce protocole est utilisé par l'API MazeRunner.
 
 \subsection{Import de données}
 
