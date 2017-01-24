@@ -4,30 +4,34 @@
 Application en charge de générer les jobs spark au seins du cluster utilisant les librairies Spark et l'API Graphx de Spark
 
 ## Configuration
-1. Scala installer sur la machine
-2. Sbt installer sur la machine
+1. Scala installé sur la machine: http://www.scala-lang.org/
+2. Sbt installé sur la machine: http://www.scala-sbt.org/
 
 ## Build
 
 A réaliser à la racine de l'application
  
-1. Compile
+1. Compilation
 
     ```bash
     $ sbt compile
     ```  
-2. Update dependencies
+2. Mise à jour des dépendances
 
-    ```bash
+    ```
     $ sbt update
     ```
     
-3. Package
+3. Package (alias pour assembly)
 
     ```bash
     $ sbt package
     ```  
-    
+4. Déplacer les jars dans le dossier artifact pour déploiement
+   ```
+   $ cd ..
+   $ ./move_artifacts
+   ```
 ## Run application in cluster spark
 
 1. Run 
